@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>나를 설명하는 데이터</title>
+<script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0F0F1A;
+    color: #FFFFFF;
+    font-family: system-ui, 'Pretendard', 'Noto Sans KR', sans-serif;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── 탭 ── */
+  #tabs {
+    display: flex;
+    gap: 8px;
+    padding: 16px 24px 0;
+    flex-shrink: 0;
+    background: #0F0F1A;
+    z-index: 10;
+  }
+
+  .tab-btn {
+    padding: 10px 28px;
+    border: 1.5px solid #333355;
+    border-radius: 24px;
+    background: transparent;
+    color: #AAAAAA;
+    font-size: 14px;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
+  .tab-btn.active {
+    background: #FF6B6B;
+    border-color: #FF6B6B;
+    color: #fff;
+    font-weight: 600;
+  }
+  .tab-btn:hover:not(.active) {
+    border-color: #6666AA;
+    color: #DDDDDD;
+  }
+
+  /* ── 메인 캔버스 ── */
+  #canvas {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .view {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .view.active {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  /* ── 툴팁 ── */
+  #tooltip {
+    position: fixed;
+    background: rgba(15,15,30,0.96);
+    border: 1px solid #444466;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: #EEEEEE;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+    z-index: 999;
+    max-width: 220px;
+    line-height: 1.6;
+  }
+  #tooltip.visible { opacity: 1; }
+
+  /* ── 하단 캡션 ── */
+  .caption {
+    font-size: 13px;
+    color: #666688;
+    text-align: center;
+    padding: 6px 0 10px;
+    flex-shrink: 0;
+  }
+
+  /* ── 뷰 2: 플레이 버튼 ── */
+  #play-btn {
+    position: absolute;
+    top: 16px;
+    right: 24px;
+    padding: 8px 22px;
+    background: #333355;
+    border: 1px solid #555577;
+    border-radius: 20px;
+    color: #CCCCEE;
+    font-size: 13px;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background 0.2s;
+    z-index: 5;
+  }
+  #play-btn:hover { background: #444466; }
+
+  /* ── 뷰 3: 페르소나 카드 ── */
+  .persona-card {
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  .persona-card:hover { transform: scale(1.02); }
+
+  /* SVG 공통 */
+  svg text { user-select: none; }
+
+  /* 뷰 2 레이블 */
+  .bubble-label {
+    font-size: 12px;
+    fill: #fff;
+    text-anchor: middle;
+    pointer-events: none;
+  }
+  .bubble-pct {
+    font-size: 11px;
+    fill: rgba(255,255,255,0.75);
+    text-anchor: middle;
+    pointer-events: none;
+  }
+
+  /* 뷰 3 카드 detail */
+  .detail-text {
+    font-size: 11.5px;
+    fill: #CCCCEE;
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+  .detail-text.shown { opacity: 1; }
+</style>
+</head>
+<body>
+
+<!-- 탭 -->
+<div id="tabs">
+  <button class="tab-btn active" data-tab="1">① 한 주의 연결</button>
+  <button class="tab-btn" data-tab="2">② 1년 전 vs 지금</button>
+  <button class="tab-btn" data-tab="3">③ 어떤 사람인지</button>
+</div>
+
+<!-- 메인 캔버스 -->
+<div id="canvas">
+  <!-- 뷰 1 -->
+  <div class="view active" id="view1">
+    <svg id="svg1" style="width:100%;height:100%;"></svg>
+    <div class="caption">노드 위에 마우스를 올리면 활동 샘플을 볼 수 있습니다 · 점선 = 도메인 간 연결</div>
+  </div>
+
+  <!-- 뷰 2 -->
+  <div class="view" id="view2">
+    <svg id="svg2" style="width:100%;height:100%;"></svg>
+    <button id="play-btn">▶ 변화 보기</button>
+    <div class="caption">버블 크기 = 전체 시청 중 비중 · Space키로도 재생</div>
+  </div>
+
+  <!-- 뷰 3 -->
+  <div class="view" id="view3">
+    <svg id="svg3" style="width:100%;height:100%;"></svg>
+    <div class="caption">페르소나 카드를 클릭하면 근거를 펼쳐볼 수 있습니다 · Esc로 닫기</div>
+  </div>
+</div>
+
+<!-- 툴팁 -->
+<div id="tooltip"></div>
+
+<script>
+// ── 데이터 ──────────────────────────────────────────────
+const DATA1 = {
+  center: { label: "메이", sublabel: "한 주 동안의 활동" },
+  domains: [
+    { id: "youtube", label: "유튜브", activityCount: 487, activityLabel: "487편 시청", color: "#FF4444",
+      samples: ["엠뚜루마뚜루 예능", "우정잉 코미디", "쯔양 먹방"] },
+    { id: "search",  label: "검색",   activityCount: 102, activityLabel: "102회 검색", color: "#4488FF",
+      samples: ["테일러 스위프트", "마츠다 세이코", "곽튜브"] },
+    { id: "music",   label: "음악",   activityCount: 31,  activityLabel: "31곡 재생",  color: "#9966FF",
+      samples: ["일본 드라이브 플리", "테일러 스위프트", "뉴진스"] },
+    { id: "maps",    label: "지도",   activityCount: 18,  activityLabel: "18곳 저장",  color: "#FFAA00",
+      samples: ["맛집 저장", "여행지 저장", "일본 여행 지도"] },
+    { id: "chrome",  label: "웹서핑", activityCount: 289, activityLabel: "289회 방문", color: "#FF66AA",
+      samples: ["네이버 검색", "구글 작업", "sakuticket.jp"] }
+  ],
+  crossLinks: [
+    { source: "youtube", target: "search",  keywords: ["테일러 스위프트", "마츠다 세이코", "장사의신"] },
+    { source: "search",  target: "music",   keywords: ["마츠다 세이코", "뉴진스"] },
+    { source: "maps",    target: "chrome",  keywords: ["여행", "펜션"] },
+    { source: "youtube", target: "music",   keywords: ["일본 음악", "K-POP"] }
+  ]
+};
+
+const DATA2 = {
+  past: {
+    period: "1년 전 (2025년 7월)",
+    categories: [
+      { id: "vlog",   label: "브이로그",     pct: 41.6, color: "#FF8C66" },
+      { id: "enter",  label: "엔터테인먼트", pct: 27.0, color: "#66AAFF" },
+      { id: "music",  label: "음악",         pct: 16.0, color: "#9966FF" },
+      { id: "travel", label: "여행",         pct: 2.9,  color: "#FFAA00" },
+      { id: "edu",    label: "AI·교육",      pct: 2.8,  color: "#44CC88" },
+      { id: "etc",    label: "기타",         pct: 9.7,  color: "#AAAAAA" }
+    ]
+  },
+  now: {
+    period: "올해 초 (2026년 2월)",
+    categories: [
+      { id: "vlog",   label: "브이로그",     pct: 28.5, color: "#FF8C66" },
+      { id: "enter",  label: "엔터테인먼트", pct: 25.4, color: "#66AAFF" },
+      { id: "music",  label: "음악",         pct: 16.4, color: "#9966FF" },
+      { id: "edu",    label: "AI·교육",      pct: 13.1, color: "#44CC88" },
+      { id: "travel", label: "여행",         pct: 4.3,  color: "#FFAA00" },
+      { id: "etc",    label: "기타",         pct: 12.3, color: "#AAAAAA" }
+    ]
+  }
+};
+
+const DATA3 = {
+  inputs: [
+    { id: "youtube", label: "유튜브\n487편/주",  color: "#FF4444" },
+    { id: "search",  label: "검색\n102회/주",    color: "#4488FF" },
+    { id: "music",   label: "음악\n31곡/주",     color: "#9966FF" },
+    { id: "maps",    label: "지도\n18곳",         color: "#FFAA00" },
+    { id: "chrome",  label: "웹서핑\n289회/주",  color: "#FF66AA" }
+  ],
+  personas: [
+    {
+      id: "weekend", label: "주말·야간 활성형",
+      stat: "주말 44% · 야간 15%",
+      marketingAction: "앱 재방문 알림 최적 타이밍",
+      evidenceSources: ["youtube", "chrome"],
+      detail: "토·일요일 + 심야 시간대에 활동량이 집중.\n평일 낮에도 활발하지만 주말이 압도적.",
+      color: "#FF8C66"
+    },
+    {
+      id: "japan", label: "음악·일본 애호가",
+      stat: "음악 16% · 일본 콘텐츠 6.5%",
+      marketingAction: "공연 티켓 · 일본 여행 광고",
+      evidenceSources: ["music", "search", "maps"],
+      detail: "드라이브·출퇴근용 일본 음악 플리.\n마츠다 세이코·나카모리 아키나 검색.\nsakuticket.jp 방문.",
+      color: "#9966FF"
+    },
+    {
+      id: "ai", label: "AI 학습자 (성장 중)",
+      stat: "AI·교육 2% → 13%",
+      marketingAction: "온라인 강의 · AI 도구 광고",
+      evidenceSources: ["youtube", "search", "chrome"],
+      detail: "오빠두엑셀·빌더 조쉬·조코딩 채널 시청.\n올해 초 AI·교육 비중이 5배 증가.",
+      color: "#44CC88"
+    }
+  ]
+};
+
+// ── 유틸 ──────────────────────────────────────────────
+const tooltip = document.getElementById('tooltip');
+function showTip(html, x, y) {
+  tooltip.innerHTML = html;
+  tooltip.classList.add('visible');
+  const tw = tooltip.offsetWidth, th = tooltip.offsetHeight;
+  const px = Math.min(x + 14, window.innerWidth - tw - 10);
+  const py = Math.max(y - th / 2, 10);
+  tooltip.style.left = px + 'px';
+  tooltip.style.top  = py + 'px';
+}
+function hideTip() { tooltip.classList.remove('visible'); }
+
+function getSize() {
+  const canvas = document.getElementById('canvas');
+  return { W: canvas.clientWidth, H: canvas.clientHeight - 28 }; // 28 = caption
+}
+
+// ── 탭 전환 ──────────────────────────────────────────
+let currentTab = 1;
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => switchTab(+btn.dataset.tab));
+});
+
+function switchTab(n) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', +b.dataset.tab === n));
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('view' + n).classList.add('active');
+  currentTab = n;
+  if (n === 1) renderView1();
+  if (n === 2) renderView2();
+  if (n === 3) renderView3();
+}
+
+// ── 뷰 1: Force Graph ─────────────────────────────────
+let sim1;
+function renderView1() {
+  const { W, H } = getSize();
+  const svg = d3.select('#svg1');
+  svg.selectAll('*').remove();
+  svg.attr('viewBox', `0 0 ${W} ${H}`);
+
+  // 노드 크기 스케일
+  const countMax = d3.max(DATA1.domains, d => d.activityCount);
+  const rScale = d3.scaleSqrt().domain([0, countMax]).range([28, 48]);
+  // 링크 두께 스케일
+  const thickScale = d3.scaleLog().domain([1, countMax]).range([2, 8]);
+
+  // 노드 구성
+  const centerNode = { id: 'center', label: '메이', r: 52, color: '#FF6B6B', fixed: true,
+    x: W/2, y: H/2, fx: W/2, fy: H/2 };
+  const domainNodes = DATA1.domains.map((d, i) => {
+    const angle = (2 * Math.PI * i / DATA1.domains.length) - Math.PI / 2;
+    const dist = Math.min(W, H) * 0.30;
+    return { ...d, r: rScale(d.activityCount),
+      x: W/2 + Math.cos(angle) * dist,
+      y: H/2 + Math.sin(angle) * dist };
+  });
+  const nodes = [centerNode, ...domainNodes];
+
+  // 링크 구성: 중앙 ↔ 도메인 (실선)
+  const centerLinks = DATA1.domains.map(d => ({
+    source: 'center', target: d.id,
+    strokeWidth: thickScale(d.activityCount),
+    color: d.color, dashed: false
+  }));
+  // 도메인 ↔ 도메인 (점선)
+  const crossLinks = DATA1.crossLinks.map(l => ({
+    ...l, strokeWidth: 1.5, color: '#555577', dashed: true
+  }));
+  const links = [...centerLinks, ...crossLinks];
+
+  // Defs: glow filter
+  const defs = svg.append('defs');
+  defs.append('filter').attr('id', 'glow')
+    .append('feGaussianBlur').attr('stdDeviation', 3).attr('result', 'coloredBlur');
+  const feMerge = defs.select('filter#glow').append('feMerge');
+  feMerge.append('feMergeNode').attr('in', 'coloredBlur');
+  feMerge.append('feMergeNode').attr('in', 'SourceGraphic');
+
+  // 노드 맵
+  const nodeMap = Object.fromEntries(nodes.map(n => [n.id, n]));
+
+  // Force sim
+  if (sim1) sim1.stop();
+  sim1 = d3.forceSimulation(nodes)
+    .force('link', d3.forceLink(links.map(l => ({
+        source: typeof l.source === 'string' ? l.source : l.source.id,
+        target: typeof l.target === 'string' ? l.target : l.target.id
+      }))).id(d => d.id).distance(d => {
+        if (!d.dashed) return Math.min(W, H) * 0.29;
+        return Math.min(W, H) * 0.35;
+      }).strength(0.3))
+    .force('charge', d3.forceManyBody().strength(-180))
+    .force('collision', d3.forceCollide().radius(d => d.r + 12))
+    .alphaDecay(0.03);
+
+  // ── 링크 그룹
+  const linkGroup = svg.append('g').attr('class', 'links');
+  const linkSel = linkGroup.selectAll('line')
+    .data(links).enter().append('line')
+    .attr('stroke', d => d.color)
+    .attr('stroke-width', d => d.strokeWidth)
+    .attr('stroke-dasharray', d => d.dashed ? '5,5' : null)
+    .attr('opacity', d => d.dashed ? 0.5 : 0.75)
+    .style('cursor', d => d.dashed ? 'pointer' : 'default')
+    .on('mousemove', function(event, d) {
+      if (!d.dashed) return;
+      const kw = DATA1.crossLinks.find(
+        cl => (cl.source === (d.source.id||d.source) && cl.target === (d.target.id||d.target)) ||
+              (cl.source === (d.target.id||d.target) && cl.target === (d.source.id||d.source))
+      );
+      if (kw) showTip(`<b>공통 키워드</b><br>${kw.keywords.join('<br>')}`, event.clientX, event.clientY);
+    })
+    .on('mouseleave', hideTip);
+
+  // ── 노드 그룹
+  const nodeGroup = svg.append('g').attr('class', 'nodes');
+  const nodeSel = nodeGroup.selectAll('g.node')
+    .data(nodes).enter().append('g')
+    .attr('class', 'node')
+    .style('cursor', 'pointer')
+    .call(d3.drag()
+      .on('start', (event, d) => { if (!sim1.alpha()) sim1.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y; })
+      .on('drag',  (event, d) => { if (d.id !== 'center') { d.fx = event.x; d.fy = event.y; } })
+      .on('end',   (event, d) => { if (d.id !== 'center') { d.fx = null; d.fy = null; } sim1.alphaTarget(0); })
+    );
+
+  // 원
+  nodeSel.append('circle')
+    .attr('r', d => d.r)
+    .attr('fill', d => d.color)
+    .attr('fill-opacity', 0.18)
+    .attr('stroke', d => d.color)
+    .attr('stroke-width', 2.5)
+    .attr('filter', 'url(#glow)');
+
+  // 라벨
+  nodeSel.append('text')
+    .attr('text-anchor', 'middle')
+    .attr('dominant-baseline', 'central')
+    .attr('fill', '#FFFFFF')
+    .attr('font-size', d => d.id === 'center' ? 15 : 12)
+    .attr('font-weight', d => d.id === 'center' ? 700 : 500)
+    .text(d => d.label);
+
+  // sublabel (메이 아래)
+  nodeSel.filter(d => d.id === 'center').append('text')
+    .attr('text-anchor', 'middle')
+    .attr('dominant-baseline', 'hanging')
+    .attr('y', d => d.r * 0.35)
+    .attr('fill', 'rgba(255,255,255,0.55)')
+    .attr('font-size', 9)
+    .text(DATA1.center.sublabel);
+
+  // activity label (도메인 노드 아래)
+  nodeSel.filter(d => d.id !== 'center').append('text')
+    .attr('text-anchor', 'middle')
+    .attr('dominant-baseline', 'hanging')
+    .attr('y', d => d.r * 0.3)
+    .attr('fill', d => d.color)
+    .attr('fill-opacity', 0.8)
+    .attr('font-size', 9)
+    .text(d => d.activityLabel);
+
+  // 툴팁
+  nodeSel.filter(d => d.id !== 'center')
+    .on('mousemove', function(event, d) {
+      showTip(`<b style="color:${d.color}">${d.label}</b> ${d.activityLabel}<br><br>` +
+        d.samples.map(s => `· ${s}`).join('<br>'), event.clientX, event.clientY);
+    })
+    .on('mouseleave', hideTip);
+
+  // Tick
+  sim1.on('tick', () => {
+    linkSel
+      .attr('x1', d => (d.source.x || W/2))
+      .attr('y1', d => (d.source.y || H/2))
+      .attr('x2', d => (d.target.x || W/2))
+      .attr('y2', d => (d.target.y || H/2));
+    nodeSel.attr('transform', d => `translate(${d.x},${d.y})`);
+  });
+}
+
+// ── 뷰 2: 버블 비교 ───────────────────────────────────
+let view2State = 'before'; // 'before' | 'after' | 'animating'
+let view2Timer = null;
+
+function renderView2(forceState) {
+  const { W, H } = getSize();
+  const svg = d3.select('#svg2');
+  svg.selectAll('*').remove();
+  svg.attr('viewBox', `0 0 ${W} ${H}`);
+
+  if (forceState) view2State = forceState;
+
+  const R_SCALE = Math.min(W, H) * 0.068;
+  const rOf = pct => Math.sqrt(pct) * R_SCALE;
+
+  const lx = W * 0.27, rx = W * 0.73, cy = H * 0.48;
+
+  // 제목
+  svg.append('text').attr('x', lx).attr('y', H * 0.09)
+    .attr('text-anchor', 'middle').attr('fill', '#DDDDEE')
+    .attr('font-size', 16).attr('font-weight', 600)
+    .text(DATA2.past.period);
+  svg.append('text').attr('x', rx).attr('y', H * 0.09)
+    .attr('text-anchor', 'middle').attr('fill', '#DDDDEE')
+    .attr('font-size', 16).attr('font-weight', 600)
+    .text(DATA2.now.period);
+
+  // 구분선
+  svg.append('line')
+    .attr('x1', W/2).attr('y1', H * 0.06)
+    .attr('x2', W/2).attr('y2', H * 0.92)
+    .attr('stroke', '#333355').attr('stroke-width', 1.5);
+
+  // 버블 배치: 원형 팩킹 간단 배치
+  function layoutBubbles(cats, cx, cy) {
+    const total = cats.length;
+    return cats.map((c, i) => {
+      const angle = (2 * Math.PI * i / total) - Math.PI / 2;
+      const r = rOf(c.pct);
+      const dist = Math.min(W, H) * 0.22;
+      return { ...c, r,
+        x: cx + Math.cos(angle) * dist * (1 - c.pct / 100),
+        y: cy + Math.sin(angle) * dist * (1 - c.pct / 100)
+      };
+    });
+  }
+
+  // 중앙 기준 배치 (겹침 방지 간이)
+  function layoutBubblesForce(cats, centerX, centerY, maxR) {
+    const placed = [];
+    const sorted = [...cats].sort((a,b) => b.pct - a.pct);
+    const angles = sorted.map((_, i) => (2 * Math.PI * i / sorted.length) - Math.PI / 2);
+    return sorted.map((c, i) => {
+      const r = rOf(c.pct);
+      const dist = maxR * 0.55 + r * 0.3;
+      return { ...c, r,
+        x: centerX + Math.cos(angles[i]) * dist,
+        y: centerY + Math.sin(angles[i]) * dist
+      };
+    });
+  }
+
+  const maxR = Math.min(W, H) * 0.34;
+  const pastBubbles = layoutBubblesForce(DATA2.past.categories, lx, cy, maxR);
+  const nowBubbles  = layoutBubblesForce(DATA2.now.categories,  rx, cy, maxR);
+
+  // id → now 위치 맵
+  const nowMap = Object.fromEntries(nowBubbles.map(b => [b.id, b]));
+  const pastMap = Object.fromEntries(pastBubbles.map(b => [b.id, b]));
+
+  // 현재 표시할 x, r: state에 따라
+  function getCurrent(d, side) {
+    if (side === 'past') {
+      if (view2State === 'before') return { x: pastMap[d.id]?.x ?? lx, y: pastMap[d.id]?.y ?? cy, r: rOf(d.pct) };
+      if (view2State === 'after')  return { x: nowMap[d.id]?.x ?? rx,  y: nowMap[d.id]?.y ?? cy,  r: rOf(nowMap[d.id]?.pct ?? d.pct) };
+    }
+    return { x: nowMap[d.id]?.x ?? rx, y: nowMap[d.id]?.y ?? cy, r: rOf(d.pct) };
+  }
+
+  // 좌측 버블
+  const leftG = svg.append('g');
+  const leftBubbles = leftG.selectAll('g.lb')
+    .data(pastBubbles).enter().append('g').attr('class', 'lb')
+    .attr('transform', d => `translate(${d.x},${d.y})`)
+    .style('cursor', 'pointer')
+    .on('mousemove', (event, d) => {
+      showTip(`<b style="color:${d.color}">${d.label}</b><br>${d.pct}% (1년 전)`, event.clientX, event.clientY);
+    })
+    .on('mouseleave', hideTip);
+
+  leftBubbles.append('circle')
+    .attr('r', d => d.r)
+    .attr('fill', d => d.color)
+    .attr('fill-opacity', 0.22)
+    .attr('stroke', d => d.color)
+    .attr('stroke-width', 2);
+
+  leftBubbles.append('text').attr('class', 'bubble-label').attr('y', -5).text(d => d.label);
+  leftBubbles.append('text').attr('class', 'bubble-pct').attr('y', 10).text(d => d.pct + '%');
+
+  // 우측 버블
+  const rightG = svg.append('g');
+  const rightBubbles = rightG.selectAll('g.rb')
+    .data(nowBubbles).enter().append('g').attr('class', 'rb')
+    .attr('transform', d => `translate(${d.x},${d.y})`)
+    .style('cursor', 'pointer')
+    .on('mousemove', (event, d) => {
+      const pastD = DATA2.past.categories.find(p => p.id === d.id);
+      const diff = (d.pct - (pastD?.pct ?? d.pct)).toFixed(1);
+      const sign = diff > 0 ? '+' : '';
+      showTip(`<b style="color:${d.color}">${d.label}</b><br>지금: ${d.pct}%<br>변화: ${sign}${diff}%` +
+        (d.id === 'edu' ? '<br>🔥 가장 큰 변화!' : ''), event.clientX, event.clientY);
+    })
+    .on('mouseleave', hideTip);
+
+  rightBubbles.append('circle')
+    .attr('r', d => d.r)
+    .attr('fill', d => d.color)
+    .attr('fill-opacity', 0.22)
+    .attr('stroke', d => d.color)
+    .attr('stroke-width', 2);
+
+  rightBubbles.append('text').attr('class', 'bubble-label').attr('y', -5)
+    .text(d => d.id === 'edu' ? '🔥 ' + d.label : d.label);
+  rightBubbles.append('text').attr('class', 'bubble-pct').attr('y', 10).text(d => d.pct + '%');
+
+  // 연결선 (같은 id)
+  const linkG = svg.insert('g', ':first-child');
+  DATA2.past.categories.forEach(pc => {
+    const nc = nowMap[pc.id];
+    if (!nc) return;
+    const px = pastMap[pc.id];
+    if (!px) return;
+    linkG.append('line')
+      .attr('x1', px.x).attr('y1', px.y)
+      .attr('x2', nc.x).attr('y2', nc.y)
+      .attr('stroke', pc.color)
+      .attr('stroke-opacity', 0.18)
+      .attr('stroke-width', 1)
+      .attr('stroke-dasharray', '4,4');
+  });
+
+  // 플레이 버튼
+  const btn = document.getElementById('play-btn');
+  btn.onclick = playView2;
+}
+
+function playView2() {
+  if (view2State === 'animating') return;
+  const { W, H } = getSize();
+  const svg = d3.select('#svg2');
+  const R_SCALE = Math.min(W, H) * 0.068;
+  const rOf = pct => Math.sqrt(pct) * R_SCALE;
+  const maxR = Math.min(W, H) * 0.34;
+  const lx = W * 0.27, rx = W * 0.73, cy = H * 0.48;
+
+  function layoutBubblesForce(cats, centerX, centerY) {
+    const sorted = [...cats].sort((a,b) => b.pct - a.pct);
+    const angles = sorted.map((_, i) => (2 * Math.PI * i / sorted.length) - Math.PI / 2);
+    return sorted.map((c, i) => {
+      const r = rOf(c.pct);
+      const dist = maxR * 0.55 + r * 0.3;
+      return { ...c, r, x: centerX + Math.cos(angles[i]) * dist, y: centerY + Math.sin(angles[i]) * dist };
+    });
+  }
+
+  const nowBubbles = layoutBubblesForce(DATA2.now.categories, rx, cy);
+  const nowMap = Object.fromEntries(nowBubbles.map(b => [b.id, b]));
+
+  view2State = 'animating';
+  document.getElementById('play-btn').textContent = '▶ 재생 중...';
+
+  // 좌측 버블 → 우측 위치·크기로 이동
+  svg.selectAll('g.lb').each(function(d) {
+    const nw = nowMap[d.id];
+    if (!nw) return;
+    const g = d3.select(this);
+    g.transition().duration(900).ease(d3.easeCubicInOut)
+      .attr('transform', `translate(${nw.x},${nw.y})`);
+    g.select('circle').transition().duration(900).ease(d3.easeCubicInOut)
+      .attr('r', nw.r);
+    g.select('.bubble-pct').transition().duration(900)
+      .tween('text', function() {
+        const that = d3.select(this);
+        const i = d3.interpolateNumber(d.pct, nw.pct);
+        return t => that.text(i(t).toFixed(1) + '%');
+      });
+  });
+
+  setTimeout(() => {
+    view2State = 'after';
+    document.getElementById('play-btn').textContent = '↺ 처음으로';
+    document.getElementById('play-btn').onclick = () => {
+      renderView2('before');
+    };
+  }, 1000);
+}
+
+// ── 뷰 3: 흐름도 ──────────────────────────────────────
+let expandedPersona = null;
+
+function renderView3() {
+  const { W, H } = getSize();
+  const svg = d3.select('#svg3');
+  svg.selectAll('*').remove();
+  svg.attr('viewBox', `0 0 ${W} ${H}`);
+  expandedPersona = null;
+
+  const cx = W / 2, cy = H / 2;
+  const inputX = W * 0.12, personaX = W * 0.72;
+  const inputCount = DATA3.inputs.length;
+  const personaCount = DATA3.personas.length;
+
+  // Input 위치
+  const inputPositions = DATA3.inputs.map((inp, i) => ({
+    ...inp,
+    x: inputX,
+    y: H * 0.18 + (H * 0.64 / (inputCount - 1)) * i
+  }));
+  const inpMap = Object.fromEntries(inputPositions.map(p => [p.id, p]));
+
+  // Persona 위치
+  const cardW = Math.min(W * 0.26, 220), cardH = 95;
+  const personaPositions = DATA3.personas.map((p, i) => ({
+    ...p,
+    x: personaX,
+    y: H * 0.22 + (H * 0.56 / (personaCount - 1)) * i
+  }));
+
+  // Defs: arrowhead
+  const defs = svg.append('defs');
+  defs.append('filter').attr('id', 'glow3')
+    .append('feGaussianBlur').attr('stdDeviation', 4).attr('result', 'coloredBlur');
+  const fm = defs.select('filter#glow3').append('feMerge');
+  fm.append('feMergeNode').attr('in', 'coloredBlur');
+  fm.append('feMergeNode').attr('in', 'SourceGraphic');
+
+  DATA3.inputs.forEach(inp => {
+    defs.append('marker').attr('id', 'arr-' + inp.id)
+      .attr('markerWidth', 7).attr('markerHeight', 7)
+      .attr('refX', 6).attr('refY', 3.5)
+      .attr('orient', 'auto')
+      .append('polygon').attr('points', '0 0, 7 3.5, 0 7')
+      .attr('fill', inp.color).attr('opacity', 0.7);
+  });
+  DATA3.personas.forEach(p => {
+    defs.append('marker').attr('id', 'arr-p-' + p.id)
+      .attr('markerWidth', 7).attr('markerHeight', 7)
+      .attr('refX', 6).attr('refY', 3.5)
+      .attr('orient', 'auto')
+      .append('polygon').attr('points', '0 0, 7 3.5, 0 7')
+      .attr('fill', p.color).attr('opacity', 0.8);
+  });
+
+  // ── input → 메이 화살표
+  const arrowG = svg.append('g');
+  inputPositions.forEach(inp => {
+    arrowG.append('path')
+      .attr('id', 'arrow-inp-' + inp.id)
+      .attr('d', `M${inp.x + 22},${inp.y} C${(inp.x+cx)/2},${inp.y} ${(inp.x+cx)/2},${cy} ${cx - 58},${cy}`)
+      .attr('fill', 'none')
+      .attr('stroke', inp.color)
+      .attr('stroke-width', 1.5)
+      .attr('stroke-opacity', 0.45)
+      .attr('marker-end', `url(#arr-${inp.id})`);
+  });
+
+  // ── 메이 → persona 화살표
+  personaPositions.forEach(p => {
+    arrowG.append('path')
+      .attr('id', 'arrow-p-' + p.id)
+      .attr('d', `M${cx + 58},${cy} C${(cx+personaX)/2},${cy} ${(cx+personaX)/2},${p.y} ${p.x - cardW/2 - 4},${p.y}`)
+      .attr('fill', 'none')
+      .attr('stroke', p.color)
+      .attr('stroke-width', 1.8)
+      .attr('stroke-opacity', 0.5)
+      .attr('marker-end', `url(#arr-p-${p.id})`);
+  });
+
+  // ── Input 노드
+  const inputG = svg.append('g');
+  const inputSel = inputG.selectAll('g.inp')
+    .data(inputPositions).enter().append('g').attr('class', 'inp')
+    .attr('transform', d => `translate(${d.x},${d.y})`);
+
+  inputSel.append('circle')
+    .attr('r', 22).attr('id', d => 'inp-circle-' + d.id)
+    .attr('fill', d => d.color).attr('fill-opacity', 0.18)
+    .attr('stroke', d => d.color).attr('stroke-width', 2);
+
+  inputSel.each(function(d) {
+    const g = d3.select(this);
+    const lines = d.label.split('\n');
+    lines.forEach((line, i) => {
+      g.append('text')
+        .attr('text-anchor', 'middle')
+        .attr('dominant-baseline', 'central')
+        .attr('y', (i - (lines.length-1)/2) * 12)
+        .attr('fill', d.color)
+        .attr('font-size', i === 0 ? 10 : 9)
+        .attr('font-weight', i === 0 ? 600 : 400)
+        .text(line);
+    });
+  });
+
+  // ── 메이 중앙 원
+  const meiG = svg.append('g').attr('transform', `translate(${cx},${cy})`);
+  meiG.append('circle').attr('r', 54)
+    .attr('fill', '#FF6B6B').attr('fill-opacity', 0.18)
+    .attr('stroke', '#FF6B6B').attr('stroke-width', 3)
+    .attr('filter', 'url(#glow3)');
+  meiG.append('text').attr('text-anchor', 'middle').attr('dominant-baseline', 'central')
+    .attr('fill', '#FF6B6B').attr('font-size', 18).attr('font-weight', 700).text('메이');
+  meiG.append('text').attr('text-anchor', 'middle').attr('y', 20)
+    .attr('fill', 'rgba(255,107,107,0.6)').attr('font-size', 10).text('활동 데이터');
+
+  // ── 페르소나 카드
+  const cardG = svg.append('g');
+  const cardSel = cardG.selectAll('g.pcard')
+    .data(personaPositions).enter().append('g').attr('class', 'pcard')
+    .attr('id', d => 'pcard-' + d.id)
+    .attr('transform', d => `translate(${d.x - cardW/2},${d.y - cardH/2})`)
+    .style('cursor', 'pointer')
+    .on('click', function(event, d) { togglePersona(d, cardW, cardH, personaPositions, inpMap); })
+    .on('mouseover', function(event, d) { highlightInputs(d.evidenceSources, true); })
+    .on('mouseout',  function(event, d) { if (expandedPersona !== d.id) highlightInputs(d.evidenceSources, false); });
+
+  // clipPath per card
+  defs.selectAll('clipPath.card-clip').data(personaPositions).enter()
+    .append('clipPath').attr('id', d => 'clip-' + d.id)
+    .append('rect').attr('width', cardW - 4).attr('height', cardH + 80).attr('rx', 12);
+
+  cardSel.append('rect')
+    .attr('width', cardW).attr('height', cardH)
+    .attr('rx', 12).attr('ry', 12)
+    .attr('id', d => 'card-rect-' + d.id)
+    .attr('fill', d => d.color).attr('fill-opacity', 0.14)
+    .attr('stroke', d => d.color).attr('stroke-width', 1.8);
+
+  cardSel.append('text')
+    .attr('x', 12).attr('y', 22)
+    .attr('fill', d => d.color)
+    .attr('font-size', 13).attr('font-weight', 700)
+    .attr('clip-path', d => `url(#clip-${d.id})`)
+    .text(d => d.label);
+
+  cardSel.append('text')
+    .attr('x', 12).attr('y', 42)
+    .attr('fill', '#CCCCEE').attr('font-size', 11)
+    .attr('clip-path', d => `url(#clip-${d.id})`)
+    .text(d => d.stat);
+
+  cardSel.append('text')
+    .attr('x', 12).attr('y', 60)
+    .attr('fill', '#AAAACC').attr('font-size', 10)
+    .attr('clip-path', d => `url(#clip-${d.id})`)
+    .text(d => '→ ' + d.marketingAction);
+
+  // expand 힌트
+  cardSel.append('text')
+    .attr('x', cardW - 16).attr('y', 22)
+    .attr('fill', '#666688').attr('font-size', 11)
+    .attr('text-anchor', 'middle')
+    .attr('id', d => 'card-hint-' + d.id)
+    .text('＋');
+}
+
+function highlightInputs(sources, on) {
+  DATA3.inputs.forEach(inp => {
+    const inSrc = sources.includes(inp.id);
+    d3.select('#inp-circle-' + inp.id)
+      .transition().duration(200)
+      .attr('fill-opacity', on ? (inSrc ? 0.55 : 0.08) : 0.18)
+      .attr('stroke-width', on && inSrc ? 3.5 : 2);
+    d3.select('#arrow-inp-' + inp.id)
+      .transition().duration(200)
+      .attr('stroke-opacity', on ? (inSrc ? 0.9 : 0.12) : 0.45)
+      .attr('stroke-width', on && inSrc ? 2.5 : 1.5);
+  });
+}
+
+function togglePersona(d, cardW, cardH, personaPositions, inpMap) {
+  const { W, H } = getSize();
+  if (expandedPersona === d.id) {
+    // 닫기
+    expandedPersona = null;
+    d3.select('#pcard-' + d.id)
+      .transition().duration(250)
+      .attr('transform', `translate(${d.x - cardW/2},${d.y - cardH/2})`);
+    d3.select('#card-rect-' + d.id)
+      .transition().duration(250)
+      .attr('height', cardH);
+    d3.select('#card-hint-' + d.id).text('＋');
+    d3.select('#detail-' + d.id).transition().duration(200).attr('opacity', 0).remove();
+    highlightInputs(d.evidenceSources, false);
+    return;
+  }
+  // 다른 카드 닫기
+  if (expandedPersona) {
+    const prev = personaPositions.find(p => p.id === expandedPersona);
+    if (prev) {
+      d3.select('#pcard-' + prev.id)
+        .transition().duration(200)
+        .attr('transform', `translate(${prev.x - cardW/2},${prev.y - cardH/2})`);
+      d3.select('#card-rect-' + prev.id).transition().duration(200).attr('height', cardH);
+      d3.select('#card-hint-' + prev.id).text('＋');
+      d3.select('#detail-' + prev.id).transition().duration(150).attr('opacity', 0).remove();
+      highlightInputs(prev.evidenceSources, false);
+    }
+  }
+  expandedPersona = d.id;
+  const expandH = cardH + 70;
+  d3.select('#pcard-' + d.id)
+    .transition().duration(250)
+    .attr('transform', `translate(${d.x - cardW/2},${d.y - expandH/2})`);
+  d3.select('#card-rect-' + d.id)
+    .transition().duration(250).attr('height', expandH);
+  d3.select('#card-hint-' + d.id).text('－');
+
+  const detailG = d3.select('#pcard-' + d.id).append('g')
+    .attr('id', 'detail-' + d.id).attr('opacity', 0);
+  const lines = d.detail.split('\n');
+  lines.forEach((line, i) => {
+    detailG.append('text')
+      .attr('x', 12).attr('y', cardH + 14 + i * 16)
+      .attr('fill', '#CCCCEE').attr('font-size', 10)
+      .text(line);
+  });
+  detailG.transition().delay(200).duration(250).attr('opacity', 1);
+  highlightInputs(d.evidenceSources, true);
+}
+
+// ── 키보드 단축키 ─────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if (e.key === '1') switchTab(1);
+  else if (e.key === '2') switchTab(2);
+  else if (e.key === '3') switchTab(3);
+  else if (e.key === ' ' && currentTab === 2) { e.preventDefault(); playView2(); }
+  else if (e.key === 'Escape' && currentTab === 3 && expandedPersona) {
+    const { W, H } = getSize();
+    const { W: W2 } = getSize();
+    const cardW = Math.min(W * 0.22, 195), cardH = 95;
+    const personaPositions = DATA3.personas.map((p, i) => ({
+      ...p, x: W * 0.75,
+      y: H * 0.22 + (H * 0.56 / (DATA3.personas.length - 1)) * i
+    }));
+    const prev = personaPositions.find(p => p.id === expandedPersona);
+    if (prev) {
+      d3.select('#pcard-' + prev.id)
+        .transition().duration(200)
+        .attr('transform', `translate(${prev.x - cardW/2},${prev.y - cardH/2})`);
+      d3.select('#card-rect-' + prev.id).transition().duration(200).attr('height', cardH);
+      d3.select('#card-hint-' + prev.id).text('＋');
+      d3.select('#detail-' + prev.id).transition().duration(150).attr('opacity', 0).remove();
+      highlightInputs(prev.evidenceSources, false);
+      expandedPersona = null;
+    }
+  }
+});
+
+// ── 리사이즈 ──────────────────────────────────────────
+let resizeTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => {
+    if (currentTab === 1) renderView1();
+    else if (currentTab === 2) renderView2();
+    else if (currentTab === 3) renderView3();
+  }, 150);
+});
+
+// ── 초기 렌더 ─────────────────────────────────────────
+renderView1();
+</script>
+</body>
+</html>

@@ -1,0 +1,1480 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>데이터로 본 나 — 메이의 1년 반</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+  <style>
+    /* ===================================================
+       RESET & BASE
+    =================================================== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #FAFBFC;
+      --white: #ffffff;
+      --text-heading: #1E293B;
+      --text-sub: #475569;
+      --text-body: #334155;
+      --text-muted: #64748B;
+      --border: #E2E8F0;
+      --shadow-card: 0 1px 3px rgba(0,0,0,0.05), 0 8px 24px rgba(0,0,0,0.04);
+      --shadow-hover: 0 4px 12px rgba(0,0,0,0.08), 0 16px 40px rgba(0,0,0,0.06);
+
+      --coral: #F87171;
+      --coral-light: #FCA5A5;
+      --coral-bg: #FEF2F2;
+      --blue: #60A5FA;
+      --blue-light: #93C5FD;
+      --blue-bg: #EFF6FF;
+      --purple: #A78BFA;
+      --purple-light: #C4B5FD;
+      --purple-bg: #F5F3FF;
+      --amber: #F59E0B;
+      --amber-light: #FCD34D;
+      --amber-bg: #FFFBEB;
+      --pink: #EC4899;
+      --pink-light: #F9A8D4;
+      --pink-bg: #FDF2F8;
+      --green: #34D399;
+      --green-bg: #ECFDF5;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Noto Sans KR', 'Pretendard', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text-body);
+      font-size: 16px;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* ===================================================
+       LAYOUT
+    =================================================== */
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 32px;
+    }
+
+    section {
+      padding: 100px 0;
+    }
+
+    .section-label {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-size: 36px;
+      font-weight: 700;
+      color: var(--text-heading);
+      line-height: 1.3;
+      margin-bottom: 12px;
+    }
+
+    .section-desc {
+      font-size: 17px;
+      color: var(--text-sub);
+      line-height: 1.7;
+      margin-bottom: 56px;
+    }
+
+    /* ===================================================
+       SECTION 1: INTRO
+    =================================================== */
+    #intro {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .intro-bg-circles {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .intro-circle {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0.07;
+    }
+
+    .intro-circle-1 {
+      width: 600px; height: 600px;
+      background: var(--coral);
+      top: -200px; right: -150px;
+    }
+
+    .intro-circle-2 {
+      width: 400px; height: 400px;
+      background: var(--blue);
+      bottom: -100px; left: -80px;
+    }
+
+    .intro-circle-3 {
+      width: 250px; height: 250px;
+      background: var(--purple);
+      top: 60%; left: 60%;
+    }
+
+    .intro-content {
+      position: relative;
+      z-index: 1;
+      max-width: 760px;
+      padding: 0 32px;
+    }
+
+    .intro-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 8px 20px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-sub);
+      margin-bottom: 40px;
+      box-shadow: var(--shadow-card);
+    }
+
+    .intro-badge-dot {
+      width: 8px; height: 8px;
+      background: var(--coral);
+      border-radius: 50%;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.3); }
+    }
+
+    .intro-headline {
+      font-size: 44px;
+      font-weight: 800;
+      color: var(--text-heading);
+      line-height: 1.25;
+      margin-bottom: 24px;
+      word-break: keep-all;
+    }
+
+    .intro-headline .highlight {
+      color: var(--coral);
+      position: relative;
+    }
+
+    .intro-sub {
+      font-size: 18px;
+      color: var(--text-sub);
+      line-height: 1.75;
+      margin-bottom: 60px;
+      word-break: keep-all;
+    }
+
+    .intro-stats-row {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      margin-bottom: 64px;
+      flex-wrap: wrap;
+    }
+
+    .intro-stat {
+      text-align: center;
+    }
+
+    .intro-stat-num {
+      display: block;
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--text-heading);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .intro-stat-label {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .intro-stat-divider {
+      width: 1px;
+      background: var(--border);
+      align-self: stretch;
+    }
+
+    .scroll-hint {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+
+    .scroll-arrow {
+      width: 36px; height: 36px;
+      border: 1.5px solid var(--border);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: bounce 2s ease-in-out infinite;
+    }
+
+    .scroll-arrow svg {
+      width: 16px; height: 16px;
+      stroke: var(--text-muted);
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(6px); }
+    }
+
+    /* ===================================================
+       SECTION 2: FORCE GRAPH
+    =================================================== */
+    #graph {
+      background: var(--white);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .graph-wrapper {
+      position: relative;
+    }
+
+    #force-graph {
+      width: 100%;
+      height: 620px;
+      display: block;
+      cursor: grab;
+    }
+
+    #force-graph:active {
+      cursor: grabbing;
+    }
+
+    .graph-hint {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-size: 13px;
+      color: var(--text-muted);
+      box-shadow: var(--shadow-card);
+      max-width: 200px;
+      line-height: 1.5;
+    }
+
+    /* Node info panel */
+    #node-info {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 24px 28px;
+      margin-top: 20px;
+      box-shadow: var(--shadow-card);
+      min-height: 100px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .node-info-emoji {
+      font-size: 40px;
+      flex-shrink: 0;
+    }
+
+    .node-info-content {
+      flex: 1;
+    }
+
+    .node-info-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-heading);
+      margin-bottom: 4px;
+    }
+
+    .node-info-desc {
+      font-size: 15px;
+      color: var(--text-sub);
+      line-height: 1.6;
+    }
+
+    .node-info-placeholder {
+      color: var(--text-muted);
+      font-size: 15px;
+    }
+
+    /* ===================================================
+       SECTION 3: INSIGHT CARDS
+    =================================================== */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .insight-card {
+      background: var(--white);
+      border-radius: 20px;
+      padding: 28px 24px;
+      box-shadow: var(--shadow-card);
+      border: 1px solid var(--border);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      cursor: default;
+    }
+
+    .insight-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .card-emoji {
+      font-size: 28px;
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .card-tag {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      padding: 3px 10px;
+      border-radius: 100px;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-heading);
+      margin-bottom: 16px;
+      line-height: 1.4;
+      word-break: keep-all;
+    }
+
+    .card-big-num {
+      font-size: 52px;
+      font-weight: 800;
+      line-height: 1;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .card-change {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .card-change-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .card-change-val {
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .card-change-label {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .card-change-arrow {
+      font-size: 18px;
+      color: var(--text-muted);
+      margin: 0 4px;
+    }
+
+    .card-desc {
+      font-size: 14px;
+      color: var(--text-sub);
+      line-height: 1.65;
+      word-break: keep-all;
+    }
+
+    .card-bar-row {
+      margin-bottom: 12px;
+    }
+
+    .bar-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .bar-label {
+      font-size: 12px;
+      color: var(--text-sub);
+      width: 28px;
+      flex-shrink: 0;
+    }
+
+    .bar-track {
+      flex: 1;
+      height: 8px;
+      background: var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 1s ease;
+    }
+
+    .bar-pct {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-sub);
+      width: 32px;
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    /* coral card */
+    .card-coral .card-tag { background: var(--coral-bg); color: var(--coral); }
+    .card-coral .card-big-num { color: var(--coral); }
+    .card-coral .card-change-val { color: var(--coral); }
+
+    /* blue card */
+    .card-blue .card-tag { background: var(--blue-bg); color: var(--blue); }
+    .card-blue .card-big-num { color: var(--blue); }
+    .card-blue .card-change-val { color: var(--blue); }
+
+    /* purple card */
+    .card-purple .card-tag { background: var(--purple-bg); color: var(--purple); }
+    .card-purple .card-big-num { color: var(--purple); }
+    .card-purple .card-change-val { color: var(--purple); }
+    .card-purple .bar-fill { background: var(--purple); }
+
+    /* amber card */
+    .card-amber .card-tag { background: var(--amber-bg); color: var(--amber); }
+    .card-amber .card-big-num { color: var(--amber); }
+    .card-amber .card-change-val { color: var(--amber); }
+
+    /* pink card */
+    .card-pink .card-tag { background: var(--pink-bg); color: var(--pink); }
+    .card-pink .card-big-num { color: var(--pink); }
+    .card-pink .card-change-val { color: var(--pink); }
+
+    /* green card */
+    .card-green .card-tag { background: var(--green-bg); color: #059669; }
+    .card-green .card-big-num { color: #059669; }
+
+    /* ===================================================
+       SECTION 4: EXCEL vs BIGQUERY
+    =================================================== */
+    #why-bq {
+      background: var(--white);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .compare-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-bottom: 48px;
+    }
+
+    .compare-card {
+      border-radius: 20px;
+      padding: 28px 24px;
+      border: 1px solid var(--border);
+    }
+
+    .compare-card.excel {
+      background: #F8FAFC;
+    }
+
+    .compare-card.bq {
+      background: var(--blue-bg);
+      border-color: #BFDBFE;
+    }
+
+    .compare-card.so {
+      background: linear-gradient(135deg, #F0FDF4 0%, #EFF6FF 100%);
+      border-color: #BBF7D0;
+    }
+
+    .compare-icon {
+      font-size: 32px;
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .compare-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-heading);
+      margin-bottom: 20px;
+    }
+
+    .compare-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .compare-list li {
+      font-size: 14px;
+      color: var(--text-sub);
+      line-height: 1.55;
+      padding-left: 20px;
+      position: relative;
+      word-break: keep-all;
+    }
+
+    .compare-list li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 8px;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+    }
+
+    .excel .compare-list li::before { background: #94A3B8; }
+    .bq .compare-list li::before { background: var(--blue); }
+    .so .compare-list li { color: #1E293B; font-weight: 500; }
+    .so .compare-list li::before { background: var(--green); }
+
+    .bq-closing {
+      background: var(--text-heading);
+      color: var(--white);
+      border-radius: 16px;
+      padding: 28px 32px;
+      text-align: center;
+      font-size: 17px;
+      line-height: 1.7;
+      word-break: keep-all;
+    }
+
+    .bq-closing strong {
+      color: var(--blue-light);
+    }
+
+    /* ===================================================
+       SECTION 5: FOOTER
+    =================================================== */
+    #footer {
+      padding: 80px 0;
+      text-align: center;
+    }
+
+    .footer-headline {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--text-heading);
+      margin-bottom: 16px;
+    }
+
+    .footer-sub {
+      font-size: 16px;
+      color: var(--text-muted);
+      margin-bottom: 32px;
+    }
+
+    .footer-sig {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text-sub);
+    }
+
+    .footer-dots {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 48px;
+    }
+
+    .footer-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      opacity: 0.3;
+    }
+
+    /* ===================================================
+       GRAPH LEGEND
+    =================================================== */
+    .graph-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .legend-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .legend-line {
+      width: 20px; height: 2px;
+      border-top: 2px dashed var(--text-muted);
+      flex-shrink: 0;
+    }
+
+    /* ===================================================
+       RESPONSIVE (basic)
+    =================================================== */
+    @media (max-width: 768px) {
+      .intro-headline { font-size: 28px; }
+      .cards-grid { grid-template-columns: 1fr 1fr; }
+      .compare-grid { grid-template-columns: 1fr; }
+      .section-title { font-size: 26px; }
+    }
+
+    @media (max-width: 540px) {
+      .cards-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ===================================================
+       TOOLTIP
+    =================================================== */
+    .graph-tooltip {
+      position: fixed;
+      background: var(--text-heading);
+      color: white;
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 500;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+      z-index: 9999;
+      white-space: nowrap;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============================================================
+       TOOLTIP (global)
+  ============================================================ -->
+  <div class="graph-tooltip" id="graph-tooltip"></div>
+
+  <!-- ============================================================
+       SECTION 1: INTRO
+  ============================================================ -->
+  <section id="intro">
+    <div class="intro-bg-circles">
+      <div class="intro-circle intro-circle-1"></div>
+      <div class="intro-circle intro-circle-2"></div>
+      <div class="intro-circle intro-circle-3"></div>
+    </div>
+    <div class="intro-content">
+      <div class="intro-badge">
+        <span class="intro-badge-dot"></span>
+        구글 테이크아웃 × 빅쿼리 × 클로드
+      </div>
+      <h1 class="intro-headline">
+        데이터 분석이라고 하면<br />
+        <span class="highlight">어려워 보이죠?</span>
+      </h1>
+      <p class="intro-sub">
+        근데 사실 그냥 — 내가 하루에 뭘 했는지 모아둔 거예요.<br />
+        지난 1년 반치 제 활동을 모아서 정리했어요.<br />
+        유튜브, 검색, 음악, 지도, 웹서핑 — 다 모아봤죠.
+      </p>
+
+      <div class="intro-stats-row">
+        <div class="intro-stat">
+          <span class="intro-stat-num" style="color:var(--coral)">32,000+</span>
+          <span class="intro-stat-label">유튜브 시청 기록</span>
+        </div>
+        <div class="intro-stat-divider"></div>
+        <div class="intro-stat">
+          <span class="intro-stat-num" style="color:var(--blue)">1년 반</span>
+          <span class="intro-stat-label">수집 기간</span>
+        </div>
+        <div class="intro-stat-divider"></div>
+        <div class="intro-stat">
+          <span class="intro-stat-num" style="color:var(--purple)">5가지</span>
+          <span class="intro-stat-label">데이터 출처</span>
+        </div>
+      </div>
+
+      <div class="scroll-hint">
+        <span>아래로 스크롤</span>
+        <div class="scroll-arrow">
+          <svg viewBox="0 0 16 16" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8 3v10M3 9l5 5 5-5"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 2: FORCE GRAPH
+  ============================================================ -->
+  <section id="graph">
+    <div class="container">
+      <div class="section-label">내 활동 지도</div>
+      <h2 class="section-title">흩어진 활동을 모아봤어요</h2>
+      <p class="section-desc">
+        노드를 클릭하면 그 영역에서 제가 뭘 했는지 보여드릴게요.<br />
+        드래그도 돼요. 마음껏 가지고 노셔도 됩니다.
+      </p>
+
+      <div class="graph-legend">
+        <div class="legend-item">
+          <div class="legend-dot" style="background:var(--coral)"></div>
+          <span>나 (중앙)</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot" style="background:var(--coral-light)"></div>
+          <span>유튜브</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot" style="background:var(--blue)"></div>
+          <span>검색</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot" style="background:var(--purple)"></div>
+          <span>음악</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot" style="background:var(--amber)"></div>
+          <span>지도</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot" style="background:var(--pink)"></div>
+          <span>웹서핑</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-line"></div>
+          <span>같은 주제로 연결된 활동</span>
+        </div>
+      </div>
+
+      <div class="graph-wrapper">
+        <svg id="force-graph"></svg>
+        <div class="graph-hint">
+          💡 점선 = 다른 영역이지만 같은 주제로 연결된 활동들
+        </div>
+      </div>
+
+      <div id="node-info">
+        <div class="node-info-placeholder">👆 노드를 클릭하면 자세한 이야기를 들을 수 있어요</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 3: INSIGHT CARDS
+  ============================================================ -->
+  <section id="insights">
+    <div class="container">
+      <div class="section-label">데이터가 본 나</div>
+      <h2 class="section-title">데이터가 본 '나'는 어떤 사람일까요?</h2>
+      <p class="section-desc">
+        숫자는 거짓말을 안 해요. 그래서 가끔 무서워요.
+      </p>
+
+      <div class="cards-grid">
+
+        <!-- 카드 1: 밤형 -->
+        <div class="insight-card card-coral">
+          <span class="card-emoji">🌙</span>
+          <span class="card-tag">시청 패턴</span>
+          <div class="card-title">저는 밤형이에요</div>
+          <span class="card-big-num">34%</span>
+          <p class="card-desc">
+            심야(밤 11시~새벽 2시) 시청 비중이 34%.<br />
+            일반 기준의 3배예요.<br />
+            퇴근하고 자기 전에 몰아보는 패턴이 진하게 나타나요.
+          </p>
+        </div>
+
+        <!-- 카드 2: 뉴스→브이로그 -->
+        <div class="insight-card card-blue">
+          <span class="card-emoji">📺</span>
+          <span class="card-tag">취향 변화</span>
+          <div class="card-title">뉴스에서 브이로그로</div>
+          <div class="card-change">
+            <div class="card-change-item">
+              <span class="card-change-val" style="color:var(--blue)">37%</span>
+              <span class="card-change-label">뉴스 (작년)</span>
+            </div>
+            <span class="card-change-arrow">→</span>
+            <div class="card-change-item">
+              <span class="card-change-val" style="color:#94A3B8">26%</span>
+              <span class="card-change-label">뉴스 (올해)</span>
+            </div>
+          </div>
+          <p class="card-desc">
+            뉴스 피로가 왔나 봐요.<br />
+            그 자리를 브이로그·예능이 채우고 있어요.<br />
+            브이로그 비중은 19.7% → 24.2%로 늘었고요.
+          </p>
+        </div>
+
+        <!-- 카드 3: AI 5배 -->
+        <div class="insight-card card-purple">
+          <span class="card-emoji">🤖</span>
+          <span class="card-tag">성장 트렌드</span>
+          <div class="card-title">AI 영상이 5배 늘었어요</div>
+          <div class="card-change">
+            <div class="card-change-item">
+              <span class="card-change-val">2.8%</span>
+              <span class="card-change-label">작년</span>
+            </div>
+            <span class="card-change-arrow">→</span>
+            <div class="card-change-item">
+              <span class="card-change-val">13.1%</span>
+              <span class="card-change-label">올해</span>
+            </div>
+          </div>
+          <p class="card-desc">
+            오빠두엑셀, 빌더조쉬, 클로드한테 우가우가...<br />
+            AI·교육 영상이 올해 5배 늘었어요.<br />
+            제 데이터가 '학습 중'을 보여줘요.
+          </p>
+        </div>
+
+        <!-- 카드 4: 직접 검색 -->
+        <div class="insight-card card-amber">
+          <span class="card-emoji">🔍</span>
+          <span class="card-tag">탐색 행동</span>
+          <div class="card-title">남의 추천보다 내 검색</div>
+          <span class="card-big-num">47%</span>
+          <p class="card-desc">
+            유튜브에서 직접 검색 → 시청으로 이어진 비율이 47%.<br />
+            알고리즘 추천에 끌려다니는 건 5%에 불과해요.<br />
+            저, 의외로 능동적이더라고요.
+          </p>
+        </div>
+
+        <!-- 카드 5: 음악 취향 -->
+        <div class="insight-card card-pink">
+          <span class="card-emoji">🎵</span>
+          <span class="card-tag">음악 취향</span>
+          <div class="card-title">음악 취향은 골고루</div>
+          <div class="card-bar-row">
+            <div class="bar-item">
+              <span class="bar-label">한국</span>
+              <div class="bar-track">
+                <div class="bar-fill" style="width:39%; background:var(--pink)"></div>
+              </div>
+              <span class="bar-pct">39%</span>
+            </div>
+            <div class="bar-item">
+              <span class="bar-label">영어</span>
+              <div class="bar-track">
+                <div class="bar-fill" style="width:37%; background:var(--pink-light)"></div>
+              </div>
+              <span class="bar-pct">37%</span>
+            </div>
+            <div class="bar-item">
+              <span class="bar-label">일본</span>
+              <div class="bar-track">
+                <div class="bar-fill" style="width:22%; background:#FBD0E6"></div>
+              </div>
+              <span class="bar-pct">22%</span>
+            </div>
+          </div>
+          <p class="card-desc">
+            한국·영어·일본 음악이 거의 골고루.<br />
+            상황별로 다른 플레이리스트 패턴이에요.
+          </p>
+        </div>
+
+        <!-- 카드 6: 최근 이탈 위험 -->
+        <div class="insight-card card-green">
+          <span class="card-emoji">⚠️</span>
+          <span class="card-tag">최근 알림</span>
+          <div class="card-title">최근 2주 — 이탈 위험!</div>
+          <span class="card-big-num">149편</span>
+          <p class="card-desc">
+            최근 2주 시청량이 149편.<br />
+            평균 주간 615편의 24% 수준이에요.<br />
+            왜냐고요? 이 발표 준비하느라 바빠서요.<br />
+            데이터가 정확히 잡아냈어요. 😅
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 4: EXCEL vs BIGQUERY
+  ============================================================ -->
+  <section id="why-bq">
+    <div class="container">
+      <div class="section-label">왜 빅쿼리야?</div>
+      <h2 class="section-title">엑셀로는 왜 안 돼요?</h2>
+      <p class="section-desc">
+        3만 2천 건 데이터. 엑셀에 넣으면 어떻게 될지... 상상이 가시죠?
+      </p>
+
+      <div class="compare-grid">
+        <div class="compare-card excel">
+          <span class="compare-icon">📊</span>
+          <div class="compare-title">엑셀이라면</div>
+          <ul class="compare-list">
+            <li>표 하나에 다 욱여넣기</li>
+            <li>행 100만 넘으면 멈춤</li>
+            <li>"다른 각도로 보고 싶어요" → 표 다시 만들어야</li>
+            <li>음악·영상·지도 합쳐서 보기 → 거의 불가능</li>
+            <li>파일 열 때마다 기도 필요</li>
+          </ul>
+        </div>
+
+        <div class="compare-card bq">
+          <span class="compare-icon">🗄️</span>
+          <div class="compare-title">빅쿼리는</div>
+          <ul class="compare-list">
+            <li>표를 여러 개로 나눠서 보관</li>
+            <li>행 무한대 가능 (제 데이터 3만+편)</li>
+            <li>"다른 각도" → 뷰만 새로 짜면 됨</li>
+            <li>음악·영상·지도 합치기 → 클릭 한 번</li>
+            <li>파일 열 필요도 없음 (클라우드)</li>
+          </ul>
+        </div>
+
+        <div class="compare-card so">
+          <span class="compare-icon">✨</span>
+          <div class="compare-title">그래서 좋은 게요</div>
+          <ul class="compare-list">
+            <li>같은 데이터를 여러 사람이 각자 다른 관점으로</li>
+            <li>새 질문 생길 때마다 처음부터 다시 안 해도 됨</li>
+            <li>AI한테 자연어로 물어보면 알아서 SQL 짜줌</li>
+            <li>데이터 한 번 잘 쌓아두면 영원히 우려먹기 가능</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="bq-closing">
+        빅쿼리가 어려운 게 아니에요.<br />
+        그냥 — <strong>엑셀 한 장에 안 들어가는 데이터를 정리할 곳</strong>이 필요했을 뿐이에요.
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 5: FOOTER
+  ============================================================ -->
+  <section id="footer">
+    <div class="container">
+      <div class="footer-headline">질문 환영해요. 😊</div>
+      <p class="footer-sub">
+        데이터 분석, 빅쿼리, 클로드 — 뭐든지 물어봐 주세요.
+      </p>
+      <div class="footer-sig">— 메이</div>
+      <div class="footer-dots">
+        <div class="footer-dot" style="background:var(--coral)"></div>
+        <div class="footer-dot" style="background:var(--blue)"></div>
+        <div class="footer-dot" style="background:var(--purple)"></div>
+        <div class="footer-dot" style="background:var(--amber)"></div>
+        <div class="footer-dot" style="background:var(--pink)"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       JAVASCRIPT: FORCE GRAPH + INTERACTIONS
+  ============================================================ -->
+  <script>
+    /* ===================================================
+       GRAPH DATA
+    =================================================== */
+    const COLORS = {
+      center: '#F87171',
+      youtube: '#FB923C',
+      search:  '#60A5FA',
+      music:   '#A78BFA',
+      map:     '#F59E0B',
+      web:     '#EC4899',
+    };
+
+    const NODE_INFO = {
+      'me': {
+        emoji: '👩‍💻',
+        title: '나 (메이)',
+        desc: '카카오모빌리티 데이터 분석가. 1년 반치 구글 테이크아웃 데이터를 빅쿼리에 올려서 분석했어요. 총 32,000+ 건의 기록이에요.'
+      },
+      'youtube': {
+        emoji: '📺',
+        title: '유튜브',
+        desc: '1년 반 동안 32,000+ 편을 시청했어요. 하루 평균 60~70편 수준이에요. 주로 심야에 몰아보는 패턴이에요.'
+      },
+      'search': {
+        emoji: '🔍',
+        title: '검색',
+        desc: '유튜브 검색 → 영상 시청 전환율이 47%예요. 알고리즘보다 제가 직접 찾는 걸 더 좋아하는 것 같아요.'
+      },
+      'music': {
+        emoji: '🎵',
+        title: '음악',
+        desc: '한국(39%) / 영어(37%) / 일본(22%) 비중으로 고루 들어요. 드라이브할 때는 일본 음악, 집중할 때는 재즈인 것 같아요.'
+      },
+      'map': {
+        emoji: '🗺️',
+        title: '지도',
+        desc: '국내 여행(양양, 맛집)과 일본 여행지 검색이 많아요. 여행 계획 세울 때 지도를 정말 많이 써요.'
+      },
+      'web': {
+        emoji: '🌐',
+        title: '웹서핑',
+        desc: '네이버·구글 검색, 일본 티켓 예약, AI 도구 탐색이 많아요. 업무 중 자료 찾기와 취미 서핑이 섞여 있어요.'
+      },
+      // 2차 노드
+      'yt-news': { emoji: '📰', title: '뉴스', desc: '작년 37% → 올해 26%로 줄었어요. 자극적인 뉴스에 지쳤나봐요. 대신 브이로그가 늘었어요.' },
+      'yt-vlog': { emoji: '🎬', title: '브이로그', desc: '19.7% → 24.2%로 증가. 누군가의 일상을 보면서 대리만족 중인 것 같아요.' },
+      'yt-variety': { emoji: '🎭', title: '예능', desc: '힐링용이에요. 퇴근 후 가벼운 예능으로 하루를 마무리하는 패턴이에요.' },
+      'yt-ai': { emoji: '🤖', title: 'AI·교육', desc: '2.8% → 13.1%로 5배 증가! AI 관련 영상을 정말 많이 봤어요. 오빠두엑셀, 빌더조쉬가 자주 등장해요.' },
+      'yt-mv': { emoji: '🎤', title: '뮤직비디오', desc: '음악 감상과 영상 시청이 겹치는 영역이에요. 테일러 스위프트, 마츠다 세이코 뮤비를 자주 봤어요.' },
+      'sr-taylor': { emoji: '🎸', title: '테일러 스위프트', desc: '검색 top 5 아티스트 중 하나예요. Eras Tour 관련 검색이 엄청 많았어요.' },
+      'sr-matsuda': { emoji: '🌸', title: '마츠다 세이코', desc: '80년대 일본 팝 아이콘. 드라이브용 플레이리스트의 단골이에요.' },
+      'sr-ai': { emoji: '💡', title: 'AI 강의', desc: '클로드, 챗GPT, 제미나이 관련 검색이 많아요. 업무에 바로 써먹을 수 있는 실전 강의 위주로 찾아요.' },
+      'sr-japan': { emoji: '🗾', title: '일본 여행', desc: '올해 일본 여행 계획을 많이 세웠어요. 검색→지도→티켓 예약이 연결되는 패턴이에요.' },
+      'sr-claude': { emoji: '🤍', title: '클로드', desc: '이번 발표 준비도 클로드랑 같이 했어요. 저한테 없어선 안 될 존재예요.' },
+      'mu-korean': { emoji: '🎵', title: '한국가요', desc: '39%로 가장 많아요. K-POP부터 발라드까지 폭넓게 들어요.' },
+      'mu-english': { emoji: '🎸', title: '영어팝', desc: '37%. 테일러 스위프트, 빌리 아일리시 위주예요. 집중 작업할 때 많이 들어요.' },
+      'mu-japan': { emoji: '🚗', title: '일본 드라이브', desc: '22%. 드라이브할 때는 꼭 일본 음악이에요. City Pop 장르가 많아요.' },
+      'mu-kpop': { emoji: '✨', title: 'K-POP', desc: '한국가요 안에서도 K-POP 비중이 높아요. 운동할 때 많이 들어요.' },
+      'mu-jazz': { emoji: '🎷', title: '재즈', desc: '집중 작업 or 카페 분위기 낼 때 틀어요. 갑자기 어른이 된 것 같은 느낌이에요.' },
+      'mp-japan': { emoji: '⛩️', title: '일본 여행지', desc: '오사카, 도쿄, 교토 위주로 많이 검색했어요. 여행 계획 세울 때 지도 타임라인이 꽉 차요.' },
+      'mp-yangyang': { emoji: '🌊', title: '양양 여행', desc: '서핑 성지 양양. 여름 여행 계획 세울 때 자주 검색했어요.' },
+      'mp-food': { emoji: '🍜', title: '맛집', desc: '"오늘 뭐 먹지" 검색이 지도 기록의 상당 부분을 차지해요. 밥 선택이 어렵긴 해요.' },
+      'mp-cafe': { emoji: '☕', title: '카페', desc: '작업할 카페 찾기. 음악 들으며 노트북 펴는 게 취미예요.' },
+      'mp-biz': { emoji: '🏢', title: '출장지', desc: '회사 관련 장소 검색. 미팅 장소나 출장 때 많이 써요.' },
+      'wb-naver': { emoji: '🔎', title: '네이버 검색', desc: '국내 정보, 뉴스, 맛집 후기는 여전히 네이버가 편해요.' },
+      'wb-google': { emoji: '🔧', title: '구글 작업', desc: '업무·기술 검색은 구글이 더 잘 나와요. SQL, 에러 메시지 검색이 많아요.' },
+      'wb-ticket': { emoji: '✈️', title: '일본 티켓', desc: '항공권, 숙소, 공연 티켓까지. 일본 여행 준비는 웹서핑이 핵심이에요.' },
+      'wb-shop': { emoji: '🛍️', title: '쇼핑', desc: '필요한 게 생기면 바로 검색. 충동구매는 아니고 신중한 쇼핑이에요 (데이터가 그래요).' },
+      'wb-ai': { emoji: '🛠️', title: 'AI 도구', desc: '클로드, 챗GPT, 미드저니, 피그마 AI... 새로운 AI 도구 탐색이 많아요.' },
+    };
+
+    const nodes = [
+      // center
+      { id: 'me', label: '나', layer: 0, color: COLORS.center, r: 36, group: 'center' },
+      // 1차
+      { id: 'youtube',  label: '유튜브',  layer: 1, color: COLORS.youtube, r: 24, group: 'youtube' },
+      { id: 'search',   label: '검색',    layer: 1, color: COLORS.search,  r: 24, group: 'search'  },
+      { id: 'music',    label: '음악',    layer: 1, color: COLORS.music,   r: 24, group: 'music'   },
+      { id: 'map',      label: '지도',    layer: 1, color: COLORS.map,     r: 24, group: 'map'     },
+      { id: 'web',      label: '웹서핑',  layer: 1, color: COLORS.web,     r: 24, group: 'web'     },
+      // 2차: 유튜브
+      { id: 'yt-news',    label: '뉴스',       layer: 2, color: '#FED7AA', r: 14, group: 'youtube' },
+      { id: 'yt-vlog',    label: '브이로그',   layer: 2, color: '#FED7AA', r: 14, group: 'youtube' },
+      { id: 'yt-variety', label: '예능',       layer: 2, color: '#FED7AA', r: 14, group: 'youtube' },
+      { id: 'yt-ai',      label: 'AI·교육',    layer: 2, color: '#FED7AA', r: 16, group: 'youtube' },
+      { id: 'yt-mv',      label: '뮤직비디오', layer: 2, color: '#FED7AA', r: 14, group: 'youtube' },
+      // 2차: 검색
+      { id: 'sr-taylor',  label: '테일러스위프트', layer: 2, color: '#BAE6FD', r: 13, group: 'search' },
+      { id: 'sr-matsuda', label: '마츠다세이코',   layer: 2, color: '#BAE6FD', r: 13, group: 'search' },
+      { id: 'sr-ai',      label: 'AI 강의',        layer: 2, color: '#BAE6FD', r: 15, group: 'search' },
+      { id: 'sr-japan',   label: '일본 여행',      layer: 2, color: '#BAE6FD', r: 15, group: 'search' },
+      { id: 'sr-claude',  label: '클로드',         layer: 2, color: '#BAE6FD', r: 14, group: 'search' },
+      // 2차: 음악
+      { id: 'mu-korean',  label: '한국가요',    layer: 2, color: '#DDD6FE', r: 15, group: 'music' },
+      { id: 'mu-english', label: '영어팝',      layer: 2, color: '#DDD6FE', r: 14, group: 'music' },
+      { id: 'mu-japan',   label: '일본드라이브',layer: 2, color: '#DDD6FE', r: 13, group: 'music' },
+      { id: 'mu-kpop',    label: 'K-POP',       layer: 2, color: '#DDD6FE', r: 12, group: 'music' },
+      { id: 'mu-jazz',    label: '재즈',         layer: 2, color: '#DDD6FE', r: 12, group: 'music' },
+      // 2차: 지도
+      { id: 'mp-japan',   label: '일본 여행지', layer: 2, color: '#FDE68A', r: 15, group: 'map' },
+      { id: 'mp-yangyang',label: '양양 여행',   layer: 2, color: '#FDE68A', r: 13, group: 'map' },
+      { id: 'mp-food',    label: '맛집',        layer: 2, color: '#FDE68A', r: 14, group: 'map' },
+      { id: 'mp-cafe',    label: '카페',        layer: 2, color: '#FDE68A', r: 12, group: 'map' },
+      { id: 'mp-biz',     label: '출장지',      layer: 2, color: '#FDE68A', r: 12, group: 'map' },
+      // 2차: 웹
+      { id: 'wb-naver',   label: '네이버검색', layer: 2, color: '#FBCFE8', r: 13, group: 'web' },
+      { id: 'wb-google',  label: '구글작업',   layer: 2, color: '#FBCFE8', r: 14, group: 'web' },
+      { id: 'wb-ticket',  label: '일본티켓',   layer: 2, color: '#FBCFE8', r: 14, group: 'web' },
+      { id: 'wb-shop',    label: '쇼핑',       layer: 2, color: '#FBCFE8', r: 12, group: 'web' },
+      { id: 'wb-ai',      label: 'AI 도구',    layer: 2, color: '#FBCFE8', r: 15, group: 'web' },
+    ];
+
+    // 계층 엣지 (실선)
+    const solidLinks = [
+      // 중앙→1차
+      { source: 'me', target: 'youtube' },
+      { source: 'me', target: 'search' },
+      { source: 'me', target: 'music' },
+      { source: 'me', target: 'map' },
+      { source: 'me', target: 'web' },
+      // 1차→2차: 유튜브
+      { source: 'youtube', target: 'yt-news' },
+      { source: 'youtube', target: 'yt-vlog' },
+      { source: 'youtube', target: 'yt-variety' },
+      { source: 'youtube', target: 'yt-ai' },
+      { source: 'youtube', target: 'yt-mv' },
+      // 1차→2차: 검색
+      { source: 'search', target: 'sr-taylor' },
+      { source: 'search', target: 'sr-matsuda' },
+      { source: 'search', target: 'sr-ai' },
+      { source: 'search', target: 'sr-japan' },
+      { source: 'search', target: 'sr-claude' },
+      // 1차→2차: 음악
+      { source: 'music', target: 'mu-korean' },
+      { source: 'music', target: 'mu-english' },
+      { source: 'music', target: 'mu-japan' },
+      { source: 'music', target: 'mu-kpop' },
+      { source: 'music', target: 'mu-jazz' },
+      // 1차→2차: 지도
+      { source: 'map', target: 'mp-japan' },
+      { source: 'map', target: 'mp-yangyang' },
+      { source: 'map', target: 'mp-food' },
+      { source: 'map', target: 'mp-cafe' },
+      { source: 'map', target: 'mp-biz' },
+      // 1차→2차: 웹
+      { source: 'web', target: 'wb-naver' },
+      { source: 'web', target: 'wb-google' },
+      { source: 'web', target: 'wb-ticket' },
+      { source: 'web', target: 'wb-shop' },
+      { source: 'web', target: 'wb-ai' },
+    ];
+
+    // 교차 연결 (점선)
+    const dashedLinks = [
+      { source: 'yt-ai',    target: 'sr-ai' },
+      { source: 'yt-mv',    target: 'mu-korean' },
+      { source: 'sr-japan', target: 'mp-japan' },
+      { source: 'mp-japan', target: 'wb-ticket' },
+      { source: 'sr-japan', target: 'wb-ticket' },
+      { source: 'sr-taylor',target: 'mu-english' },
+      { source: 'sr-matsuda',target:'mu-japan' },
+      { source: 'yt-ai',    target: 'wb-ai' },
+      { source: 'sr-claude',target: 'wb-ai' },
+    ];
+
+    /* ===================================================
+       RENDER FORCE GRAPH
+    =================================================== */
+    function renderGraph() {
+      const container = document.getElementById('force-graph');
+      const rect = container.parentElement.getBoundingClientRect();
+      const W = rect.width || 900;
+      const H = 620;
+
+      const svg = d3.select('#force-graph')
+        .attr('width', W)
+        .attr('height', H)
+        .attr('viewBox', `0 0 ${W} ${H}`)
+        .style('background', '#FFFFFF');
+
+      // defs: arrow marker (not used for dashed but kept for possible future)
+      const defs = svg.append('defs');
+
+      // build all links array for simulation
+      const allLinks = [
+        ...solidLinks.map(d => ({ ...d, dashed: false })),
+        ...dashedLinks.map(d => ({ ...d, dashed: true })),
+      ];
+
+      const nodeMap = {};
+      nodes.forEach(n => { nodeMap[n.id] = n; });
+
+      const simulation = d3.forceSimulation(nodes)
+        .force('link', d3.forceLink(allLinks)
+          .id(d => d.id)
+          .distance(d => {
+            const s = typeof d.source === 'object' ? d.source : nodeMap[d.source];
+            const t = typeof d.target === 'object' ? d.target : nodeMap[d.target];
+            if (!s || !t) return 100;
+            if (s.layer === 0 && t.layer === 1) return 140;
+            if (s.layer === 1 && t.layer === 2) return 100;
+            return 160;
+          })
+          .strength(d => {
+            const s = typeof d.source === 'object' ? d.source : nodeMap[d.source];
+            const t = typeof d.target === 'object' ? d.target : nodeMap[d.target];
+            if (!s || !t) return 0.3;
+            if (d.dashed) return 0.05;
+            if (s.layer === 0) return 0.8;
+            return 0.6;
+          })
+        )
+        .force('charge', d3.forceManyBody()
+          .strength(d => d.layer === 0 ? -600 : d.layer === 1 ? -300 : -120)
+        )
+        .force('center', d3.forceCenter(W / 2, H / 2).strength(0.3))
+        .force('collision', d3.forceCollide().radius(d => d.r + 14))
+        .force('x', d3.forceX(W / 2).strength(0.04))
+        .force('y', d3.forceY(H / 2).strength(0.04))
+        .alphaDecay(0.02);
+
+      // link groups
+      const linkGroup = svg.append('g').attr('class', 'links');
+
+      const solidSel = linkGroup.selectAll('.solid-link')
+        .data(solidLinks)
+        .enter()
+        .append('line')
+        .attr('class', 'solid-link')
+        .attr('stroke', d => {
+          const s = nodeMap[d.source] || d.source;
+          return s.color || '#CBD5E1';
+        })
+        .attr('stroke-width', d => {
+          const s = nodeMap[d.source] || d.source;
+          return s.layer === 0 ? 2.5 : 1.5;
+        })
+        .attr('stroke-opacity', 0.45);
+
+      const dashedSel = linkGroup.selectAll('.dashed-link')
+        .data(dashedLinks)
+        .enter()
+        .append('line')
+        .attr('class', 'dashed-link')
+        .attr('stroke', '#94A3B8')
+        .attr('stroke-width', 1.5)
+        .attr('stroke-opacity', 0.5)
+        .attr('stroke-dasharray', '5,4');
+
+      // node groups
+      const nodeGroup = svg.append('g').attr('class', 'nodes');
+
+      const nodeSel = nodeGroup.selectAll('.node')
+        .data(nodes)
+        .enter()
+        .append('g')
+        .attr('class', 'node')
+        .style('cursor', 'pointer')
+        .call(
+          d3.drag()
+            .on('start', dragStart)
+            .on('drag', dragged)
+            .on('end', dragEnd)
+        );
+
+      // circles
+      nodeSel.append('circle')
+        .attr('r', d => d.r)
+        .attr('fill', d => d.color)
+        .attr('stroke', '#FFFFFF')
+        .attr('stroke-width', d => d.layer === 0 ? 4 : 2.5);
+
+      // labels
+      nodeSel.append('text')
+        .attr('text-anchor', 'middle')
+        .attr('dy', d => d.layer === 2 ? d.r + 14 : d.r + 16)
+        .attr('font-size', d => d.layer === 0 ? '14px' : d.layer === 1 ? '13px' : '11px')
+        .attr('font-weight', d => d.layer <= 1 ? '700' : '500')
+        .attr('fill', '#334155')
+        .attr('font-family', "'Noto Sans KR', system-ui, sans-serif")
+        .text(d => d.label);
+
+      // center node special: "나" 글자
+      nodeSel.filter(d => d.layer === 0)
+        .append('text')
+        .attr('text-anchor', 'middle')
+        .attr('dy', '0.38em')
+        .attr('font-size', '16px')
+        .attr('font-weight', '800')
+        .attr('fill', '#FFFFFF')
+        .attr('font-family', "'Noto Sans KR', system-ui, sans-serif")
+        .attr('pointer-events', 'none')
+        .text('나');
+
+      // hover interactions
+      const tooltip = document.getElementById('graph-tooltip');
+
+      nodeSel
+        .on('mouseover', function(event, d) {
+          // tooltip
+          tooltip.textContent = d.label;
+          tooltip.style.opacity = '1';
+
+          // highlight connected
+          const connectedIds = new Set([d.id]);
+          allLinks.forEach(l => {
+            const sid = typeof l.source === 'object' ? l.source.id : l.source;
+            const tid = typeof l.target === 'object' ? l.target.id : l.target;
+            if (sid === d.id) connectedIds.add(tid);
+            if (tid === d.id) connectedIds.add(sid);
+          });
+
+          nodeSel.select('circle')
+            .attr('opacity', n => connectedIds.has(n.id) ? 1 : 0.2);
+          nodeSel.select('text')
+            .attr('opacity', n => connectedIds.has(n.id) ? 1 : 0.2);
+
+          solidSel.attr('stroke-opacity', l => {
+            const sid = typeof l.source === 'object' ? l.source.id : l.source;
+            const tid = typeof l.target === 'object' ? l.target.id : l.target;
+            return connectedIds.has(sid) && connectedIds.has(tid) ? 0.75 : 0.05;
+          });
+
+          dashedSel.attr('stroke-opacity', l => {
+            const sid = typeof l.source === 'object' ? l.source.id : l.source;
+            const tid = typeof l.target === 'object' ? l.target.id : l.target;
+            return connectedIds.has(sid) && connectedIds.has(tid) ? 0.75 : 0.05;
+          });
+        })
+        .on('mousemove', function(event) {
+          tooltip.style.left = (event.clientX + 12) + 'px';
+          tooltip.style.top  = (event.clientY - 32) + 'px';
+        })
+        .on('mouseout', function() {
+          tooltip.style.opacity = '0';
+          nodeSel.select('circle').attr('opacity', 1);
+          nodeSel.select('text').attr('opacity', 1);
+          solidSel.attr('stroke-opacity', 0.45);
+          dashedSel.attr('stroke-opacity', 0.5);
+        })
+        .on('click', function(event, d) {
+          showNodeInfo(d);
+          // pulse animation
+          d3.select(this).select('circle')
+            .transition().duration(150).attr('r', d.r * 1.25)
+            .transition().duration(150).attr('r', d.r);
+        });
+
+      // tick
+      simulation.on('tick', () => {
+        nodeSel.attr('transform', d => {
+          d.x = Math.max(d.r + 10, Math.min(W - d.r - 10, d.x));
+          d.y = Math.max(d.r + 20, Math.min(H - d.r - 20, d.y));
+          return `translate(${d.x},${d.y})`;
+        });
+
+        solidSel
+          .attr('x1', d => d.source.x).attr('y1', d => d.source.y)
+          .attr('x2', d => d.target.x).attr('y2', d => d.target.y);
+
+        dashedSel
+          .attr('x1', d => d.source.x).attr('y1', d => d.source.y)
+          .attr('x2', d => d.target.x).attr('y2', d => d.target.y);
+      });
+
+      function dragStart(event, d) {
+        if (!event.active) simulation.alphaTarget(0.3).restart();
+        d.fx = d.x; d.fy = d.y;
+      }
+      function dragged(event, d) {
+        d.fx = event.x; d.fy = event.y;
+      }
+      function dragEnd(event, d) {
+        if (!event.active) simulation.alphaTarget(0);
+        d.fx = null; d.fy = null;
+      }
+    }
+
+    function showNodeInfo(d) {
+      const info = NODE_INFO[d.id];
+      const panel = document.getElementById('node-info');
+      if (!info) {
+        panel.innerHTML = `<div class="node-info-placeholder">이 노드에 대한 정보가 없어요</div>`;
+        return;
+      }
+
+      const groupColors = {
+        center: '#F87171', youtube: '#FB923C', search: '#60A5FA',
+        music: '#A78BFA', map: '#F59E0B', web: '#EC4899'
+      };
+      const accentColor = groupColors[d.group] || '#64748B';
+
+      panel.innerHTML = `
+        <div class="node-info-emoji">${info.emoji}</div>
+        <div class="node-info-content">
+          <div class="node-info-title" style="color:${accentColor}">${info.title}</div>
+          <div class="node-info-desc">${info.desc}</div>
+        </div>
+      `;
+    }
+
+    /* ===================================================
+       INIT
+    =================================================== */
+    document.addEventListener('DOMContentLoaded', () => {
+      renderGraph();
+
+      // Intersection Observer: bar fill animation
+      const bars = document.querySelectorAll('.bar-fill');
+      bars.forEach(bar => {
+        const width = bar.style.width;
+        bar.style.width = '0';
+        const obs = new IntersectionObserver(entries => {
+          if (entries[0].isIntersecting) {
+            setTimeout(() => { bar.style.width = width; }, 200);
+            obs.disconnect();
+          }
+        }, { threshold: 0.3 });
+        obs.observe(bar);
+      });
+
+      // Footer dots pulse
+      const dots = document.querySelectorAll('.footer-dot');
+      dots.forEach((dot, i) => {
+        dot.style.animation = `pulse ${1.5 + i * 0.2}s ease-in-out ${i * 0.15}s infinite`;
+        dot.style.opacity = '0.4';
+      });
+    });
+
+    // Handle resize
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        const svg = document.getElementById('force-graph');
+        svg.innerHTML = '';
+        renderGraph();
+      }, 400);
+    });
+  </script>
+</body>
+</html>

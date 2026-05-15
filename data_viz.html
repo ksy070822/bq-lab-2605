@@ -1,0 +1,1489 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>메이의 데이터 — 구조와 분석</title>
+<script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+/* ─────────────────────────────────────────
+   RESET & BASE
+───────────────────────────────────────── */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #FAFBFC;
+  --surface: rgba(255, 255, 255, 0.95);
+  --border: #E2E8F0;
+  --text: #1E293B;
+  --muted: #64748B;
+  --coral: #F87171;
+  --blue: #60A5FA;
+  --green: #34D399;
+  --amber: #F59E0B;
+  --purple: #A78BFA;
+  --accent: #3B82F6;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, 'Pretendard', 'Noto Sans KR', sans-serif;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ─────────────────────────────────────────
+   HEADER / NAV
+───────────────────────────────────────── */
+#header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 24px;
+  flex-shrink: 0;
+  background: rgba(255,255,255,0.95);
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  z-index: 20;
+}
+
+#header-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #334155;
+  letter-spacing: -0.01em;
+}
+#header-title span {
+  color: var(--accent);
+}
+
+#tab-group {
+  display: flex;
+  gap: 6px;
+  background: rgba(241,245,249,0.9);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 4px;
+}
+
+.tab-btn {
+  padding: 7px 18px;
+  border-radius: 7px;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+  white-space: nowrap;
+}
+.tab-btn:hover { color: var(--text); }
+.tab-btn.active {
+  background: rgba(59,130,246,0.12);
+  color: var(--accent);
+  border: 1px solid rgba(59,130,246,0.35);
+}
+
+/* ─────────────────────────────────────────
+   MAIN CONTENT AREA
+───────────────────────────────────────── */
+#content {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+.tab-panel {
+  position: absolute;
+  inset: 0;
+  display: none;
+  overflow: hidden;
+}
+.tab-panel.active { display: flex; flex-direction: column; }
+
+/* ─────────────────────────────────────────
+   TAB 1 — PIPELINE
+───────────────────────────────────────── */
+#pipeline-container {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+#pipeline-svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* Layer legend */
+#layer-legend {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 16px;
+  background: rgba(255,255,255,0.9);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 8px 16px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  pointer-events: none;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--muted);
+}
+.legend-dot {
+  width: 10px; height: 10px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+/* Detail panel */
+#detail-panel {
+  width: 0;
+  overflow: hidden;
+  transition: width 0.3s ease;
+  background: rgba(255,255,255,0.98);
+  border-left: 1px solid var(--border);
+  box-shadow: -4px 0 16px rgba(0,0,0,0.06);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+#detail-panel.open {
+  width: 280px;
+}
+#detail-panel-inner {
+  padding: 20px;
+  overflow-y: auto;
+  height: 100%;
+}
+#detail-panel h3 {
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+#detail-panel .detail-type {
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 14px;
+}
+#detail-panel .detail-section-label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  margin-bottom: 6px;
+  margin-top: 12px;
+}
+#detail-panel .detail-row {
+  font-size: 12px;
+  color: #475569;
+  padding: 3px 0;
+  border-bottom: 1px solid rgba(226,232,240,0.8);
+}
+#detail-panel .detail-stat {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  padding: 4px 0;
+}
+#detail-panel .detail-stat span:first-child { color: var(--muted); }
+#detail-panel .detail-stat span:last-child { color: var(--text); font-weight: 600; }
+#detail-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 16px;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+#detail-close:hover { color: var(--text); background: rgba(0,0,0,0.04); }
+
+#pipeline-wrap {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  min-width: 0;
+}
+
+#pipeline-container {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+/* ─────────────────────────────────────────
+   TAB 2 — INSIGHT CARDS
+───────────────────────────────────────── */
+#insight-panel {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 24px 24px;
+}
+
+#insight-panel::-webkit-scrollbar { width: 6px; }
+#insight-panel::-webkit-scrollbar-track { background: transparent; }
+#insight-panel::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 3px; }
+
+#cards-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.insight-card {
+  background: rgba(255,255,255,0.95);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  cursor: default;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 2px 8px rgba(0,0,0,0.04);
+}
+.insight-card:hover {
+  border-color: rgba(59,130,246,0.45);
+  box-shadow: 0 2px 12px rgba(59,130,246,0.08);
+}
+
+.card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+.card-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+}
+.card-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  margin-top: 2px;
+}
+
+.card-metric {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+.card-big-num {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+.card-insight-text {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.card-chart-wrap {
+  height: 120px;
+  position: relative;
+}
+
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.table-badges {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+.table-badge {
+  padding: 3px 8px;
+  border-radius: 5px;
+  font-size: 10px;
+  font-weight: 600;
+  background: rgba(226,232,240,0.8);
+  border: 1px solid rgba(203,213,225,0.8);
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.table-badge:hover {
+  background: rgba(59,130,246,0.12);
+  border-color: rgba(59,130,246,0.45);
+  color: var(--accent);
+}
+
+.sql-toggle-btn {
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(203,213,225,0.8);
+  background: transparent;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.sql-toggle-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.sql-toggle-btn.active {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(59,130,246,0.06);
+}
+
+.sql-box {
+  display: none;
+  background: #F1F5F9;
+  border: 1px solid rgba(203,213,225,0.9);
+  border-radius: 8px;
+  padding: 14px;
+  overflow-x: auto;
+}
+.sql-box.open { display: block; }
+.sql-box pre {
+  font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+  font-size: 11px;
+  line-height: 1.6;
+  color: #334155;
+  white-space: pre;
+}
+.sql-kw { color: #1D4ED8; font-weight: 700; }
+.sql-fn { color: #059669; }
+.sql-str { color: #B45309; }
+.sql-cmt { color: #94A3B8; font-style: italic; }
+
+/* Summary card (full-width) */
+.insight-card.full-width {
+  grid-column: 1 / -1;
+}
+
+/* color accents per card */
+.card-q1 .card-big-num { color: var(--coral); }
+.card-q2 .card-big-num { color: var(--amber); }
+.card-q3 .card-big-num { color: var(--green); }
+.card-q4 .card-big-num { color: var(--purple); }
+.card-q5 .card-big-num { color: var(--blue); }
+.card-q6 .card-big-num { color: var(--coral); }
+.card-q7 .card-big-num { color: #DC2626; }
+
+/* ─────────────────────────────────────────
+   SCROLLBAR (pipeline area)
+───────────────────────────────────────── */
+svg text { user-select: none; }
+
+/* funnel bars */
+.funnel-wrap {
+  display: flex;
+  gap: 16px;
+  align-items: flex-end;
+  padding: 8px 0;
+}
+.funnel-col { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.funnel-bar-wrap { width: 48px; display: flex; flex-direction: column; justify-content: flex-end; height: 70px; background: rgba(241,245,249,0.8); border-radius: 4px; overflow: hidden; }
+.funnel-bar { width: 100%; background: var(--green); border-radius: 2px; }
+.funnel-label { font-size: 10px; color: var(--muted); text-align: center; }
+.funnel-num { font-size: 11px; font-weight: 700; color: var(--text); }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════ HEADER ═══════════════════════ -->
+<div id="header">
+  <div id="header-title">
+    <span>메이의 데이터</span> — 어떻게 정리되고 어떻게 분석됐나
+  </div>
+  <div id="tab-group">
+    <button class="tab-btn active" data-tab="pipeline">🏗️ 데이터 구조</button>
+    <button class="tab-btn" data-tab="insights">📊 인사이트 7개</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════ CONTENT ═══════════════════════ -->
+<div id="content">
+
+  <!-- ══ TAB 1: PIPELINE ══ -->
+  <div class="tab-panel active" id="tab-pipeline">
+    <div id="pipeline-wrap">
+      <div id="pipeline-container">
+        <svg id="pipeline-svg"></svg>
+        <div id="layer-legend">
+          <div class="legend-item"><div class="legend-dot" style="background:#F87171"></div>📦 내가 쌓은 것 (원천 데이터)</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#60A5FA"></div>⚙️ 정리하는 코드 (파싱 스크립트)</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#34D399"></div>📔 활동 일기 (팩트 테이블)</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#F59E0B"></div>📖 사전 + 🪟 창문 (딤·뷰)</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#A78BFA"></div>💡 발견한 것 (인사이트)</div>
+        </div>
+      </div>
+      <div id="detail-panel">
+        <button id="detail-close" onclick="closeDetail()">✕</button>
+        <div id="detail-panel-inner">
+          <div id="detail-content"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ TAB 2: INSIGHTS ══ -->
+  <div class="tab-panel" id="tab-insights">
+    <div id="insight-panel">
+      <div id="cards-grid"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════ DATA ═══════════════════════ -->
+<script>
+/* ─────────────────────────────────────────
+   PIPELINE DATA
+───────────────────────────────────────── */
+const LAYERS = [
+  {
+    id: 'sources', label: '📦 내가 쌓은 것', color: '#F87171',
+    nodes: [
+      { id: 'src_yt', label: 'youtube_history.json', sub: '32,000건', detail: {
+        type: '원천 데이터 (JSON)', desc: 'Google Takeout으로 추출한 유튜브 시청 기록. 제목, 채널명, 시청 URL, 타임스탬프 포함.',
+        stats: [['파일 크기', '~45 MB'], ['기간', '2024.10 ~ 2026.05'], ['형식', 'JSON Array']],
+        cols: []
+      }},
+      { id: 'src_ch', label: 'chrome_history.html', sub: '30,000건', detail: {
+        type: '원천 데이터 (HTML)', desc: 'Chrome 브라우저 방문 기록. 검색어, 방문 URL, 타임스탬프 포함.',
+        stats: [['파일 크기', '~18 MB'], ['기간', '2024.10 ~ 2026.05'], ['형식', 'HTML Table']],
+        cols: []
+      }},
+      { id: 'src_ml', label: 'music_library.csv', sub: '2,000곡', detail: {
+        type: '원천 데이터 (CSV)', desc: 'YouTube Music 보관함. 곡명, 아티스트, 앨범, 추가 날짜 포함.',
+        stats: [['레코드', '2,034행'], ['필드', '8개'], ['형식', 'CSV UTF-8']],
+        cols: []
+      }},
+      { id: 'src_mp', label: 'music_playlists.csv', sub: '50 플레이리스트', detail: {
+        type: '원천 데이터 (CSV)', desc: '직접 만든 플레이리스트 목록과 포함 곡 정보.',
+        stats: [['플레이리스트', '50개'], ['총 트랙', '~1,200행'], ['형식', 'CSV UTF-8']],
+        cols: []
+      }},
+      { id: 'src_maps', label: 'maps_data.kmz', sub: '6개 지도', detail: {
+        type: '원천 데이터 (KMZ)', desc: 'Google My Maps에 저장한 장소 데이터. 저장 장소와 커스텀 지도.',
+        stats: [['저장 장소', '18곳'], ['커스텀 지도', '6개'], ['형식', 'KMZ (XML 압축)']],
+        cols: []
+      }},
+      { id: 'src_nb', label: 'notebooklm_export.json', sub: '10 워크스페이스', detail: {
+        type: '원천 데이터 (JSON)', desc: 'NotebookLM 워크스페이스 목록. 주제별 학습 노트.',
+        stats: [['워크스페이스', '10개'], ['기간', '2025 ~ 2026'], ['형식', 'JSON']],
+        cols: []
+      }},
+    ]
+  },
+  {
+    id: 'scripts', label: '⚙️ 정리하는 코드', color: '#60A5FA',
+    nodes: [
+      { id: 'scr_ay', label: 'parse_all_youtube.py', sub: 'JSON→BQ', detail: {
+        type: '파싱 스크립트 (Python)', desc: '유튜브 시청 기록 JSON을 파싱해 BigQuery에 적재. 타임스탬프 KST 변환, URL에서 video_id 추출 포함.',
+        stats: [['입력', 'youtube_history.json'], ['출력', 'fact_youtube_watch'], ['실행 시간', '~2분']],
+        cols: ['video_id 추출', 'watched_at UTC→KST', '중복 제거', 'BQ 적재 (WRITE_TRUNCATE)']
+      }},
+      { id: 'scr_ym', label: 'fetch_youtube_metadata.py', sub: 'YouTube API', detail: {
+        type: '파싱 스크립트 (Python)', desc: 'YouTube Data API v3로 video_id별 메타데이터 수집. 할당량 관리를 위해 배치 처리.',
+        stats: [['API 할당량', '10,000/일'], ['배치 크기', '50개'], ['소요', '~3시간 분할']],
+        cols: ['제목', '채널명', '카테고리 ID', '태그', '게시일', '조회수']
+      }},
+      { id: 'scr_ch', label: 'parse_chrome.py', sub: 'HTML→BQ', detail: {
+        type: '파싱 스크립트 (Python)', desc: 'Chrome 히스토리 HTML을 BeautifulSoup으로 파싱. 검색 vs 일반 방문 분리, 도메인 추출.',
+        stats: [['입력', 'chrome_history.html'], ['출력', '3개 테이블'], ['실행 시간', '~30초']],
+        cols: ['URL 파싱', '검색어 추출 (q= 파라미터)', '도메인 정규화', '타임스탬프 변환']
+      }},
+      { id: 'scr_mu', label: 'parse_music.py', sub: 'CSV→BQ', detail: {
+        type: '파싱 스크립트 (Python)', desc: '음악 라이브러리와 플레이리스트 CSV 파싱. 언어 감지(langdetect) 포함.',
+        stats: [['입력', '2개 CSV'], ['출력', '2개 테이블'], ['실행 시간', '~15초']],
+        cols: ['언어 감지', '아티스트 정규화', '플레이리스트 연결', 'BQ 적재']
+      }},
+      { id: 'scr_ma', label: 'parse_maps.py', sub: 'KMZ→BQ', detail: {
+        type: '파싱 스크립트 (Python)', desc: 'KMZ(Keyhole Markup Language) 파일 파싱. 위경도, 장소명, 카테고리 추출.',
+        stats: [['입력', 'maps_data.kmz'], ['출력', '2개 테이블'], ['실행 시간', '~5초']],
+        cols: ['KML XML 파싱', '위경도 추출', '카테고리 분류', '지도별 그룹핑']
+      }},
+      { id: 'scr_nb', label: 'build_notebooklm_timeline.py', sub: 'JSON→BQ', detail: {
+        type: '파싱 스크립트 (Python)', desc: 'NotebookLM 워크스페이스 JSON을 타임라인 형태로 변환.',
+        stats: [['입력', 'notebooklm_export.json'], ['출력', 'fact_notebooklm_workspaces'], ['실행 시간', '~3초']],
+        cols: ['생성일 파싱', '주제 태깅', '소스 문서 목록', 'BQ 적재']
+      }},
+    ]
+  },
+  {
+    id: 'facts', label: '📔 활동 일기', color: '#34D399',
+    nodes: [
+      { id: 'ft_yw', label: 'fact_youtube_watch', sub: '32,548행', detail: {
+        type: '팩트 테이블 (BigQuery)', desc: '유튜브 시청 이벤트 기록. 시청 1건 = 1행.',
+        stats: [['행 수', '32,548'], ['기간', '2024.10~2026.05'], ['갱신', '수동 (Takeout)']],
+        cols: ['video_id', 'title', 'channel_url', 'watched_at_utc', 'watched_at_kst', 'source_file']
+      }},
+      { id: 'ft_cs', label: 'fact_chrome_search', sub: '1,129행', detail: {
+        type: '팩트 테이블 (BigQuery)', desc: '크롬 브라우저 검색어 기록.',
+        stats: [['행 수', '1,129'], ['엔진', '구글 검색 위주'], ['갱신', '수동']],
+        cols: ['query', 'searched_at', 'search_engine', 'result_url']
+      }},
+      { id: 'ft_cv', label: 'fact_chrome_visit', sub: '29,234행', detail: {
+        type: '팩트 테이블 (BigQuery)', desc: '크롬 URL 방문 기록.',
+        stats: [['행 수', '29,234'], ['도메인 수', '892개'], ['갱신', '수동']],
+        cols: ['url', 'title', 'visited_at', 'domain', 'visit_count']
+      }},
+      { id: 'ft_mu', label: 'fact_music_play', sub: '2,034행', detail: {
+        type: '팩트 테이블 (BigQuery)', desc: 'YouTube Music 보관함 추가 기록.',
+        stats: [['행 수', '2,034'], ['언어 비율', '한38/영37/일22%'], ['갱신', '수동']],
+        cols: ['track_id', 'title', 'artist', 'album', 'added_at', 'playlist_id']
+      }},
+      { id: 'ft_ms', label: 'fact_maps_saved', sub: '18행', detail: {
+        type: '팩트 테이블 (BigQuery)', desc: '저장된 장소 목록.',
+        stats: [['행 수', '18'], ['카테고리', '여행/맛집/기타'], ['갱신', '수동']],
+        cols: ['place_name', 'lat', 'lng', 'category', 'saved_at', 'address']
+      }},
+      { id: 'ft_mm', label: 'fact_maps_mymap', sub: '6행', detail: {
+        type: '팩트 테이블 (BigQuery)', desc: '직접 만든 커스텀 지도.',
+        stats: [['행 수', '6'], ['용도', '여행 계획/기록'], ['갱신', '수동']],
+        cols: ['map_id', 'map_name', 'created_at', 'place_count', 'theme']
+      }},
+      { id: 'ft_nb', label: 'fact_notebooklm_workspaces', sub: '10행', detail: {
+        type: '팩트 테이블 (BigQuery)', desc: 'NotebookLM 워크스페이스 메타데이터.',
+        stats: [['행 수', '10'], ['주제', 'AI/법/데이터/개인'], ['갱신', '수동']],
+        cols: ['workspace_id', 'title', 'created_at', 'source_count', 'topic_tag']
+      }},
+    ]
+  },
+  {
+    id: 'dims', label: '📖 사전 + 🪟 창문', color: '#F59E0B',
+    nodes: [
+      { id: 'dm_vid', label: 'dim_videos', sub: '28,523행', detail: {
+        type: '딤 테이블 (BigQuery)', desc: 'YouTube API로 수집한 영상 메타데이터. fact_youtube_watch의 video_id와 JOIN.',
+        stats: [['행 수', '28,523'], ['매칭율', '87.6%'], ['갱신', 'API 재수집']],
+        cols: ['video_id', 'title', 'channel_id', 'category_id', 'category_name', 'published_at', 'tags', 'view_count']
+      }},
+      { id: 'dm_ch', label: 'dim_channels', sub: '3,421행', detail: {
+        type: '딤 테이블 (BigQuery)', desc: '채널 메타데이터. 구독/비구독 채널 모두 포함.',
+        stats: [['행 수', '3,421'], ['카테고리', '18개'], ['갱신', 'API 재수집']],
+        cols: ['channel_id', 'channel_name', 'subscriber_count', 'country', 'topic_categories']
+      }},
+      { id: 'dm_mu', label: 'dim_music_metadata', sub: '1,876행', detail: {
+        type: '딤 테이블 (BigQuery)', desc: '음악 메타데이터. 언어 감지 결과 포함.',
+        stats: [['행 수', '1,876'], ['언어', '한/영/일/기타'], ['갱신', '수동']],
+        cols: ['track_id', 'title_normalized', 'artist_normalized', 'language', 'genre']
+      }},
+      { id: 'dm_dom', label: 'dim_chrome_domains', sub: '892행', detail: {
+        type: '딤 테이블 (BigQuery)', desc: '크롬 방문 도메인 분류 테이블.',
+        stats: [['행 수', '892'], ['카테고리', '뉴스/소셜/쇼핑 등'], ['갱신', '수동']],
+        cols: ['domain', 'site_name', 'category', 'is_social', 'is_news']
+      }},
+      { id: 'vw_we', label: 'view_watch_enriched', sub: '시청+메타 통합', detail: {
+        type: '뷰 (BigQuery View)', desc: 'fact_youtube_watch + dim_videos + dim_channels를 JOIN한 핵심 뷰. 대부분의 인사이트 쿼리가 이 뷰를 기반으로 함.',
+        stats: [['소스', '3개 테이블 JOIN'], ['행 수', 'fact_youtube_watch와 동일'], ['주요 용도', 'Q1~Q2, Q5~Q7']],
+        cols: ['video_id', 'title', 'channel_name', 'category_name', 'watched_at_kst', 'day_type', 'time_slot', 'language']
+      }},
+      { id: 'vw_ca', label: 'view_content_all', sub: '영상+음악 통합', detail: {
+        type: '뷰 (BigQuery View)', desc: '영상 시청과 음악 청취를 하나의 컨텐츠 테이블로 통합.',
+        stats: [['소스', '2개 팩트 테이블'], ['컨텐츠 타입', 'video / music'], ['용도', 'Q4, Q6']],
+        cols: ['content_id', 'content_type', 'title', 'artist_or_channel', 'consumed_at', 'language', 'category']
+      }},
+      { id: 'vw_sa', label: 'view_search_all', sub: '검색 통합', detail: {
+        type: '뷰 (BigQuery View)', desc: 'YouTube 검색과 Chrome 검색을 통합. 플랫폼 구분자 포함.',
+        stats: [['소스', '유튜브+크롬 검색'], ['총 검색', '4,443+1,129건'], ['용도', 'Q3']],
+        cols: ['search_id', 'platform', 'query', 'searched_at', 'result_url', 'converted_watch_id']
+      }},
+    ]
+  },
+  {
+    id: 'insights', label: '💡 발견한 것', color: '#A78BFA',
+    nodes: [
+      { id: 'ins_q1', label: 'Q1: 시청 골든타임', sub: '평일 심야·저녁', detail: {
+        type: '인사이트 쿼리', desc: '평일/주말별 시간대(오전/낮/저녁/심야) 시청 분포. KST 기준으로 평일은 퇴근 후 시간대에 몰림.',
+        stats: [['평일 심야(23-5)', '39.5%'], ['평일 저녁(18-22)', '37.8%'], ['주말 저녁(18-22)', '32.6%'], ['소스 뷰', 'view_watch_enriched']],
+        cols: []
+      }},
+      { id: 'ins_q2', label: 'Q2: 카테고리 트렌드', sub: 'AI·교육 2.8%→13.1%', detail: {
+        type: '인사이트 쿼리', desc: '초반(2025 H1)과 최근(2025 H2~2026) 카테고리 비중 변화. 뉴스 감소, AI 교육 급증.',
+        stats: [['뉴스', '37%→26% ▼'], ['교육/AI', '2.8%→13.1% ▲'], ['브이로그', '19.7%→24.2% ▲']],
+        cols: []
+      }},
+      { id: 'ins_q3', label: 'Q3: 검색→시청 전환율', sub: '유튜브 내 47.2%', detail: {
+        type: '인사이트 쿼리', desc: '검색 후 30분 이내 관련 영상 시청 여부를 매칭. 유튜브 내 검색은 절반 가까이 전환되지만 외부 검색은 0%.',
+        stats: [['유튜브 전환', '47.2%'], ['크롬 전환', '0.0%'], ['분석 윈도우', '30분']],
+        cols: []
+      }},
+      { id: 'ins_q4', label: 'Q4: 음악 취향', sub: '한국어 38.6%', detail: {
+        type: '인사이트 쿼리', desc: '보관함 음악의 언어 분포. 한국어·영어·일본어 거의 균등하게 분포.',
+        stats: [['한국어', '788곡 (38.6%)'], ['영어', '759곡 (37.2%)'], ['일본어', '445곡 (21.8%)']],
+        cols: []
+      }},
+      { id: 'ins_q5', label: 'Q5: 딥다이브 패턴', sub: 'Heavy vs Light', detail: {
+        type: '인사이트 쿼리', desc: '하루 시청 편수에 따른 주제 집중도 분석. 많이 볼수록 분산되고, 적게 볼수록 한 주제에 집중.',
+        stats: [['Heavy(82편)', '집중도 42%'], ['Light(8편)', '집중도 55%'], ['채널 다양성', '35 vs 8']],
+        cols: []
+      }},
+      { id: 'ins_q6', label: 'Q6: 페르소나 자동분류', sub: '4개 페르소나 조합', detail: {
+        type: '인사이트 쿼리', desc: '야간활성형 + 주말헤비유저 + 뉴스중독자 + 여행잠재고객 4개 기준으로 자동 분류 (KST 기준).',
+        stats: [['야간활성형', '34.2% (기준 10%)'], ['주말헤비', '41.9% (기준 35%)'], ['뉴스중독', '26.3% (기준 25%)']],
+        cols: []
+      }},
+      { id: 'ins_q7', label: 'Q7: 이탈 신호', sub: '최근 2주 ⚠️ 위험', detail: {
+        type: '인사이트 쿼리', desc: '주별 시청 편수와 7주 이동평균 비교. 최근 2주 연속 급감으로 이탈 패턴 감지.',
+        stats: [['최근 주', '149편'], ['7주 평균', '615편'], ['이탈 임계', '평균의 40% 미만']],
+        cols: []
+      }},
+    ]
+  }
+];
+
+/* ─────────────────────────────────────────
+   PIPELINE EDGES
+───────────────────────────────────────── */
+const EDGES = [
+  // Source → Script
+  { from: 'src_yt', to: 'scr_ay' },
+  { from: 'src_yt', to: 'scr_ym' },
+  { from: 'src_ch', to: 'scr_ch' },
+  { from: 'src_ml', to: 'scr_mu' },
+  { from: 'src_mp', to: 'scr_mu' },
+  { from: 'src_maps', to: 'scr_ma' },
+  { from: 'src_nb', to: 'scr_nb' },
+  // Script → Fact
+  { from: 'scr_ay', to: 'ft_yw' },
+  { from: 'scr_ym', to: 'dm_vid' },
+  { from: 'scr_ym', to: 'dm_ch' },
+  { from: 'scr_ch', to: 'ft_cs' },
+  { from: 'scr_ch', to: 'ft_cv' },
+  { from: 'scr_ch', to: 'dm_dom' },
+  { from: 'scr_mu', to: 'ft_mu' },
+  { from: 'scr_mu', to: 'dm_mu' },
+  { from: 'scr_ma', to: 'ft_ms' },
+  { from: 'scr_ma', to: 'ft_mm' },
+  { from: 'scr_nb', to: 'ft_nb' },
+  // Fact/Dim → View
+  { from: 'ft_yw', to: 'vw_we' },
+  { from: 'dm_vid', to: 'vw_we' },
+  { from: 'dm_ch', to: 'vw_we' },
+  { from: 'ft_mu', to: 'vw_ca' },
+  { from: 'dm_mu', to: 'vw_ca' },
+  { from: 'ft_cs', to: 'vw_sa' },
+  { from: 'ft_yw', to: 'vw_sa' },
+  { from: 'ft_cv', to: 'dm_dom' },
+  // View/Fact → Insight
+  { from: 'vw_we', to: 'ins_q1' },
+  { from: 'vw_we', to: 'ins_q2' },
+  { from: 'vw_sa', to: 'ins_q3' },
+  { from: 'ft_cv', to: 'ins_q3' },
+  { from: 'vw_ca', to: 'ins_q4' },
+  { from: 'vw_we', to: 'ins_q5' },
+  { from: 'vw_we', to: 'ins_q6' },
+  { from: 'ft_ms', to: 'ins_q6' },
+  { from: 'vw_we', to: 'ins_q7' },
+];
+
+/* ─────────────────────────────────────────
+   INSIGHT CARDS DATA
+───────────────────────────────────────── */
+const CARDS = [
+  {
+    id: 'q1', cls: 'card-q1',
+    label: 'Q1 · 시청 골든타임',
+    bigNum: '39.5%',
+    insight: '평일은 심야(23~5시)가 1위.\n저녁까지 합치면 77% — 퇴근 후 시간대.',
+    tables: ['view_watch_enriched'],
+    tableNodeIds: ['vw_we'],
+    chartType: 'bar',
+    chartData: {
+      labels: ['심야(23~5)', '저녁(18~22)', '낮(12~17)', '오전(6~11)'],
+      datasets: [
+        { label: '평일', data: [39.5, 37.8, 15.0, 7.7], backgroundColor: 'rgba(248,113,113,0.85)', borderRadius: 4 },
+        { label: '주말', data: [26.8, 32.6, 28.9, 11.7], backgroundColor: 'rgba(96,165,250,0.85)', borderRadius: 4 }
+      ]
+    },
+    chartOpts: { indexAxis: 'y', scales: { x: { stacked: false, max: 45 } } },
+    sql: `<span class="sql-cmt">-- watched_at_kst 컬럼이 실제로는 UTC라서</span>
+<span class="sql-cmt">-- DATETIME(..., 'Asia/Seoul')로 진짜 KST 변환 필수</span>
+<span class="sql-kw">WITH</span> t <span class="sql-kw">AS</span> (
+  <span class="sql-kw">SELECT</span> <span class="sql-fn">DATETIME</span>(watched_at_kst, <span class="sql-str">'Asia/Seoul'</span>) <span class="sql-kw">AS</span> kst
+  <span class="sql-kw">FROM</span> <span class="sql-str">\`keuk-2026.my_life.view_watch_enriched\`</span>
+)
+<span class="sql-kw">SELECT</span>
+  <span class="sql-kw">CASE WHEN</span> <span class="sql-fn">EXTRACT</span>(DAYOFWEEK <span class="sql-kw">FROM</span> kst) <span class="sql-kw">IN</span> (1,7)
+       <span class="sql-kw">THEN</span> <span class="sql-str">'주말'</span> <span class="sql-kw">ELSE</span> <span class="sql-str">'평일'</span> <span class="sql-kw">END AS</span> day_type,
+  <span class="sql-kw">CASE</span>
+    <span class="sql-kw">WHEN</span> <span class="sql-fn">EXTRACT</span>(HOUR <span class="sql-kw">FROM</span> kst) <span class="sql-kw">BETWEEN</span> 18 <span class="sql-kw">AND</span> 22 <span class="sql-kw">THEN</span> <span class="sql-str">'저녁'</span>
+    <span class="sql-kw">WHEN</span> <span class="sql-fn">EXTRACT</span>(HOUR <span class="sql-kw">FROM</span> kst) <span class="sql-kw">BETWEEN</span> 12 <span class="sql-kw">AND</span> 17 <span class="sql-kw">THEN</span> <span class="sql-str">'낮'</span>
+    <span class="sql-kw">WHEN</span> <span class="sql-fn">EXTRACT</span>(HOUR <span class="sql-kw">FROM</span> kst) <span class="sql-kw">BETWEEN</span> 6  <span class="sql-kw">AND</span> 11 <span class="sql-kw">THEN</span> <span class="sql-str">'오전'</span>
+    <span class="sql-kw">ELSE</span> <span class="sql-str">'심야'</span> <span class="sql-kw">END AS</span> slot,
+  <span class="sql-fn">COUNT</span>(*) <span class="sql-kw">AS</span> cnt
+<span class="sql-kw">FROM</span> t
+<span class="sql-kw">GROUP BY</span> day_type, slot
+<span class="sql-kw">ORDER BY</span> day_type, cnt <span class="sql-kw">DESC</span>`
+  },
+  {
+    id: 'q2', cls: 'card-q2',
+    label: 'Q2 · 카테고리 트렌드',
+    bigNum: '13.1%',
+    insight: 'AI·교육 비중 2.8%→13.1% ▲\n뉴스는 37%→26% ▼',
+    tables: ['view_watch_enriched', 'dim_videos'],
+    tableNodeIds: ['vw_we', 'dm_vid'],
+    chartType: 'bar',
+    chartData: {
+      labels: ['뉴스', '엔터', '브이로그', '음악', '교육/AI', '코미디'],
+      datasets: [
+        { label: '초반(2025 H1)', data: [36.9, 20.4, 19.7, 11.1, 2.2, 1.1], backgroundColor: 'rgba(245,158,11,0.45)', borderRadius: 3 },
+        { label: '최근(2025 H2~)', data: [26.3, 22.6, 24.2, 11.8, 13.1, 2.2], backgroundColor: 'rgba(245,158,11,0.9)', borderRadius: 3 }
+      ]
+    },
+    chartOpts: { scales: { y: { max: 45 } } },
+    sql: `<span class="sql-kw">SELECT</span>
+  <span class="sql-kw">CASE</span>
+    <span class="sql-kw">WHEN</span> watched_at_kst <span class="sql-kw">&lt;</span> <span class="sql-str">'2025-07-01'</span> <span class="sql-kw">THEN</span> <span class="sql-str">'초반'</span>
+    <span class="sql-kw">ELSE</span> <span class="sql-str">'최근'</span>
+  <span class="sql-kw">END AS</span> period,
+  category_name,
+  <span class="sql-fn">COUNT</span>(*) AS cnt,
+  <span class="sql-fn">ROUND</span>(<span class="sql-fn">COUNT</span>(*) * 100.0 /
+    <span class="sql-fn">SUM</span>(<span class="sql-fn">COUNT</span>(*)) <span class="sql-kw">OVER</span> (
+      <span class="sql-kw">PARTITION BY</span> period), 1) AS pct
+<span class="sql-kw">FROM</span> <span class="sql-str">\`keuk-2026.my_life.view_watch_enriched\`</span>
+<span class="sql-kw">WHERE</span> category_name <span class="sql-kw">IS NOT NULL</span>
+<span class="sql-kw">GROUP BY</span> period, category_name
+<span class="sql-kw">ORDER BY</span> period, cnt <span class="sql-kw">DESC</span>`
+  },
+  {
+    id: 'q3', cls: 'card-q3',
+    label: 'Q3 · 검색→시청 전환율',
+    bigNum: '47.2%',
+    insight: '유튜브 내 검색의 절반은\n영상 시청으로 연결됨.',
+    tables: ['view_search_all', 'view_watch_enriched'],
+    tableNodeIds: ['vw_sa', 'vw_we'],
+    chartType: 'bar',
+    chartData: {
+      labels: ['유튜브 검색', '크롬 검색'],
+      datasets: [
+        { label: '검색 건수', data: [4443, 1129], backgroundColor: 'rgba(52,211,153,0.45)', borderRadius: 4 },
+        { label: '전환 건수', data: [2095, 0], backgroundColor: 'rgba(52,211,153,0.9)', borderRadius: 4 }
+      ]
+    },
+    chartOpts: { scales: { y: { max: 5000 } } },
+    sql: `<span class="sql-cmt">-- 검색 후 30분 이내 동일 키워드 영상 시청 매칭</span>
+<span class="sql-kw">WITH</span> searches <span class="sql-kw">AS</span> (
+  <span class="sql-kw">SELECT</span> platform, query, searched_at
+  <span class="sql-kw">FROM</span> <span class="sql-str">\`keuk-2026.my_life.view_search_all\`</span>
+),
+watches <span class="sql-kw">AS</span> (
+  <span class="sql-kw">SELECT</span> title, watched_at_kst
+  <span class="sql-kw">FROM</span> <span class="sql-str">\`keuk-2026.my_life.view_watch_enriched\`</span>
+)
+<span class="sql-kw">SELECT</span>
+  s.platform,
+  <span class="sql-fn">COUNT</span>(*) AS search_cnt,
+  <span class="sql-fn">COUNTIF</span>(w.title <span class="sql-kw">IS NOT NULL</span>) AS converted,
+  <span class="sql-fn">ROUND</span>(<span class="sql-fn">COUNTIF</span>(w.title <span class="sql-kw">IS NOT NULL</span>) * 100.0
+        / <span class="sql-fn">COUNT</span>(*), 1) AS cvr_pct
+<span class="sql-kw">FROM</span> searches s
+<span class="sql-kw">LEFT JOIN</span> watches w
+  <span class="sql-kw">ON</span> w.title <span class="sql-kw">LIKE</span> <span class="sql-fn">CONCAT</span>(<span class="sql-str">'%'</span>, s.query, <span class="sql-str">'%'</span>)
+  <span class="sql-kw">AND</span> w.watched_at_kst
+    <span class="sql-kw">BETWEEN</span> s.searched_at
+        <span class="sql-kw">AND</span> <span class="sql-fn">TIMESTAMP_ADD</span>(s.searched_at,
+                            <span class="sql-fn">INTERVAL</span> 30 <span class="sql-kw">MINUTE</span>)
+<span class="sql-kw">GROUP BY</span> s.platform`
+  },
+  {
+    id: 'q4', cls: 'card-q4',
+    label: 'Q4 · 음악 취향',
+    bigNum: '38.6%',
+    insight: '한국어 788곡 / 영어 759곡\n일본어 445곡 — 글로벌 취향.',
+    tables: ['fact_music_play', 'dim_music_metadata'],
+    tableNodeIds: ['ft_mu', 'dm_mu'],
+    chartType: 'doughnut',
+    chartData: {
+      labels: ['한국어', '영어', '일본어', '기타'],
+      datasets: [{
+        data: [788, 759, 445, 42],
+        backgroundColor: ['rgba(167,139,250,0.9)', 'rgba(96,165,250,0.9)', 'rgba(245,158,11,0.9)', 'rgba(148,163,184,0.8)'],
+        borderWidth: 2,
+        borderColor: '#FFFFFF'
+      }]
+    },
+    chartOpts: { cutout: '62%' },
+    sql: `<span class="sql-kw">SELECT</span>
+  m.language,
+  <span class="sql-fn">COUNT</span>(*) AS track_count,
+  <span class="sql-fn">ROUND</span>(<span class="sql-fn">COUNT</span>(*) * 100.0
+        / <span class="sql-fn">SUM</span>(<span class="sql-fn">COUNT</span>(*)) <span class="sql-kw">OVER</span>(), 1) AS pct
+<span class="sql-kw">FROM</span> <span class="sql-str">\`keuk-2026.my_life.fact_music_play\`</span> f
+<span class="sql-kw">JOIN</span> <span class="sql-str">\`keuk-2026.my_life.dim_music_metadata\`</span> m
+  <span class="sql-kw">USING</span> (track_id)
+<span class="sql-kw">GROUP BY</span> m.language
+<span class="sql-kw">ORDER BY</span> track_count <span class="sql-kw">DESC</span>`
+  },
+  {
+    id: 'q5', cls: 'card-q5',
+    label: 'Q5 · 딥다이브 패턴',
+    bigNum: '42% vs 55%',
+    insight: 'Heavy(82편/일)는 분산 42%\nLight(8편/일)는 집중 55%',
+    tables: ['view_watch_enriched'],
+    tableNodeIds: ['vw_we'],
+    chartType: 'radar',
+    chartData: {
+      labels: ['주제 집중도', '채널 집중도', '카테고리 수', '시간대 분산', '시청 밀도'],
+      datasets: [
+        { label: 'Heavy day', data: [42, 35, 80, 70, 90], backgroundColor: 'rgba(96,165,250,0.2)', borderColor: 'rgba(96,165,250,0.9)', pointBackgroundColor: 'rgba(96,165,250,1)' },
+        { label: 'Light day', data: [55, 65, 30, 40, 20], backgroundColor: 'rgba(52,211,153,0.2)', borderColor: 'rgba(52,211,153,0.9)', pointBackgroundColor: 'rgba(52,211,153,1)' }
+      ]
+    },
+    chartOpts: { scales: { r: { min: 0, max: 100, ticks: { display: false }, pointLabels: { font: { size: 10 } } } } },
+    sql: `<span class="sql-kw">WITH</span> daily <span class="sql-kw">AS</span> (
+  <span class="sql-kw">SELECT</span>
+    <span class="sql-fn">DATE</span>(watched_at_kst) AS watch_date,
+    <span class="sql-fn">COUNT</span>(*) AS daily_cnt,
+    <span class="sql-fn">COUNT</span>(<span class="sql-kw">DISTINCT</span> category_name) AS cat_cnt,
+    <span class="sql-fn">COUNT</span>(<span class="sql-kw">DISTINCT</span> channel_name) AS ch_cnt
+  <span class="sql-kw">FROM</span> <span class="sql-str">\`keuk-2026.my_life.view_watch_enriched\`</span>
+  <span class="sql-kw">GROUP BY</span> watch_date
+)
+<span class="sql-kw">SELECT</span>
+  <span class="sql-kw">CASE</span>
+    <span class="sql-kw">WHEN</span> daily_cnt >= 50 <span class="sql-kw">THEN</span> <span class="sql-str">'Heavy'</span>
+    <span class="sql-kw">ELSE</span> <span class="sql-str">'Light'</span>
+  <span class="sql-kw">END AS</span> day_type,
+  <span class="sql-fn">AVG</span>(daily_cnt) AS avg_watches,
+  <span class="sql-fn">AVG</span>(cat_cnt) AS avg_categories,
+  <span class="sql-fn">AVG</span>(ch_cnt) AS avg_channels
+<span class="sql-kw">FROM</span> daily
+<span class="sql-kw">GROUP BY</span> day_type`
+  },
+  {
+    id: 'q6', cls: 'card-q6',
+    label: 'Q6 · 페르소나 자동분류',
+    bigNum: '4개',
+    insight: '야간활성형 · 주말헤비유저\n뉴스중독자 · 여행잠재고객',
+    tables: ['view_watch_enriched', 'fact_maps_saved'],
+    tableNodeIds: ['vw_we', 'ft_ms'],
+    chartType: 'radar',
+    chartData: {
+      labels: ['야간시청', '주말시청', '뉴스시청', '여행관심', '일본콘텐츠', 'AI·교육'],
+      datasets: [{
+        label: '메이의 수치',
+        data: [34.2, 41.9, 26.3, 2.7, 4.8, 2.9],
+        backgroundColor: 'rgba(248,113,113,0.2)',
+        borderColor: 'rgba(248,113,113,0.9)',
+        pointBackgroundColor: 'rgba(248,113,113,1)'
+      }, {
+        label: '기준값',
+        data: [10, 35, 25, 1, 5, 5],
+        backgroundColor: 'rgba(148,163,184,0.15)',
+        borderColor: 'rgba(148,163,184,0.6)',
+        borderDash: [4,4],
+        pointRadius: 2,
+        pointBackgroundColor: 'rgba(148,163,184,0.7)'
+      }]
+    },
+    chartOpts: { scales: { r: { min: 0, max: 50, ticks: { display: false }, pointLabels: { font: { size: 10 } } } } },
+    sql: `<span class="sql-cmt">-- 진짜 KST 변환 후 야간/주말 비중 계산</span>
+<span class="sql-kw">WITH</span> t <span class="sql-kw">AS</span> (
+  <span class="sql-kw">SELECT</span> <span class="sql-fn">DATETIME</span>(watched_at_kst, <span class="sql-str">'Asia/Seoul'</span>) <span class="sql-kw">AS</span> kst,
+         category_name, channel_name
+  <span class="sql-kw">FROM</span> <span class="sql-str">\`keuk-2026.my_life.view_watch_enriched\`</span>
+)
+<span class="sql-kw">SELECT</span>
+  <span class="sql-fn">COUNTIF</span>(<span class="sql-fn">EXTRACT</span>(HOUR <span class="sql-kw">FROM</span> kst)
+          <span class="sql-kw">NOT BETWEEN</span> 6 <span class="sql-kw">AND</span> 22) * 100.0
+    / <span class="sql-fn">COUNT</span>(*) AS night_pct,
+  <span class="sql-fn">COUNTIF</span>(<span class="sql-fn">EXTRACT</span>(DAYOFWEEK <span class="sql-kw">FROM</span> watched_at_kst)
+          <span class="sql-kw">IN</span> (1,7)) * 100.0
+    / <span class="sql-fn">COUNT</span>(*) AS weekend_pct,
+  <span class="sql-fn">COUNTIF</span>(category_name = <span class="sql-str">'뉴스'</span>) * 100.0
+    / <span class="sql-fn">COUNT</span>(*) AS news_pct,
+  <span class="sql-fn">COUNTIF</span>(channel_name <span class="sql-kw">LIKE</span> <span class="sql-str">'%여행%'</span>
+       <span class="sql-kw">OR</span> channel_name <span class="sql-kw">LIKE</span> <span class="sql-str">'%travel%'</span>) * 100.0
+    / <span class="sql-fn">COUNT</span>(*) AS travel_pct
+<span class="sql-kw">FROM</span> <span class="sql-str">\`keuk-2026.my_life.view_watch_enriched\`</span>`
+  },
+  {
+    id: 'q7', cls: 'card-q7',
+    label: 'Q7 · 주간 이탈 신호',
+    bigNum: '⚠️ 149편',
+    insight: '최근 2주 연속 급감.\n7주 평균 615편 대비 24% 수준.',
+    tables: ['view_watch_enriched'],
+    tableNodeIds: ['vw_we'],
+    chartType: 'line',
+    chartData: {
+      labels: ['2/9', '2/16', '2/23', '3/2', '3/9', '3/16', '3/23', '3/30', '4/6', '4/13', '4/20', '4/27', '5/4', '5/11'],
+      datasets: [
+        {
+          label: '주간 시청수',
+          data: [720, 580, 690, 540, 880, 620, 710, 590, 820, 860, 404, 582, 324, 149],
+          borderColor: '#3B82F6',
+          backgroundColor: 'rgba(59,130,246,0.10)',
+          fill: true,
+          tension: 0.3,
+          pointRadius: (ctx) => {
+            const idx = ctx.dataIndex;
+            return idx >= 12 ? 6 : 3;
+          },
+          pointBackgroundColor: (ctx) => {
+            const idx = ctx.dataIndex;
+            return idx >= 12 ? '#DC2626' : '#3B82F6';
+          }
+        },
+        {
+          label: '7주 이동평균',
+          data: [null, null, null, null, null, null, 650, 660, 665, 640, 660, 670, 660, 680, 700, 660, 691, 686, 679, 615].slice(0, 14),
+          borderColor: 'rgba(245,158,11,0.8)',
+          borderDash: [6, 4],
+          borderWidth: 2,
+          pointRadius: 0,
+          tension: 0.3
+        }
+      ]
+    },
+    chartOpts: {
+      scales: {
+        y: { min: 0, max: 1000 }
+      }
+    },
+    sql: `<span class="sql-kw">WITH</span> weekly <span class="sql-kw">AS</span> (
+  <span class="sql-kw">SELECT</span>
+    <span class="sql-fn">DATE_TRUNC</span>(<span class="sql-fn">DATE</span>(watched_at_kst), WEEK(MONDAY))
+      <span class="sql-kw">AS</span> week_start,
+    <span class="sql-fn">COUNT</span>(*) AS watch_cnt
+  <span class="sql-kw">FROM</span> <span class="sql-str">\`keuk-2026.my_life.view_watch_enriched\`</span>
+  <span class="sql-kw">GROUP BY</span> week_start
+)
+<span class="sql-kw">SELECT</span>
+  week_start,
+  watch_cnt,
+  <span class="sql-fn">AVG</span>(watch_cnt) <span class="sql-kw">OVER</span> (
+    <span class="sql-kw">ORDER BY</span> week_start
+    <span class="sql-kw">ROWS BETWEEN</span> 6 <span class="sql-kw">PRECEDING AND CURRENT ROW</span>
+  ) <span class="sql-kw">AS</span> moving_avg_7w
+<span class="sql-kw">FROM</span> weekly
+<span class="sql-kw">ORDER BY</span> week_start`
+  }
+];
+</script>
+
+<!-- ═══════════════════════ JS: PIPELINE (D3) ═══════════════════════ -->
+<script>
+(function() {
+
+const NODE_W = 152;
+const NODE_H = 44;
+const NODE_GAP_Y = 8;
+const PADDING_X = 24;
+const PADDING_Y = 48;
+
+let selectedNode = null;
+let nodePositions = {};
+let highlightedEdges = new Set();
+
+function getNodeColor(layerId) {
+  const map = { sources: '#F87171', scripts: '#60A5FA', facts: '#34D399', dims: '#F59E0B', insights: '#A78BFA' };
+  return map[layerId] || '#888';
+}
+
+function renderPipeline() {
+  const container = document.getElementById('pipeline-container');
+  const containerW = container.clientWidth;
+  const H = container.clientHeight;
+
+  // Minimum width so 5 layers always have enough room
+  const MIN_W = LAYERS.length * NODE_W + (LAYERS.length - 1) * 80 + PADDING_X * 2;
+  const W = Math.max(containerW, MIN_W);
+
+  const svg = d3.select('#pipeline-svg')
+    .attr('viewBox', `0 0 ${W} ${H}`)
+    .attr('width', W)
+    .attr('height', H)
+    .style('min-width', `${W}px`);
+
+  svg.selectAll('*').remove();
+
+  // defs
+  const defs = svg.append('defs');
+  LAYERS.forEach(layer => {
+    const grad = defs.append('linearGradient')
+      .attr('id', `grad-${layer.id}`)
+      .attr('x1', '0%').attr('y1', '0%').attr('x2', '100%').attr('y2', '100%');
+    grad.append('stop').attr('offset', '0%').attr('stop-color', layer.color).attr('stop-opacity', 0.18);
+    grad.append('stop').attr('offset', '100%').attr('stop-color', layer.color).attr('stop-opacity', 0.05);
+  });
+
+  // compute dynamic layer gap
+  const availW = W - PADDING_X * 2;
+  const LAYER_GAP_X = (availW - LAYERS.length * NODE_W) / (LAYERS.length - 1);
+  const startX = PADDING_X;
+
+  // compute positions — vertically center based on tallest layer
+  const maxNodes = Math.max(...LAYERS.map(l => l.nodes.length));
+  const totalMaxH = maxNodes * NODE_H + (maxNodes - 1) * NODE_GAP_Y;
+  const headerZone = 52; // space for layer header labels
+  const baseY = headerZone + Math.max(0, (H - headerZone - totalMaxH - PADDING_Y) / 2);
+
+  LAYERS.forEach((layer, li) => {
+    const lx = startX + li * (NODE_W + LAYER_GAP_X);
+    const totalNodeH = layer.nodes.length * NODE_H + (layer.nodes.length - 1) * NODE_GAP_Y;
+    // Center each layer's nodes relative to the tallest layer
+    const startY = baseY + (totalMaxH - totalNodeH) / 2;
+    layer.nodes.forEach((node, ni) => {
+      const ny = startY + ni * (NODE_H + NODE_GAP_Y);
+      nodePositions[node.id] = { x: lx, y: ny, cx: lx + NODE_W / 2, cy: ny + NODE_H / 2, color: layer.color, layerId: layer.id };
+    });
+  });
+
+  // draw layer headers
+  LAYERS.forEach((layer, li) => {
+    const lx = startX + li * (NODE_W + LAYER_GAP_X);
+    const headerY = baseY - 36;
+    svg.append('text')
+      .attr('x', lx + NODE_W / 2)
+      .attr('y', headerY + 10)
+      .attr('text-anchor', 'middle')
+      .attr('font-size', 11)
+      .attr('font-weight', 700)
+      .attr('fill', layer.color)
+      .attr('opacity', 0.85)
+      .text(`Layer ${li + 1}`);
+    svg.append('text')
+      .attr('x', lx + NODE_W / 2)
+      .attr('y', headerY + 24)
+      .attr('text-anchor', 'middle')
+      .attr('font-size', 10)
+      .attr('fill', layer.color)
+      .attr('opacity', 0.6)
+      .text(layer.label);
+  });
+
+  // edges group (behind nodes)
+  const edgesG = svg.append('g').attr('class', 'edges-g');
+
+  // build adjacency for hover
+  const edgesByNode = {};
+  EDGES.forEach(e => {
+    if (!edgesByNode[e.from]) edgesByNode[e.from] = [];
+    if (!edgesByNode[e.to]) edgesByNode[e.to] = [];
+    edgesByNode[e.from].push({ edge: e, role: 'from' });
+    edgesByNode[e.to].push({ edge: e, role: 'to' });
+  });
+
+  // connected node sets for hover
+  function getConnectedIds(nodeId) {
+    const visited = new Set([nodeId]);
+    // traverse edges both forward and backward
+    let frontier = [nodeId];
+    while (frontier.length > 0) {
+      const next = [];
+      frontier.forEach(fid => {
+        (edgesByNode[fid] || []).forEach(({ edge }) => {
+          if (!visited.has(edge.from)) { visited.add(edge.from); next.push(edge.from); }
+          if (!visited.has(edge.to)) { visited.add(edge.to); next.push(edge.to); }
+        });
+      });
+      frontier = next;
+    }
+    return visited;
+  }
+
+  // draw edges
+  function edgeKey(e) { return `${e.from}--${e.to}`; }
+
+  const edgePaths = {};
+  EDGES.forEach(e => {
+    const s = nodePositions[e.from];
+    const t = nodePositions[e.to];
+    if (!s || !t) return;
+    const x1 = s.x + NODE_W;
+    const y1 = s.cy;
+    const x2 = t.x;
+    const y2 = t.cy;
+    const mx = (x1 + x2) / 2;
+    const path = edgesG.append('path')
+      .attr('d', `M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2},${y2}`)
+      .attr('fill', 'none')
+      .attr('stroke', '#CBD5E1')
+      .attr('stroke-width', 1.5)
+      .attr('opacity', 0.7)
+      .attr('class', `edge edge-${e.from} edge-${e.to}`)
+      .attr('data-from', e.from)
+      .attr('data-to', e.to);
+    edgePaths[edgeKey(e)] = path;
+  });
+
+  // nodes group
+  const nodesG = svg.append('g').attr('class', 'nodes-g');
+
+  LAYERS.forEach(layer => {
+    layer.nodes.forEach(node => {
+      const pos = nodePositions[node.id];
+      const g = nodesG.append('g')
+        .attr('class', 'node-g')
+        .attr('data-id', node.id)
+        .attr('cursor', 'pointer')
+        .attr('transform', `translate(${pos.x},${pos.y})`);
+
+      // background rect
+      g.append('rect')
+        .attr('width', NODE_W)
+        .attr('height', NODE_H)
+        .attr('rx', 8)
+        .attr('fill', `url(#grad-${layer.id})`)
+        .attr('stroke', layer.color)
+        .attr('stroke-width', 1.2)
+        .attr('stroke-opacity', 0.5);
+
+      // label
+      const labelText = node.label.length > 20 ? node.label.substring(0, 18) + '…' : node.label;
+      g.append('text')
+        .attr('x', NODE_W / 2)
+        .attr('y', NODE_H / 2 - 4)
+        .attr('text-anchor', 'middle')
+        .attr('dominant-baseline', 'middle')
+        .attr('font-size', 11)
+        .attr('font-weight', 600)
+        .attr('fill', '#1E293B')
+        .text(labelText);
+
+      // sub label
+      g.append('text')
+        .attr('x', NODE_W / 2)
+        .attr('y', NODE_H / 2 + 10)
+        .attr('text-anchor', 'middle')
+        .attr('font-size', 9)
+        .attr('fill', layer.color)
+        .attr('opacity', 0.8)
+        .text(node.sub);
+
+      // tooltip title (full name on hover)
+      g.append('title').text(node.label);
+
+      // hover
+      g.on('mouseenter', function(event) {
+        if (selectedNode) return;
+        const connected = getConnectedIds(node.id);
+
+        // fade unconnected nodes
+        nodesG.selectAll('.node-g').each(function() {
+          const nid = d3.select(this).attr('data-id');
+          d3.select(this).attr('opacity', connected.has(nid) ? 1 : 0.2);
+        });
+
+        // highlight connected edges
+        edgesG.selectAll('path').each(function() {
+          const ef = d3.select(this).attr('data-from');
+          const et = d3.select(this).attr('data-to');
+          const isConnected = connected.has(ef) && connected.has(et);
+          d3.select(this)
+            .attr('stroke', isConnected ? layer.color : '#CBD5E1')
+            .attr('stroke-width', isConnected ? 2.5 : 1.5)
+            .attr('opacity', isConnected ? 0.9 : 0.15);
+        });
+
+        // glow on this node
+        g.select('rect')
+          .attr('stroke-width', 2.2)
+          .attr('stroke-opacity', 1)
+          .attr('filter', `drop-shadow(0 0 6px ${layer.color}88)`);
+      })
+      .on('mouseleave', function() {
+        if (selectedNode) return;
+        resetHighlight();
+      })
+      .on('click', function(event) {
+        event.stopPropagation();
+        if (selectedNode === node.id) {
+          selectedNode = null;
+          closeDetail();
+          resetHighlight();
+        } else {
+          selectedNode = node.id;
+          openDetail(node, layer);
+          const connected = getConnectedIds(node.id);
+          nodesG.selectAll('.node-g').each(function() {
+            const nid = d3.select(this).attr('data-id');
+            d3.select(this).attr('opacity', connected.has(nid) ? 1 : 0.2);
+          });
+          edgesG.selectAll('path').each(function() {
+            const ef = d3.select(this).attr('data-from');
+            const et = d3.select(this).attr('data-to');
+            const isConnected = connected.has(ef) && connected.has(et);
+            d3.select(this)
+              .attr('stroke', isConnected ? layer.color : '#CBD5E1')
+              .attr('stroke-width', isConnected ? 2.5 : 1.5)
+              .attr('opacity', isConnected ? 0.9 : 0.15);
+          });
+        }
+      });
+    });
+  });
+
+  // click on svg background to deselect
+  svg.on('click', function() {
+    selectedNode = null;
+    closeDetail();
+    resetHighlight();
+  });
+
+  function resetHighlight() {
+    nodesG.selectAll('.node-g').attr('opacity', 1);
+    edgesG.selectAll('path')
+      .attr('stroke', '#CBD5E1')
+      .attr('stroke-width', 1.5)
+      .attr('opacity', 0.7);
+    nodesG.selectAll('rect')
+      .attr('stroke-width', 1.2)
+      .attr('stroke-opacity', 0.5)
+      .attr('filter', null);
+  }
+}
+
+// ── Detail Panel ──
+function openDetail(node, layer) {
+  const panel = document.getElementById('detail-panel');
+  panel.classList.add('open');
+  const d = node.detail;
+  let html = `
+    <h3 style="color:${layer.color}">${node.label}</h3>
+    <div class="detail-type">${d.type}</div>
+    <p style="font-size:12px;color:#475569;line-height:1.6;margin-bottom:8px">${d.desc}</p>
+  `;
+  if (d.stats && d.stats.length) {
+    html += `<div class="detail-section-label">주요 수치</div>`;
+    d.stats.forEach(([k, v]) => {
+      html += `<div class="detail-stat"><span>${k}</span><span>${v}</span></div>`;
+    });
+  }
+  if (d.cols && d.cols.length) {
+    html += `<div class="detail-section-label" style="margin-top:14px">컬럼 / 처리 단계</div>`;
+    d.cols.forEach(c => {
+      html += `<div class="detail-row">· ${c}</div>`;
+    });
+  }
+  document.getElementById('detail-content').innerHTML = html;
+  // trigger repaint so panel width change re-renders pipeline
+  setTimeout(renderPipeline, 310);
+}
+
+window.closeDetail = function() {
+  document.getElementById('detail-panel').classList.remove('open');
+  selectedNode = null;
+  setTimeout(renderPipeline, 310);
+};
+
+// highlight a specific node from tab2 badge click
+window.highlightPipelineNode = function(nodeId) {
+  // switch to tab1
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === 'pipeline'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === 'tab-pipeline'));
+  setTimeout(() => {
+    const nodeEl = document.querySelector(`.node-g[data-id="${nodeId}"]`);
+    if (nodeEl) nodeEl.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+  }, 150);
+};
+
+renderPipeline();
+window.addEventListener('resize', renderPipeline);
+
+})();
+</script>
+
+<!-- ═══════════════════════ JS: INSIGHT CARDS ═══════════════════════ -->
+<script>
+(function() {
+
+const CHART_DEFAULTS = {
+  responsive: true,
+  maintainAspectRatio: false,
+  animation: { duration: 600 },
+  plugins: {
+    legend: {
+      position: 'bottom',
+      labels: {
+        color: '#475569',
+        font: { size: 10 },
+        boxWidth: 10,
+        padding: 8
+      }
+    },
+    tooltip: {
+      backgroundColor: 'rgba(255,255,255,0.96)',
+      borderColor: '#E2E8F0',
+      borderWidth: 1,
+      titleColor: '#1E293B',
+      bodyColor: '#475569',
+      cornerRadius: 8
+    }
+  },
+  scales: {
+    x: {
+      grid: { color: 'rgba(0,0,0,0.06)' },
+      ticks: { color: '#64748B', font: { size: 10 } }
+    },
+    y: {
+      grid: { color: 'rgba(0,0,0,0.06)' },
+      ticks: { color: '#64748B', font: { size: 10 } }
+    }
+  }
+};
+
+function mergeOpts(type, extra) {
+  const base = JSON.parse(JSON.stringify(CHART_DEFAULTS));
+  if (type === 'doughnut' || type === 'radar') {
+    delete base.scales;
+    base.plugins.legend.position = 'right';
+    if (type === 'radar') {
+      base.scales = { r: {
+        grid: { color: 'rgba(0,0,0,0.06)' },
+        angleLines: { color: 'rgba(0,0,0,0.06)' },
+        ticks: { color: '#64748B', font: { size: 9 }, backdropColor: 'transparent' },
+        pointLabels: { color: '#475569', font: { size: 10 } }
+      }};
+    }
+  }
+  if (extra) deepMerge(base, extra);
+  return base;
+}
+
+function deepMerge(target, src) {
+  for (const k of Object.keys(src)) {
+    if (src[k] && typeof src[k] === 'object' && !Array.isArray(src[k])) {
+      if (!target[k]) target[k] = {};
+      deepMerge(target[k], src[k]);
+    } else {
+      target[k] = src[k];
+    }
+  }
+}
+
+const grid = document.getElementById('cards-grid');
+const chartInstances = {};
+
+CARDS.forEach(card => {
+  const el = document.createElement('div');
+  el.className = `insight-card ${card.cls}`;
+  el.id = `card-${card.id}`;
+
+  const badgesHTML = card.tables.map((t, i) =>
+    `<span class="table-badge" onclick="window.highlightPipelineNode('${card.tableNodeIds[i] || ''}')" title="파이프라인에서 보기">${t}</span>`
+  ).join('');
+
+  el.innerHTML = `
+    <div class="card-header">
+      <div>
+        <div class="card-label">${card.label}</div>
+      </div>
+    </div>
+    <div class="card-metric">
+      <div class="card-big-num">${card.bigNum}</div>
+    </div>
+    <div class="card-insight-text">${card.insight.replace(/\n/g, '<br>')}</div>
+    <div class="card-chart-wrap">
+      <canvas id="chart-${card.id}"></canvas>
+    </div>
+    <div class="card-footer">
+      <div class="table-badges">${badgesHTML}</div>
+      <button class="sql-toggle-btn" id="sql-btn-${card.id}" onclick="toggleSql('${card.id}')">SQL 보기</button>
+    </div>
+    <div class="sql-box" id="sql-box-${card.id}">
+      <pre>${card.sql}</pre>
+    </div>
+  `;
+
+  grid.appendChild(el);
+});
+
+// Make Q7 full width
+const q7card = document.getElementById('card-q7');
+if (q7card) q7card.classList.add('full-width');
+
+// Render charts
+CARDS.forEach(card => {
+  const canvas = document.getElementById(`chart-${card.id}`);
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const opts = mergeOpts(card.chartType, card.chartOpts || {});
+
+  // special: indexAxis for q1
+  if (card.chartType === 'bar' && card.chartOpts && card.chartOpts.indexAxis) {
+    opts.indexAxis = card.chartOpts.indexAxis;
+  }
+
+  // special: line chart point styling (functions can't be deep-cloned, re-apply)
+  let ds = card.chartData.datasets;
+  if (card.id === 'q7') {
+    ds = ds.map((d, di) => {
+      if (di === 0) {
+        return {
+          ...d,
+          pointRadius: d.data.map((_, idx) => idx >= 12 ? 6 : 3),
+          pointBackgroundColor: d.data.map((_, idx) => idx >= 12 ? '#DC2626' : '#3B82F6')
+        };
+      }
+      return d;
+    });
+  }
+
+  chartInstances[card.id] = new Chart(ctx, {
+    type: card.chartType,
+    data: { ...card.chartData, datasets: ds },
+    options: opts
+  });
+});
+
+// SQL toggle
+window.toggleSql = function(id) {
+  const box = document.getElementById(`sql-box-${id}`);
+  const btn = document.getElementById(`sql-btn-${id}`);
+  const isOpen = box.classList.contains('open');
+  box.classList.toggle('open', !isOpen);
+  btn.classList.toggle('active', !isOpen);
+  btn.textContent = isOpen ? 'SQL 보기' : 'SQL 닫기';
+};
+
+})();
+</script>
+
+<!-- ═══════════════════════ JS: TAB TOGGLE ═══════════════════════ -->
+<script>
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const tab = btn.dataset.tab;
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b === btn));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === `tab-${tab}`));
+    // Re-render pipeline when switching to it (size may have changed)
+    if (tab === 'pipeline') {
+      setTimeout(() => window.dispatchEvent(new Event('resize')), 50);
+    }
+  });
+});
+</script>
+
+</body>
+</html>

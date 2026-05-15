@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>AI와 친해지기 — 흩어진 일상이 데이터가 되는 순간 · 메이</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css">
+<style>
+:root{
+  --blue:#185FA5;
+  --blue-d:#0e4a82;
+  --coral:#D85A30;
+  --ink:#1a1a2e;
+  --muted:#6b7280;
+  --bg:#fafbfc;
+  --card:#ffffff;
+  --line:#e5e7eb;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;overflow:hidden;}
+body{
+  font-family:'Pretendard Variable','Pretendard',-apple-system,sans-serif;
+  background:var(--bg);
+  color:var(--ink);
+  -webkit-font-smoothing:antialiased;
+}
+
+/* 슬라이드 컨테이너 */
+.deck{position:relative;width:100vw;height:100vh;overflow:hidden;}
+.slide{
+  position:absolute;top:0;left:0;width:100%;height:100%;
+  padding:6vh 8vw;
+  display:flex;flex-direction:column;justify-content:center;
+  opacity:0;visibility:hidden;
+  transition:opacity .35s ease;
+}
+.slide.active{opacity:1;visibility:visible;}
+
+/* 다크 모드 */
+body.dark{background:#0a0e1a;color:#f0f0f0;}
+body.dark .slide{background:transparent;}
+body.dark .nav-bar{background:rgba(20,25,40,.85);color:#fff;}
+body.dark .progress-track{background:rgba(255,255,255,.1);}
+
+/* 텍스트 스타일 */
+.t-hero{font-size:5.5vw;font-weight:800;line-height:1.2;letter-spacing:-0.02em;}
+.t-large{font-size:4vw;font-weight:700;line-height:1.25;letter-spacing:-0.01em;}
+.t-h1{font-size:3.2vw;font-weight:800;line-height:1.3;}
+.t-h2{font-size:2.4vw;font-weight:700;line-height:1.35;color:var(--blue);}
+.t-body{font-size:1.6vw;line-height:1.6;color:#374151;}
+.t-small{font-size:1.2vw;color:var(--muted);line-height:1.5;}
+.t-tiny{font-size:.95vw;color:var(--muted);}
+.accent{color:var(--coral);font-weight:700;}
+.blue{color:var(--blue);font-weight:700;}
+
+/* 챕터 인트로 */
+.chapter{display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:24px;}
+.chapter-num{font-size:8vw;font-weight:900;color:var(--blue);line-height:1;letter-spacing:-0.04em;}
+.chapter-name{font-size:3vw;font-weight:700;color:var(--ink);}
+.chapter-sub{font-size:1.5vw;color:var(--muted);margin-top:8px;}
+
+/* 카드 */
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:24px;}
+.card-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+.card-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+.card-grid-6{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+
+/* before/after 대비 */
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;}
+.compare-side{padding:20px;}
+.compare-side h4{font-size:1.4vw;color:var(--muted);margin-bottom:14px;font-weight:600;}
+.compare-side .quote{font-size:2vw;font-weight:600;color:var(--ink);line-height:1.45;}
+.compare-arrow{font-size:3vw;color:var(--coral);text-align:center;}
+
+/* 대화 캡쳐 박스 */
+.chat-box{background:#f3f4f6;border-radius:12px;padding:18px 22px;margin:10px 0;}
+.chat-box .who{font-size:1.1vw;color:var(--muted);font-weight:600;margin-bottom:6px;}
+.chat-box .msg{font-size:1.5vw;line-height:1.5;color:var(--ink);}
+.chat-box.user{background:#e0f2fe;}
+.chat-box.ai{background:#f3f4f6;}
+
+/* 데이터 표 */
+.data-table{width:100%;border-collapse:collapse;font-size:1.3vw;}
+.data-table th,.data-table td{padding:10px 14px;text-align:left;border-bottom:1px solid var(--line);}
+.data-table th{color:var(--muted);font-weight:600;font-size:1.1vw;}
+.data-table .pct{font-weight:700;color:var(--blue);}
+.data-table .up{color:var(--coral);font-weight:700;}
+
+/* iframe wrapper */
+.iframe-wrap{width:100%;height:75vh;border-radius:14px;overflow:hidden;border:1px solid var(--line);}
+.iframe-wrap iframe{width:100%;height:100%;border:none;}
+
+/* 네비 */
+.nav-bar{
+  position:fixed;bottom:0;left:0;right:0;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 24px;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);
+  border-top:1px solid var(--line);
+  font-size:.85rem;color:var(--muted);z-index:100;
+}
+.nav-controls{display:flex;align-items:center;gap:12px;}
+.nav-btn{background:transparent;border:1px solid var(--line);color:inherit;border-radius:6px;padding:5px 10px;cursor:pointer;font-size:.8rem;}
+.nav-btn:hover{background:var(--bg);}
+.progress-track{flex:1;height:3px;background:#e5e7eb;border-radius:2px;margin:0 16px;overflow:hidden;}
+.progress-bar{height:100%;background:var(--blue);border-radius:2px;transition:width .25s;}
+.slide-counter{font-variant-numeric:tabular-nums;}
+.slide-tag{display:inline-block;padding:2px 8px;background:var(--blue);color:#fff;border-radius:4px;font-size:.7rem;font-weight:700;}
+
+/* 슬라이드별 정렬 헬퍼 */
+.center{align-items:center;text-align:center;}
+.full-bleed{padding:0;}
+
+/* 챕터 색상 변형 */
+.bg-blue{background:var(--blue);color:#fff;}
+.bg-blue .t-h1,.bg-blue .chapter-num,.bg-blue .chapter-name,.bg-blue .accent{color:#fff;}
+.bg-blue .chapter-num{opacity:.4;}
+.bg-dark{background:#0a0e1a;color:#fff;}
+.bg-dark .t-hero,.bg-dark .t-large,.bg-dark .t-h1{color:#fff;}
+
+/* 키 힌트 */
+.key-hint{position:fixed;top:16px;right:24px;font-size:.75rem;color:var(--muted);background:rgba(255,255,255,.9);padding:6px 10px;border-radius:6px;border:1px solid var(--line);z-index:99;}
+.key-hint.hide{display:none;}
+
+/* 6 카테고리 카드 */
+.cat-card{
+  background:var(--card);border:2px solid var(--line);border-radius:14px;
+  padding:24px 16px;text-align:center;transition:all .2s;
+}
+.cat-card .ico{font-size:3vw;margin-bottom:10px;}
+.cat-card .lbl{font-size:1.3vw;font-weight:700;}
+
+/* 인사이트 박스 */
+.insight{
+  background:linear-gradient(135deg,#fff5f0,#fff);
+  border-left:4px solid var(--coral);
+  border-radius:10px;
+  padding:18px 24px;
+  font-size:1.6vw;
+  line-height:1.55;
+  color:var(--ink);
+  font-weight:500;
+}
+
+/* TOC 목차 */
+.toc{display:flex;flex-direction:column;gap:14px;}
+.toc-item{display:flex;align-items:center;gap:14px;font-size:1.8vw;}
+.toc-num{
+  width:50px;height:50px;border-radius:50%;
+  background:var(--blue);color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:1.6vw;flex-shrink:0;
+}
+.toc-item.highlight .toc-num{background:var(--coral);}
+.toc-item.highlight{font-weight:700;}
+
+/* 차트 stand-in */
+.bar-row{display:flex;align-items:center;gap:14px;margin:8px 0;font-size:1.3vw;}
+.bar-label{width:120px;color:var(--muted);}
+.bar-fill{height:24px;background:linear-gradient(90deg,var(--blue),var(--blue-d));border-radius:4px;}
+.bar-fill.coral{background:linear-gradient(90deg,var(--coral),#b04823);}
+.bar-pct{font-weight:700;color:var(--blue);}
+
+/* 발표자 노트 (S 키로 토글) */
+.notes{
+  position:fixed;bottom:80px;left:24px;right:24px;
+  background:rgba(20,25,40,.95);color:#fff;
+  border-radius:10px;padding:16px 20px;
+  font-size:.95rem;line-height:1.6;
+  display:none;z-index:90;
+  max-height:30vh;overflow-y:auto;
+}
+.notes.show{display:block;}
+.notes::before{content:'🎤 발표 멘트';display:block;font-size:.75rem;opacity:.6;margin-bottom:6px;}
+
+/* QR / 가져갈 자료 슬라이드 */
+.takeaway{display:grid;grid-template-columns:1fr 1.4fr;gap:60px;align-items:center;}
+.qr-placeholder{
+  width:100%;aspect-ratio:1;
+  background:repeating-conic-gradient(#000 0% 25%,#fff 0% 50%) 50% / 12px 12px;
+  border-radius:8px;
+}
+
+/* 시청 비교 (S10) */
+.dist-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;}
+.dist-bar{margin:6px 0;}
+.dist-bar-track{height:32px;background:var(--line);border-radius:6px;overflow:hidden;}
+.dist-bar-fill{height:100%;display:flex;align-items:center;padding:0 10px;color:#fff;font-weight:700;font-size:1vw;}
+
+@media (max-width:768px){
+  .slide{padding:24px;}
+  .t-hero{font-size:8vw;}
+  .t-large{font-size:6vw;}
+  .t-h1{font-size:5vw;}
+  .t-body{font-size:2.8vw;}
+  .card-grid-3,.card-grid-2,.card-grid-6{grid-template-columns:1fr;}
+  .compare,.dist-grid,.takeaway{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<div class="key-hint" id="key-hint">← → 이동 · S 멘트 · D 다크 · F 풀스크린 · O 목차</div>
+
+<div class="deck" id="deck">
+
+<!-- ═════════════════════════════════════════
+     도입부 S01~S06
+═════════════════════════════════════════ -->
+
+<!-- S01 첫 질문 ★ -->
+<section class="slide active bg-dark center" data-notes="안녕하세요, CX Synergy 김소영입니다. 오늘 발표는 시연 위주로 짧게 갈 거예요. 시작 전에 질문 하나만요. 여러분, 하루에 AI한테 몇 번 질문하세요? ... 몇 번이든, 한 번 더 물어볼게요. AI는 저를 얼만큼 알고 있을까요?">
+  <div class="t-hero">AI는 저를<br>얼만큼 알고 있을까요?</div>
+</section>
+
+<!-- S02 Thesis -->
+<section class="slide center" data-notes="AI가 먼저 우리한테 손을 내밀어줬어요. 우리가 한 발자국 더 다가갈 차례예요. 친해지는 한 발자국이요.">
+  <div class="t-small" style="margin-bottom:30px;">오늘 보여드릴 것</div>
+  <div class="t-large" style="margin-bottom:20px;">AI랑 친해지는 한 발자국</div>
+  <div class="t-body" style="color:var(--muted)">저랑 AI가 어떻게 소통하게 됐는지</div>
+</section>
+
+<!-- S03 1년 반 대화 4컷 ★★★ -->
+<section class="slide" data-notes="1년 반 전엔 이런 식이었어요. AI가 뭐 던지면 다 받았어요. '잘 모르겠어, 알아서 해줘'였어요. 그러다 몇 달 전부터 좀 달라졌어요. 'BigQuery 데이터셋 어떻게 만들어?' 단어를 알게 됐어요. 그리고 지금은 'AI가 제안하면 아니, 그거 말고' 라고 말해요.">
+  <div class="t-small" style="margin-bottom:24px;">1년 반 동안 제가 AI랑 어떻게 소통했냐면…</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;">
+    <div>
+      <div class="t-tiny" style="margin-bottom:6px;color:var(--coral);font-weight:700;">📅 첫 시도 · 2024.04</div>
+      <div class="chat-box ai"><div class="who">🤖 AI</div><div class="msg">테이블명 알려주시면 코드 짜드릴게요</div></div>
+      <div class="chat-box user"><div class="who">🙋 메이</div><div class="msg">아마 dw_payment 쪽에 있을 거 같아…</div></div>
+    </div>
+    <div>
+      <div class="t-tiny" style="margin-bottom:6px;color:var(--coral);font-weight:700;">📅 적응기 · 2025.01</div>
+      <div class="chat-box user"><div class="who">🙋 메이</div><div class="msg">BigQuery 데이터셋 만들고 싶어. asia-northeast3로</div></div>
+      <div class="chat-box ai"><div class="who">🤖 AI</div><div class="msg">바로 코드 드릴게요</div></div>
+    </div>
+    <div>
+      <div class="t-tiny" style="margin-bottom:6px;color:var(--coral);font-weight:700;">📅 협업기 · 2025.06</div>
+      <div class="chat-box user"><div class="who">🙋 메이</div><div class="msg">상담사 데이터 분석 자동화 만들어줘. 매주 슬랙으로</div></div>
+      <div class="chat-box ai"><div class="who">🤖 AI</div><div class="msg">트리거 어떤 주기로?</div></div>
+    </div>
+    <div>
+      <div class="t-tiny" style="margin-bottom:6px;color:var(--coral);font-weight:700;">📅 지금 · 2025.11</div>
+      <div class="chat-box ai"><div class="who">🤖 AI</div><div class="msg">이렇게 하면 어떨까요?</div></div>
+      <div class="chat-box user"><div class="who">🙋 메이</div><div class="msg">아니야 그거 말고. 이거.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- S04 시스템은 돌아가요 -->
+<section class="slide" data-notes="이게 1년 반 후예요. 시스템들 돌아가요. 근데 여전히 저는 코드 못 짜요. 여전히 '잘 모르겠어'로 시작해요.">
+  <div style="display:grid;grid-template-columns:1fr 1.2fr;gap:60px;align-items:center;">
+    <div>
+      <div class="t-small" style="margin-bottom:14px;">지난 1년 반 동안 만든 것들</div>
+      <ul style="list-style:none;font-size:1.3vw;line-height:2;color:var(--muted);">
+        <li>· AI 상담품질 평가 시스템</li>
+        <li>· 위험상담사 주간 예측</li>
+        <li>· 민원 통합 시스템</li>
+        <li>· 영장 자동화</li>
+        <li>· 슬랙↔아지트 연동</li>
+        <li>· 교육 봇</li>
+      </ul>
+    </div>
+    <div>
+      <div class="t-large" style="line-height:1.4;">근데 저는<br>코드 못 짜요.<br><span class="accent">근데 시스템은</span><br><span class="accent">돌아가요.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- S05 진짜 바뀐 것 ★ -->
+<section class="slide" data-notes="근데 한 가지 진짜 바뀐 게 있어요. 처음엔 AI한테 뭐라 말할지를 몰랐어요. AI 주는 거 다 받았어요. 지금은 'AI가 뭐 제안하면 아니, 그거 말고' 라고 말해요. 우리가 소통하게 된 거예요.">
+  <div class="t-h2" style="text-align:center;margin-bottom:50px;">1년 반 동안 진짜 바뀐 한 가지</div>
+  <div class="compare">
+    <div class="compare-side" style="text-align:right;">
+      <h4>처음</h4>
+      <div class="quote">"잘 모르겠어,<br>알아서 해줘"</div>
+    </div>
+    <div class="compare-side">
+      <h4>지금</h4>
+      <div class="quote">"아니야, 그거 말고<br>이거"</div>
+    </div>
+  </div>
+  <div style="text-align:center;margin-top:48px;">
+    <div class="t-large accent">저랑 AI가 소통하게 된 거예요.</div>
+  </div>
+</section>
+
+<!-- S06 발표 흐름 -->
+<section class="slide" data-notes="오늘 시연 위주로 갈 거예요. 시작할게요.">
+  <div class="t-h2" style="margin-bottom:36px;">오늘 같이 볼 것</div>
+  <div class="toc">
+    <div class="toc-item"><div class="toc-num">1</div>제 일상이 어떻게 데이터가 되는지</div>
+    <div class="toc-item highlight"><div class="toc-num">2</div>AI랑 어떻게 소통하는지 <span class="accent" style="margin-left:14px;font-size:1.4vw;">★ 라이브 시연</span></div>
+    <div class="toc-item"><div class="toc-num">3</div>소통되니까 보이는 것들</div>
+    <div class="toc-item"><div class="toc-num">4</div>우리 회사에선 어떻게?</div>
+  </div>
+  <div style="margin-top:50px;color:var(--muted);font-size:1.1vw;">
+    * 오늘 코드 하나도 안 보여드려요. &nbsp;&nbsp; * 어려운 용어도 안 써요.
+  </div>
+</section>
+
+<!-- ═════════════════════════════════════════
+     Part 1 S07~S11
+═════════════════════════════════════════ -->
+
+<!-- S07 Part 1 인트로 -->
+<section class="slide chapter bg-blue">
+  <div class="chapter-num">Part 1</div>
+  <div class="chapter-name">제 일상이 데이터가 되는 과정</div>
+  <div class="chapter-sub">흩어진 활동 6개가 한곳으로</div>
+</section>
+
+<!-- S08 흩어진 일상 -->
+<section class="slide" data-notes="제 일상 활동은 사실 다 어딘가에 기록돼요. 근데 흩어져 있어서 저도 봐본 적이 없어요.">
+  <div class="t-h1" style="margin-bottom:30px;">제 일상은<br>어디에 흩어져 있을까요?</div>
+  <div class="card-grid-6">
+    <div class="cat-card"><div class="ico">🎬</div><div class="lbl">유튜브 시청</div></div>
+    <div class="cat-card"><div class="ico">🎵</div><div class="lbl">음악 재생</div></div>
+    <div class="cat-card"><div class="ico">🔍</div><div class="lbl">구글 검색</div></div>
+    <div class="cat-card"><div class="ico">🌐</div><div class="lbl">크롬 방문</div></div>
+    <div class="cat-card"><div class="ico">📰</div><div class="lbl">뉴스 클릭</div></div>
+    <div class="cat-card"><div class="ico">📍</div><div class="lbl">지도 활동</div></div>
+  </div>
+  <div class="t-body" style="text-align:center;margin-top:30px;color:var(--muted);">다 흩어져 있어요. 저도 잊었어요.</div>
+</section>
+
+<!-- S09 구글 Takeout -->
+<section class="slide" data-notes="여러분도 takeout.google.com 들어가시면 받을 수 있어요. 자기 모든 디지털 흔적을요.">
+  <div class="t-h1" style="margin-bottom:24px;">근데 구글이<br>다 모아놨더라구요</div>
+  <div style="background:#f9fafb;border-radius:14px;padding:32px;text-align:center;margin:20px 0;">
+    <div style="font-size:2vw;font-weight:700;color:var(--blue);font-family:monospace;">takeout.google.com</div>
+    <div style="margin-top:10px;color:var(--muted);font-size:1.3vw;">→ 내 모든 활동 다운로드</div>
+  </div>
+  <div class="t-body" style="color:var(--muted);text-align:center;">유튜브 · 검색 · 지도 · 크롬 · 캘린더… 다 한 번에 받을 수 있어요.</div>
+</section>
+
+<!-- S10 메이 데이터 1년 변화 ★ -->
+<section class="slide" data-notes="1년 전 저는 맛집·음악만 봤어요. 지금은 AI 강의에 시간을 다 써요. 저 자신도 이렇게까지 바뀐 줄 몰랐어요. AI는 알아요. 제 데이터 보고요.">
+  <div class="t-h1" style="margin-bottom:32px;">제 데이터가 뭘 알려줬게요?</div>
+  <div class="dist-grid">
+    <div>
+      <div class="t-small" style="margin-bottom:10px;">1년 전 (2024.11~2025.04)</div>
+      <div class="dist-bar"><div class="dist-bar-track"><div class="dist-bar-fill" style="width:38%;background:#94a3b8;">음악 38%</div></div></div>
+      <div class="dist-bar"><div class="dist-bar-track"><div class="dist-bar-fill" style="width:22%;background:#94a3b8;">맛집 22%</div></div></div>
+      <div class="dist-bar"><div class="dist-bar-track"><div class="dist-bar-fill" style="width:15%;background:#94a3b8;">여행 15%</div></div></div>
+      <div class="dist-bar"><div class="dist-bar-track"><div class="dist-bar-fill" style="width:12%;background:#cbd5e1;color:#475569;">일상 12%</div></div></div>
+    </div>
+    <div>
+      <div class="t-small" style="margin-bottom:10px;">지금 (2025.05~2025.11)</div>
+      <div class="dist-bar"><div class="dist-bar-track"><div class="dist-bar-fill" style="width:45%;background:var(--coral);">AI 강의 45%</div></div></div>
+      <div class="dist-bar"><div class="dist-bar-track"><div class="dist-bar-fill" style="width:23%;background:var(--blue);">여행 23%</div></div></div>
+      <div class="dist-bar"><div class="dist-bar-track"><div class="dist-bar-fill" style="width:17%;background:var(--blue);">음악 17%</div></div></div>
+      <div class="dist-bar"><div class="dist-bar-track"><div class="dist-bar-fill" style="width:8%;background:#94a3b8;">맛집 8%</div></div></div>
+    </div>
+  </div>
+  <div class="insight" style="margin-top:36px;">저도 모르는 사이에 제가 바뀌었어요. <span class="accent">AI는 알고 있었어요.</span></div>
+</section>
+
+<!-- S11 Part 1 → Part 2 연결 -->
+<section class="slide center" data-notes="그럼 이제 보여드릴게요. 흩어진 데이터를 AI랑 어떻게 합치는지.">
+  <div class="t-large">그럼 이제 보여드릴게요.</div>
+  <div class="t-h1" style="margin-top:20px;">흩어진 데이터를<br>AI랑 어떻게 <span class="accent">합치는지</span></div>
+</section>
+
+<!-- ═════════════════════════════════════════
+     Part 2 S12~S20
+═════════════════════════════════════════ -->
+
+<!-- S12 Part 2 인트로 -->
+<section class="slide chapter bg-blue">
+  <div class="chapter-num">Part 2</div>
+  <div class="chapter-name">AI랑 데이터 구조 짜기</div>
+  <div class="chapter-sub">★ 지금부터 라이브 시연이에요</div>
+</section>
+
+<!-- S13 STEP 1 부탁 시작 -->
+<section class="slide" data-notes="이렇게 시작해요. 그냥 일상 언어로요. (실제 Claude/Gemini 화면 띄움)">
+  <div class="t-small" style="margin-bottom:10px;">STEP 1</div>
+  <div class="t-h1" style="margin-bottom:30px;">AI한테 부탁하기</div>
+  <div class="chat-box user" style="max-width:80%;">
+    <div class="who">🙋 메이</div>
+    <div class="msg">제 6개 일상 데이터 정리해서 빅쿼리에 올리고 싶어요. 어떻게 정리하면 좋을까요? 친구한테 설명하듯이 알려주세요.</div>
+  </div>
+</section>
+
+<!-- S14 STEP 2 AI 답변 -->
+<section class="slide" data-notes="AI가 이렇게 답해요. 이걸 같이 보면서 고쳐가요.">
+  <div class="t-small" style="margin-bottom:10px;">STEP 2</div>
+  <div class="t-h1" style="margin-bottom:24px;">AI 답변 보기</div>
+  <div class="chat-box ai">
+    <div class="who">🤖 AI</div>
+    <div class="msg">이렇게 정리하면 어떨까요?<br><br>
+      <strong>1. 활동 한 줄씩</strong> = 사건 기록 (큰 책)<br>
+      <strong>2. 채널·카테고리 정보</strong> = 사전 (작은 책)<br>
+      <strong>3. 둘을 연결</strong>해서 보면 의미가 보여요</div>
+  </div>
+</section>
+
+<!-- S15 STEP 3 "근데 이건?" -->
+<section class="slide" data-notes="AI가 준 답에 그냥 '아니야 그거 말고' 한 번 더 던지는 거예요. 이게 소통이에요.">
+  <div class="t-small" style="margin-bottom:10px;">STEP 3</div>
+  <div class="t-h1" style="margin-bottom:24px;">근데 이건? 한 번 더</div>
+  <div class="chat-box user">
+    <div class="who">🙋 메이</div>
+    <div class="msg">근데 1년치 보려면 날짜로 묶이는 게 편하지 않아?<br>시간·요일·시간대도 같이 보고 싶은데.</div>
+  </div>
+</section>
+
+<!-- S16 STEP 4 AI 재제안 -->
+<section class="slide" data-notes="AI가 다시 제안해요. 이게 4단계예요. 1. 부탁 2. 답 3. 다시 부탁 4. 다시 답. 반복하면 점점 가까워져요.">
+  <div class="t-small" style="margin-bottom:10px;">STEP 4</div>
+  <div class="t-h1" style="margin-bottom:24px;">AI가 다시 제안</div>
+  <div class="chat-box ai">
+    <div class="who">🤖 AI</div>
+    <div class="msg">시간 사전을 따로 만들어요.<br>"이 시간이 평일인지/주말인지, 어느 시간대인지" 같이 보면 패턴이 잘 보여요.</div>
+  </div>
+</section>
+
+<!-- S17 결과 — BigQuery 콘솔 -->
+<section class="slide" data-notes="AI랑 5분 정도 대화하면 이게 나와요. 진짜로요. (콘솔 캡처)">
+  <div class="t-h1" style="margin-bottom:24px;">AI랑 5분 대화 → 이게 나와요</div>
+  <div class="card" style="background:#0f172a;color:#e2e8f0;font-family:monospace;font-size:1.2vw;padding:30px;">
+    📁 my_life<br>
+    &nbsp;&nbsp;├── fact_youtube_watch · 2,547건<br>
+    &nbsp;&nbsp;├── fact_music_play · 2,034건<br>
+    &nbsp;&nbsp;├── fact_search · 5,572건<br>
+    &nbsp;&nbsp;├── fact_chrome_visit · 18,495건<br>
+    &nbsp;&nbsp;├── fact_news_click · 891건<br>
+    &nbsp;&nbsp;├── fact_map_activity · 412건<br>
+    &nbsp;&nbsp;├── dim_videos · 영상 사전<br>
+    &nbsp;&nbsp;├── dim_artists · 아티스트 사전<br>
+    &nbsp;&nbsp;└── dim_time · 시간 사전
+  </div>
+</section>
+
+<!-- S18 Part 2 정리 ★ -->
+<section class="slide center" data-notes="이게 다예요. 어려운 거 없어요.">
+  <div class="t-large" style="margin-bottom:50px;">방금 보신 게</div>
+  <div class="t-hero accent" style="margin-bottom:60px;">"AI랑 소통하는 방법"<br>이에요</div>
+  <div style="display:flex;justify-content:center;gap:30px;flex-wrap:wrap;">
+    <div class="card" style="text-align:center;padding:18px 26px;">1. 일상 언어로 부탁</div>
+    <div class="card" style="text-align:center;padding:18px 26px;">2. AI 답 듣기</div>
+    <div class="card" style="text-align:center;padding:18px 26px;">3. "근데 이건?" 한 번 더</div>
+    <div class="card" style="text-align:center;padding:18px 26px;">4. AI가 다시 제안</div>
+  </div>
+</section>
+
+<!-- S19 (여유 슬라이드) -->
+<section class="slide center" data-notes="(시연 길어졌을 때 흡수용 여유 슬라이드)">
+  <div class="t-h2" style="color:var(--muted);">잠시…</div>
+</section>
+
+<!-- S20 (여유 슬라이드) -->
+<section class="slide chapter bg-blue">
+  <div class="chapter-num">Part 3</div>
+  <div class="chapter-name">소통되니까 보이는 것들</div>
+  <div class="chapter-sub">데이터한테 질문 7개 던졌어요</div>
+</section>
+
+<!-- ═════════════════════════════════════════
+     Part 3 S21~S28 — 7개 질문
+═════════════════════════════════════════ -->
+
+<!-- S21 Part 3 인트로 (overview) -->
+<section class="slide" data-notes="여기까지 우리 데이터를 한곳에 모았어요. 이제 데이터한테 질문을 던질 차례예요. 빅쿼리에 모아둔 데이터한테는 어떻게 말 거냐고요? SQL이라는 말로요. 근데 우리 이거 안 외울 거예요. AI한테 부탁할 거니까요.">
+  <div class="t-h1" style="margin-bottom:30px;">데이터한테 던진 7개 질문</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;font-size:1.3vw;">
+    <div class="card" style="padding:16px 22px;">🌙 Q1. 알림 보내면 언제 잘 볼까?</div>
+    <div class="card" style="padding:16px 22px;">📈 Q2. 요즘 뭐에 빠져 있나?</div>
+    <div class="card" style="padding:16px 22px;">🔍 Q3. 검색하면 진짜 보러 가나?</div>
+    <div class="card" style="padding:16px 22px;">🎵 Q4. 음악 취향은 어때?</div>
+    <div class="card" style="padding:16px 22px;">⭐ Q5. 어떤 채널·아티스트를 충성스럽게?</div>
+    <div class="card" style="padding:16px 22px;">🪞 Q6. 저는 어떤 사람으로 분류되나?</div>
+    <div class="card" style="padding:16px 22px;grid-column:1/3;">💤 Q7. 휴면 가능성이 있나?</div>
+  </div>
+</section>
+
+<!-- S22 Q1 푸시 골든타임 -->
+<section class="slide" data-notes="전체로 보면 낮이 압도적이에요. 근데 평일 저녁을 따로 보면 루틴이 보여요. 18시엔 음악 먼저. 19~20시엔 저녁 뉴스. 21시 넘으면 브이로그. 데이터가 제 하루 일과를 알고 있어요.">
+  <div class="t-small">Q1</div>
+  <div class="t-h1" style="margin-bottom:24px;">알림 보내면 언제 잘 볼까?</div>
+  <div style="display:grid;grid-template-columns:1fr 1.2fr;gap:40px;">
+    <div>
+      <table class="data-table">
+        <tr><th>요일</th><th>비중</th><th></th></tr>
+        <tr><td>토요일</td><td class="pct">21.4%</td><td class="up">▲</td></tr>
+        <tr><td>일요일</td><td class="pct">19.5%</td><td class="up">▲</td></tr>
+        <tr><td>금요일</td><td>15.4%</td><td></td></tr>
+        <tr><td>월요일</td><td>12.8%</td><td></td></tr>
+        <tr><td>목요일</td><td>10.7%</td><td></td></tr>
+      </table>
+    </div>
+    <div>
+      <div class="t-small" style="margin-bottom:10px;font-weight:600;">평일 저녁 루틴 (17~23시)</div>
+      <div class="card" style="background:#f9fafb;line-height:2;font-size:1.3vw;">
+        <strong>18시</strong> &nbsp;&nbsp; 음악 29% &nbsp;<span style="color:var(--muted)">퇴근하면서 음악부터</span><br>
+        <strong>19~20시</strong> 뉴스 31% &nbsp;<span style="color:var(--muted)">저녁 뉴스로 하루 정리</span><br>
+        <strong>21~23시</strong> 브이로그 30~32% &nbsp;<span style="color:var(--muted)">뉴스 끄고 브이로그로</span>
+      </div>
+    </div>
+  </div>
+  <div class="insight" style="margin-top:24px;">데이터가 제 하루 일과를 알고 있어요.</div>
+</section>
+
+<!-- S23 Q2 관심사 변화 -->
+<section class="slide" data-notes="뉴스 빼고 보면 변화가 더 뚜렷해요. 1년 전엔 브이로그가 42%. 올해 초엔 AI·기술 강의가 13%까지 올라왔어요. 데이터가 저보다 저를 더 잘 알아요.">
+  <div class="t-small">Q2</div>
+  <div class="t-h1" style="margin-bottom:24px;">요즘 뭐에 빠져 있나?</div>
+  <table class="data-table">
+    <tr><th>카테고리</th><th>1년 전 (25.7월)</th><th>올해 초 (26.2월)</th><th>변화</th></tr>
+    <tr><td>브이로그</td><td>41.6%</td><td>28.5%</td><td style="color:#94a3b8">📉 -13%p</td></tr>
+    <tr><td>엔터테인먼트</td><td>27.0%</td><td>25.4%</td><td style="color:var(--muted)">→ 유지</td></tr>
+    <tr><td>음악</td><td>16.0%</td><td>16.4%</td><td style="color:var(--muted)">→ 유지</td></tr>
+    <tr><td><strong>AI·교육+과기</strong></td><td>2.8%</td><td><strong>13.1%</strong></td><td class="up">🔥 +10%p</td></tr>
+    <tr><td>여행</td><td>2.9%</td><td>4.3%</td><td class="up">📈 소폭 증가</td></tr>
+  </table>
+  <div class="insight" style="margin-top:20px;">데이터가 <span class="accent">저보다 저를 더 잘 알아요.</span></div>
+</section>
+
+<!-- S24 Q3 검색 → 시청 -->
+<section class="slide" data-notes="검색하면 절반이 영상 보러 가요. 47%. 검색 = 의도. 자동재생으로 끌려서 보는 비율 — 5%밖에 안 돼요. 63%는 3분 이내에 제가 직접 다른 채널로 넘어가요.">
+  <div class="t-small">Q3</div>
+  <div class="t-h1" style="margin-bottom:24px;">검색한 게 시청으로 이어지나?</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:30px;">
+    <div>
+      <div class="t-small" style="margin-bottom:8px;font-weight:600;">검색 → 시청 전환</div>
+      <div class="card">
+        <div style="font-size:1.3vw;margin:8px 0;">유튜브 검색 4,443건 → 2,095건 시청</div>
+        <div class="t-large blue" style="text-align:center;margin-top:14px;">전환율 47%</div>
+      </div>
+    </div>
+    <div>
+      <div class="t-small" style="margin-bottom:8px;font-weight:600;">시청 패턴 (28,486건)</div>
+      <div class="bar-row"><div class="bar-label">직접 클릭</div><div class="bar-fill" style="width:63%;"></div><div class="bar-pct">63%</div></div>
+      <div class="bar-row"><div class="bar-label">이어보기</div><div class="bar-fill" style="width:21%;"></div><div class="bar-pct">21%</div></div>
+      <div class="bar-row"><div class="bar-label">잠시 후</div><div class="bar-fill" style="width:7%;"></div><div class="bar-pct">7%</div></div>
+      <div class="bar-row"><div class="bar-label">자동재생</div><div class="bar-fill coral" style="width:5%;"></div><div class="bar-pct" style="color:var(--coral)">5%</div></div>
+    </div>
+  </div>
+  <div class="insight" style="margin-top:24px;">알고리즘이 저를 끌고 다니는 것 같아도, 데이터 보면 <span class="accent">제가 능동적으로 골라요.</span></div>
+</section>
+
+<!-- S25 Q4 음악 취향 -->
+<section class="slide" data-notes="음악 취향은 영상이랑 달라요. 영상은 한국어 압도적인데, 음악은 한국어·영어·일본어 거의 3등분이에요. 재생목록 보면 '드라이브', '제주드라이브', '출퇴근' — 상황별로 만들어놨어요.">
+  <div class="t-small">Q4</div>
+  <div class="t-h1" style="margin-bottom:24px;">음악 취향은 어때?</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;">
+    <div>
+      <div class="t-small" style="margin-bottom:10px;font-weight:600;">언어별 분포 (2,000곡)</div>
+      <div class="bar-row"><div class="bar-label">한국어</div><div class="bar-fill" style="width:50%;"></div><div class="bar-pct">38.6%</div></div>
+      <div class="bar-row"><div class="bar-label">영어</div><div class="bar-fill" style="width:48%;"></div><div class="bar-pct">37.2%</div></div>
+      <div class="bar-row"><div class="bar-label">일본어</div><div class="bar-fill coral" style="width:28%;"></div><div class="bar-pct" style="color:var(--coral)">21.8%</div></div>
+    </div>
+    <div>
+      <div class="t-small" style="margin-bottom:10px;font-weight:600;">상황별 재생목록</div>
+      <div class="card" style="font-size:1.2vw;line-height:1.9;">
+        <strong>일본 관련 플리</strong> 52회 <span style="color:var(--muted)">드라이브하며</span><br>
+        <strong>드라이브 플리</strong> 15회 <span style="color:var(--muted)">제주 드라이브</span><br>
+        <strong>출퇴근 플리</strong> 2회 <span style="color:var(--muted)">통근길 일본 음악</span><br>
+        <strong>드라마 OST</strong> 5회 <span style="color:var(--muted)">하트시그널, 크리스마스</span>
+      </div>
+    </div>
+  </div>
+  <div class="insight" style="margin-top:24px;">일본 좋아하는 게 <span class="accent">음악에서 제일 먼저</span> 나타나요.</div>
+</section>
+
+<!-- S26 Q5 충성 채널 -->
+<section class="slide" data-notes="여러 번 본 채널 보면 이 사람 진짜 관심사가 나와요. 광고 효율, 협찬 적합도가 여기서 결정돼요.">
+  <div class="t-small">Q5</div>
+  <div class="t-h1" style="margin-bottom:24px;">어떤 채널을 충성스럽게 보나?</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:30px;">
+    <div>
+      <div class="t-small" style="margin-bottom:8px;font-weight:600;">TOP 5 채널 (지난 6개월)</div>
+      <table class="data-table">
+        <tr><th>채널</th><th>시청 횟수</th></tr>
+        <tr><td>오빠두엑셀</td><td class="pct">52회</td></tr>
+        <tr><td>빌더 조쉬</td><td class="pct">38회</td></tr>
+        <tr><td>짐코딩</td><td class="pct">29회</td></tr>
+        <tr><td>CONNECT AI LAB</td><td class="pct">24회</td></tr>
+        <tr><td>조코딩</td><td class="pct">18회</td></tr>
+      </table>
+    </div>
+    <div>
+      <div class="t-small" style="margin-bottom:8px;font-weight:600;">아티스트 TOP 3 (2,034곡)</div>
+      <div class="card" style="font-size:1.4vw;line-height:2;">
+        🥇 <strong>Ado</strong> <span style="color:var(--muted)">68회</span><br>
+        🥈 <strong>IU</strong> <span style="color:var(--muted)">52회</span><br>
+        🥉 <strong>NewJeans</strong> <span style="color:var(--muted)">41회</span>
+      </div>
+    </div>
+  </div>
+  <div class="insight" style="margin-top:24px;">광고·협찬 효율은 <span class="accent">충성도에서</span> 결정돼요.</div>
+</section>
+
+<!-- S27 Q6 페르소나 -->
+<section class="slide" data-notes="제 데이터로 만든 한 줄 자기소개예요. 마케터가 보면 이 사람한테 뭘 광고할지, 어떤 메시지를 던질지 한눈에 보여요.">
+  <div class="t-small">Q6</div>
+  <div class="t-h1" style="margin-bottom:30px;">저는 어떤 사람으로 분류되나?</div>
+  <div class="card" style="background:linear-gradient(135deg,#fff5f0,#fff);border-left:6px solid var(--coral);padding:36px 40px;">
+    <div class="t-small accent" style="margin-bottom:10px;">🪞 데이터로 본 메이</div>
+    <div class="t-h1" style="line-height:1.45;">
+      평일 저녁 음악·뉴스 루틴을 가진,<br>
+      AI 강의에 빠진 <span class="accent">일본 콘텐츠 애호가</span>.<br>
+      충성 채널 5곳·아티스트 3명을 반복 소비.
+    </div>
+  </div>
+  <div class="insight" style="margin-top:24px;">한 줄 자기소개를 <span class="accent">데이터가 써줘요.</span></div>
+</section>
+
+<!-- S28 Q7 휴면 -->
+<section class="slide" data-notes="휴면 신호도 보여요. 평소엔 매주 30+곡 듣다가 어느 주만 5곡으로 뚝 떨어졌어요. 회사라면 '이 고객 곧 이탈?'을 미리 알아챌 수 있어요.">
+  <div class="t-small">Q7</div>
+  <div class="t-h1" style="margin-bottom:24px;">휴면 가능성이 있나?</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;">
+    <div>
+      <div class="t-small" style="margin-bottom:8px;font-weight:600;">음악 주간 재생 (최근 12주)</div>
+      <div style="font-size:1.5vw;line-height:1.6;font-family:monospace;color:var(--muted);">
+        ▮▮▮▮▮▮▮▮ 32곡<br>
+        ▮▮▮▮▮▮▮ 28곡<br>
+        ▮▮▮▮▮▮▮▮▮ 36곡<br>
+        <span style="color:var(--coral);">▮ 5곡 ⚠️</span><br>
+        ▮▮▮▮▮▮▮ 30곡<br>
+        ▮▮▮▮▮▮▮▮ 33곡
+      </div>
+    </div>
+    <div>
+      <div class="t-h2" style="color:var(--coral);">⚠️ 4주차 이상신호</div>
+      <div class="t-body" style="margin-top:14px;">평균 30곡 → 5곡<br>곧 휴면 가능성</div>
+    </div>
+  </div>
+  <div class="insight" style="margin-top:24px;">회사라면 <span class="accent">이탈 전에</span> 알아챌 수 있어요.</div>
+</section>
+
+<!-- ═════════════════════════════════════════
+     Part 4 S29~S33
+═════════════════════════════════════════ -->
+
+<!-- S29 Part 4 인트로 -->
+<section class="slide chapter bg-blue">
+  <div class="chapter-num">Part 4</div>
+  <div class="chapter-name">우리 회사에선 어떻게?</div>
+  <div class="chapter-sub">사내 데이터도 같은 원리예요</div>
+</section>
+
+<!-- S30 사내 데이터도 똑같아요 -->
+<section class="slide center" data-notes="원리는 똑같아요.">
+  <div class="t-large" style="margin-bottom:30px;">제 일상 데이터든<br>여러분 팀 데이터든</div>
+  <div class="t-h1" style="margin-bottom:30px;">흩어진 걸 모으고<br>AI랑 같이 정리하면</div>
+  <div class="t-large accent">데이터한테 질문할 수 있어요.</div>
+</section>
+
+<!-- S31 RAG 그래프 ★ -->
+<section class="slide" data-notes="제 6개 일상 데이터가 어떻게 연결되는지 보여드려요. 클릭하면 바뀌어요. (인터랙티브 그래프)">
+  <div class="t-h2" style="margin-bottom:16px;">제 데이터가 연결되는 방식</div>
+  <div class="iframe-wrap"><iframe src="rag_graph.html" loading="lazy"></iframe></div>
+</section>
+
+<!-- S32 메이의 사내 시스템들 -->
+<section class="slide" data-notes="다 같은 패턴이에요. 흩어진 거 모으고, AI랑 같이 만들고.">
+  <div class="t-h1" style="margin-bottom:30px;">지난 1년 반 동안 만든 것들</div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px;">
+    <div class="card" style="text-align:center;padding:24px 18px;">
+      <div style="font-size:2.5vw;margin-bottom:8px;">🤖</div>
+      <div style="font-size:1.2vw;font-weight:700;">AI 상담품질 평가</div>
+    </div>
+    <div class="card" style="text-align:center;padding:24px 18px;">
+      <div style="font-size:2.5vw;margin-bottom:8px;">⚠️</div>
+      <div style="font-size:1.2vw;font-weight:700;">위험상담사 주간 예측</div>
+    </div>
+    <div class="card" style="text-align:center;padding:24px 18px;">
+      <div style="font-size:2.5vw;margin-bottom:8px;">📋</div>
+      <div style="font-size:1.2vw;font-weight:700;">민원 통합 시스템</div>
+    </div>
+    <div class="card" style="text-align:center;padding:24px 18px;">
+      <div style="font-size:2.5vw;margin-bottom:8px;">⚖️</div>
+      <div style="font-size:1.2vw;font-weight:700;">영장 자동화</div>
+    </div>
+    <div class="card" style="text-align:center;padding:24px 18px;">
+      <div style="font-size:2.5vw;margin-bottom:8px;">💬</div>
+      <div style="font-size:1.2vw;font-weight:700;">슬랙↔아지트 연동</div>
+    </div>
+    <div class="card" style="text-align:center;padding:24px 18px;">
+      <div style="font-size:2.5vw;margin-bottom:8px;">📚</div>
+      <div style="font-size:1.2vw;font-weight:700;">교육 봇</div>
+    </div>
+  </div>
+  <div class="insight" style="margin-top:24px;">다 같은 패턴이에요. <span class="accent">흩어진 거 모으고, AI랑 같이 만들고.</span></div>
+</section>
+
+<!-- S33 Part 4 → 클로징 -->
+<section class="slide center" data-notes="이제 진짜 가져가실 수 있는 거 드릴게요.">
+  <div class="t-h1" style="margin-bottom:24px;">여러분도 할 수 있어요.</div>
+  <div class="t-body" style="color:var(--muted);">발표 끝나고 따라할 수 있는 가이드 준비했어요.</div>
+</section>
+
+<!-- ═════════════════════════════════════════
+     클로징 S34~S37
+═════════════════════════════════════════ -->
+
+<!-- S34 오늘의 공식 -->
+<section class="slide" data-notes="오늘의 공식이에요. 외울 필요 없고, 한 번씩 해보세요.">
+  <div class="t-h1" style="margin-bottom:36px;">오늘의 공식</div>
+  <div style="display:flex;flex-direction:column;gap:14px;font-size:1.7vw;">
+    <div class="card" style="display:flex;align-items:center;gap:18px;padding:18px 24px;"><span class="blue" style="font-size:2vw;">1.</span> 흩어진 것 모으기</div>
+    <div class="card" style="display:flex;align-items:center;gap:18px;padding:18px 24px;"><span class="blue" style="font-size:2vw;">2.</span> AI랑 의논해서 정리하기</div>
+    <div class="card" style="display:flex;align-items:center;gap:18px;padding:18px 24px;"><span class="blue" style="font-size:2vw;">3.</span> 같이 보고 같이 결정하기</div>
+    <div class="card" style="display:flex;align-items:center;gap:18px;padding:18px 24px;"><span class="blue" style="font-size:2vw;">4.</span> 또 의논하기</div>
+  </div>
+  <div style="text-align:center;margin-top:36px;">
+    <span class="t-large accent">= AI랑 소통하는 한 발자국</span>
+  </div>
+</section>
+
+<!-- S35 1년 반 전 다시 짚기 -->
+<section class="slide" data-notes="처음 봤던 메이의 대화 4컷 기억나시죠? 그 사이에 어떻게 변했냐면요.">
+  <div class="t-h2" style="text-align:center;margin-bottom:40px;">1년 반 전 vs 지금</div>
+  <div class="compare">
+    <div class="compare-side" style="text-align:right;">
+      <h4>1년 반 전</h4>
+      <div class="quote" style="font-size:1.5vw;line-height:1.8;">
+        "BigQuery?<br>그게 뭐예요?"<br>
+        "어떻게 확인하나요?"<br>
+        "각각 어떤 기능이야?"
+      </div>
+    </div>
+    <div class="compare-side">
+      <h4>지금</h4>
+      <div class="quote" style="font-size:1.5vw;line-height:1.8;">
+        "내가 뭘 원하는지<br>알아요"<br>
+        "아니야, 그거 말고"<br>
+        "이거 같이 봐줘"
+      </div>
+    </div>
+  </div>
+  <div style="text-align:center;margin-top:40px;">
+    <span class="t-large accent">어색했던 사이가, 소통이 되는 사이가 됐어요.</span>
+  </div>
+</section>
+
+<!-- S36 수미상관 ★★★ 발표 핵심 -->
+<section class="slide bg-dark center" data-notes="발표 시작할 때 물었어요. AI는 저를 얼만큼 알까요. (잠시) 답을 드릴게요. 소통하면 알아요. 말 안 해도요. 제 데이터 보고 AI가 '메이는 요즘 AI 강의에 빠져있구나, 일본 여행 가고 싶구나' 알아요. 제가 일일이 말 안 해도요. 여러분도 AI랑 소통될 수 있어요. 어색한 단계만 지나면요.">
+  <div style="font-size:1.2vw;color:rgba(255,255,255,.5);margin-bottom:30px;">발표 시작할 때 물었어요.</div>
+  <div class="t-large" style="margin-bottom:50px;color:#fff;">"AI는 저를 얼만큼 알고 있을까요?"</div>
+  <div class="t-hero" style="color:var(--coral);line-height:1.3;">
+    답: 소통하면 알아요.<br>말 안 해도요.
+  </div>
+  <div style="font-size:1.1vw;color:rgba(255,255,255,.5);margin-top:40px;">
+    — 제 데이터 보고 AI가 알아요. 제가 일일이 말 안 해도요.
+  </div>
+</section>
+
+<!-- S37 가져갈 자료 + 인사 -->
+<section class="slide" data-notes="따라할 수 있는 가이드 다 준비해뒀어요. 천천히 가셔도 돼요. 1년 반 안 걸려요. AI한테 부탁하는 게 어색하시면, 저한테 물어봐주셔도 좋아요. 같이 시작해봐요. 감사합니다.">
+  <div class="takeaway">
+    <div>
+      <div style="background:#fff;padding:24px;border-radius:14px;border:2px solid var(--blue);">
+        <div class="t-small" style="margin-bottom:10px;font-weight:600;text-align:center;">실습 웹앱 바로가기</div>
+        <div style="font-family:monospace;font-size:1vw;color:var(--blue);text-align:center;padding:14px;background:#f0f4ff;border-radius:8px;">
+          ksy070822.github.io<br>/bq-lab-2605
+        </div>
+        <div class="t-tiny" style="margin-top:12px;text-align:center;">컴퓨터에서 열어주세요</div>
+      </div>
+    </div>
+    <div>
+      <div class="t-h1" style="margin-bottom:24px;">가져가실 것</div>
+      <ul style="list-style:none;font-size:1.4vw;line-height:2.2;color:var(--ink);">
+        <li>✅ 발표 슬라이드</li>
+        <li>✅ 사후 가이드 (12단계 웹앱)</li>
+        <li>✅ 더미데이터 + 빅쿼리 적재 스크립트</li>
+        <li>✅ AI 프롬프트 모음</li>
+      </ul>
+      <div style="margin-top:30px;padding-top:20px;border-top:1px solid var(--line);font-size:1.2vw;color:var(--muted);">
+        <strong>슬랙</strong> #cx-share &nbsp; · &nbsp; <strong>DM</strong> may.08
+      </div>
+      <div class="t-h1 accent" style="margin-top:24px;">감사합니다 🙏</div>
+    </div>
+  </div>
+</section>
+
+</div><!-- /deck -->
+
+<!-- 발표자 노트 -->
+<div class="notes" id="notes"></div>
+
+<!-- 네비 -->
+<div class="nav-bar">
+  <div class="slide-tag" id="slide-tag">도입</div>
+  <div class="nav-controls">
+    <button class="nav-btn" onclick="prev()">←</button>
+    <span class="slide-counter" id="counter">1 / 37</span>
+    <button class="nav-btn" onclick="next()">→</button>
+  </div>
+  <div class="progress-track"><div class="progress-bar" id="pbar"></div></div>
+  <div style="font-size:.75rem;">메이 · AI와 친해지기</div>
+</div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const TOTAL = slides.length;
+let cur = 0;
+
+// 챕터 태그 매핑
+const CHAPTERS = [
+  {start:0, end:5, name:'도입'},
+  {start:6, end:10, name:'Part 1 · 일상이 데이터로'},
+  {start:11, end:19, name:'Part 2 · AI랑 데이터 짜기'},
+  {start:20, end:27, name:'Part 3 · 데이터 질문 7개'},
+  {start:28, end:32, name:'Part 4 · 사내 적용'},
+  {start:33, end:36, name:'클로징'},
+];
+
+function go(n){
+  cur = Math.max(0, Math.min(TOTAL-1, n));
+  slides.forEach((s,i)=>s.classList.toggle('active', i===cur));
+  document.getElementById('counter').textContent = (cur+1)+' / '+TOTAL;
+  document.getElementById('pbar').style.width = ((cur+1)/TOTAL*100)+'%';
+  const ch = CHAPTERS.find(c=>cur>=c.start && cur<=c.end);
+  document.getElementById('slide-tag').textContent = ch ? ch.name : '';
+  // 발표자 노트 업데이트
+  const notes = slides[cur].dataset.notes || '';
+  const notesEl = document.getElementById('notes');
+  if(notes){
+    notesEl.textContent = notes;
+  } else {
+    notesEl.textContent = '(이 슬라이드 멘트 없음)';
+  }
+}
+function next(){go(cur+1);}
+function prev(){go(cur-1);}
+
+document.addEventListener('keydown', e=>{
+  if(e.key==='ArrowRight' || e.key===' ' || e.key==='PageDown') next();
+  else if(e.key==='ArrowLeft' || e.key==='PageUp') prev();
+  else if(e.key==='Home') go(0);
+  else if(e.key==='End') go(TOTAL-1);
+  else if(e.key.toLowerCase()==='s') document.getElementById('notes').classList.toggle('show');
+  else if(e.key.toLowerCase()==='d') document.body.classList.toggle('dark');
+  else if(e.key.toLowerCase()==='f') document.documentElement.requestFullscreen?.();
+  else if(e.key.toLowerCase()==='o') toggleOverview();
+  else if(e.key>='1' && e.key<='9' && e.ctrlKey){
+    const ch = parseInt(e.key)-1;
+    if(CHAPTERS[ch]) go(CHAPTERS[ch].start);
+  }
+});
+
+// 5초 후 키 힌트 숨김
+setTimeout(()=>document.getElementById('key-hint').classList.add('hide'), 6000);
+
+// 마우스 클릭으로도 이동 (오른쪽 클릭은 메뉴라서 안 함)
+document.querySelector('.deck').addEventListener('click', e=>{
+  if(e.target.tagName === 'IFRAME' || e.target.tagName === 'A' || e.target.tagName === 'BUTTON') return;
+  next();
+});
+
+// 목차 오버레이
+function toggleOverview(){
+  // 간단한 슬라이드 그리드를 만드는 함수 (필요시 확장)
+  alert('1-6 도입 / 7-11 Part1 / 12-20 Part2 / 21-28 Part3 / 29-33 Part4 / 34-37 클로징\nCtrl+1~6 으로 챕터 점프');
+}
+
+go(0);
+</script>
+</body>
+</html>
