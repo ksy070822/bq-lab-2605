@@ -848,8 +848,11 @@ setTimeout(()=>document.getElementById('key-hint').classList.add('hide'), 6000);
 
 // 마우스 클릭으로도 이동 (오른쪽 클릭은 메뉴라서 안 함)
 document.querySelector('.deck').addEventListener('click', e=>{
-  if(e.target.tagName === 'IFRAME' || e.target.tagName === 'A' || e.target.tagName === 'BUTTON') return;
-  next();
+  if(e.target.tagName === 'IFRAME' || e.target.tagName === 'A' || e.target.tagName === 'BUTTON' || e.target.closest('.nav-bar')) return;
+  // 우측 30% 클릭 → 다음, 좌측 15% → 이전, 중앙 무반응
+  const x = e.clientX / window.innerWidth;
+  if(x > 0.7) next();
+  else if(x < 0.15) prev();
 });
 
 // 목차 오버레이
