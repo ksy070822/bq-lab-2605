@@ -712,15 +712,23 @@ details[open]>summary::before{content:"▾ ";}
       </div>
       <div id="persona-area"></div>
       <div id="dl-area" style="display:none;">
-        <p style="font-size:.83rem;font-weight:600;margin:12px 0 8px;">📥 CSV 파일 두 개 모두 다운로드하세요</p>
-        <div class="dl-grid">
+        <p style="font-size:.83rem;font-weight:600;margin:12px 0 8px;">📥 CSV 파일 4개 모두 다운로드하세요</p>
+        <div class="dl-grid" style="grid-template-columns:1fr 1fr;">
           <div class="dl-card" id="dlc-yt" onclick="dlCSV('youtube')">
             <div class="dl-icon">📺</div><div class="dl-name">youtube_history.csv</div>
-            <div class="dl-sub" id="dl-yt-cnt"></div><div class="dl-ok" id="dl-yt-ok" style="display:none;">✓ 다운로드 완료</div>
+            <div class="dl-sub" id="dl-yt-cnt"></div><div class="dl-ok" id="dl-yt-ok" style="display:none;">✓ 다운로드</div>
           </div>
           <div class="dl-card" id="dlc-mu" onclick="dlCSV('music')">
             <div class="dl-icon">🎵</div><div class="dl-name">music_history.csv</div>
-            <div class="dl-sub" id="dl-mu-cnt"></div><div class="dl-ok" id="dl-mu-ok" style="display:none;">✓ 다운로드 완료</div>
+            <div class="dl-sub" id="dl-mu-cnt"></div><div class="dl-ok" id="dl-mu-ok" style="display:none;">✓ 다운로드</div>
+          </div>
+          <div class="dl-card" id="dlc-wb" onclick="dlCSV('web')">
+            <div class="dl-icon">🌐</div><div class="dl-name">web_history.csv</div>
+            <div class="dl-sub" id="dl-wb-cnt"></div><div class="dl-ok" id="dl-wb-ok" style="display:none;">✓ 다운로드</div>
+          </div>
+          <div class="dl-card" id="dlc-sh" onclick="dlCSV('shop')">
+            <div class="dl-icon">🛒</div><div class="dl-name">shop_history.csv</div>
+            <div class="dl-sub" id="dl-sh-cnt"></div><div class="dl-ok" id="dl-sh-ok" style="display:none;">✓ 다운로드</div>
           </div>
         </div>
       </div>
@@ -772,7 +780,7 @@ details[open]>summary::before{content:"▾ ";}
     <div class="sc-ttl"><h2>5단계 — 빅쿼리에 파일 올리기</h2><p>다운받은 CSV → BigQuery 테이블. <span class="accent">AI가 알아서 올려줘요</span></p></div>
   </div>
   <div class="sc-body">
-    <div class="alert alert-info" style="margin-bottom:14px;">📂 업로드 파일: <strong>youtube_history.csv + music_history.csv</strong><br>아직 안 받았으면 <a href="#" onclick="gst(4);return false;" style="color:var(--blue);font-weight:600;">← 이전으로</a> 먼저 받아오세요</div>
+    <div class="alert alert-info" style="margin-bottom:14px;">📂 업로드 파일: <strong>youtube_history.csv + music_history.csv + web_history.csv + shop_history.csv</strong><br>아직 안 받았으면 <a href="#" onclick="gst(4);return false;" style="color:var(--blue);font-weight:600;">← 이전으로</a> 먼저 받아오세요</div>
 
     <!-- 메인 방법 -->
     <div style="background:linear-gradient(135deg,#eff6ff,#fff);border:2px solid var(--blue);border-radius:12px;padding:20px;margin:14px 0;">
@@ -1417,7 +1425,7 @@ const SCORE_MAP={s2:15,s3:15,s4:20,s5:25,s6:25,s7:100};
 const S={
   session:'bq',
   step:1,yt:[],mu:[],persona:null,
-  dlYt:false,dlMu:false,
+  dlYt:false,dlMu:false,dlWb:false,dlSh:false,
   tYtOk:false,tMuOk:false,
   realData:null,dataMode:'dummy',
   projectId:'',
@@ -1668,8 +1676,13 @@ function shPersona(){
     </div>`;
   shCharts(key);
   document.getElementById('dl-area').style.display='block';
+  // 웹/쇼핑 데이터 생성 (페르소나 기반)
+  if(!d.web) d.web = genWebData(key, d.youtube);
+  if(!d.shop) d.shop = genShopData(key, d.youtube);
   document.getElementById('dl-yt-cnt').textContent=d.youtube.length+'건';
   document.getElementById('dl-mu-cnt').textContent=d.music.length+'건';
+  document.getElementById('dl-wb-cnt').textContent=d.web.length+'건';
+  document.getElementById('dl-sh-cnt').textContent=d.shop.length+'건';
   document.getElementById('vb-step4').style.display='block';
 }
 function shCharts(key){
@@ -1698,15 +1711,245 @@ function shCharts(key){
 }
 function dlCSV(t){
   if(!S.persona)return;
-  const rows=t==='youtube'?PD[S.persona].youtube:PD[S.persona].music;
+  const pd=PD[S.persona];
+  if(!pd.web) pd.web=genWebData(S.persona, pd.youtube);
+  if(!pd.shop) pd.shop=genShopData(S.persona, pd.youtube);
+  const rows = t==='youtube'?pd.youtube : t==='music'?pd.music : t==='web'?pd.web : pd.shop;
+  if(!rows||!rows.length){alert('데이터 없음');return;}
   const keys=Object.keys(rows[0]);
   const csv=keys.join(',')+'\n'+rows.map(r=>keys.map(k=>{const v=String(r[k]??'').replace(/"/g,'""');return v.includes(',')||v.includes('"')?`"${v}"`:v;}).join(',')).join('\n');
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));
-  a.download=(t==='youtube'?'youtube':'music')+'_history.csv';a.click();
-  if(t==='youtube'){S.dlYt=true;document.getElementById('dlc-yt').classList.add('got');document.getElementById('dl-yt-ok').style.display='block';}
-  else{S.dlMu=true;document.getElementById('dlc-mu').classList.add('got');document.getElementById('dl-mu-ok').style.display='block';}
+  a.download = t+'_history.csv';
+  a.click();
+  const map={youtube:['dlc-yt','dl-yt-ok','dlYt'], music:['dlc-mu','dl-mu-ok','dlMu'], web:['dlc-wb','dl-wb-ok','dlWb'], shop:['dlc-sh','dl-sh-ok','dlSh']};
+  const [cardId, okId, stateKey] = map[t];
+  S[stateKey]=true;
+  document.getElementById(cardId).classList.add('got');
+  document.getElementById(okId).style.display='block';
 }
+
+// ═════════════════════════════════════════
+// 웹서핑·쇼핑 더미데이터 생성기 (페르소나별 패턴)
+// ═════════════════════════════════════════
+function genWebData(personaKey, ytData) {
+  // 페르소나별 웹서핑 패턴
+  const patterns = {
+    'A_야행성덕후': {
+      sites: [
+        {host:'twitter.com',         path:'/explore', cat:'sns',     lang:'ja'},
+        {host:'pixiv.net',           path:'/artworks',cat:'illust',  lang:'ja'},
+        {host:'cdjapan.co.jp',       path:'/product', cat:'shopping',lang:'ja'},
+        {host:'nico.ms',             path:'/watch',   cat:'video',   lang:'ja'},
+        {host:'google.com',          path:'/search',  cat:'search',  lang:'ko'},
+        {host:'namu.wiki',           path:'/w/',      cat:'wiki',    lang:'ko'},
+        {host:'reddit.com',          path:'/r/anime', cat:'sns',     lang:'en'},
+        {host:'instagram.com',       path:'/explore', cat:'sns',     lang:'ko'},
+        {host:'tumblr.com',          path:'/dashboard',cat:'sns',    lang:'en'},
+      ],
+      titles: ['Ado 라이브 정보','요아소비 신곡','일본 애니 추천','애니메이션 굿즈','일본 페스티벌 일정']
+    },
+    'B_성장형직장인': {
+      sites: [
+        {host:'google.com',          path:'/search',  cat:'search',  lang:'ko'},
+        {host:'github.com',          path:'/explore', cat:'dev',     lang:'en'},
+        {host:'stackoverflow.com',   path:'/questions',cat:'dev',    lang:'en'},
+        {host:'velog.io',            path:'/explore', cat:'blog',    lang:'ko'},
+        {host:'inflearn.com',        path:'/courses', cat:'edu',     lang:'ko'},
+        {host:'notion.so',           path:'/me',      cat:'tool',    lang:'ko'},
+        {host:'medium.com',          path:'/topic',   cat:'blog',    lang:'en'},
+        {host:'wanted.co.kr',        path:'/jobs',    cat:'career',  lang:'ko'},
+        {host:'naver.com',           path:'/search.naver',cat:'search',lang:'ko'},
+      ],
+      titles: ['파이썬 데이터 분석','React Hook 정리','SQL JOIN 최적화','이력서 양식','부동산 시세']
+    },
+    'C_주말탐험가': {
+      sites: [
+        {host:'maps.google.com',     path:'/place',   cat:'travel',  lang:'ko'},
+        {host:'agoda.com',           path:'/hotels',  cat:'travel',  lang:'ko'},
+        {host:'kayak.co.kr',         path:'/flights', cat:'travel',  lang:'ko'},
+        {host:'instagram.com',       path:'/explore', cat:'sns',     lang:'ko'},
+        {host:'mangoplate.com',      path:'/search',  cat:'food',    lang:'ko'},
+        {host:'naver.com',           path:'/place',   cat:'food',    lang:'ko'},
+        {host:'youtube.com',         path:'/results', cat:'video',   lang:'ko'},
+        {host:'expedia.co.kr',       path:'/Hotels',  cat:'travel',  lang:'ko'},
+        {host:'airbnb.co.kr',        path:'/s/',      cat:'travel',  lang:'ko'},
+      ],
+      titles: ['후쿠오카 맛집','오사카 호텔','제주도 카페','서울 핫플','부산 1박2일']
+    },
+    'D_감성인간': {
+      sites: [
+        {host:'pinterest.com',       path:'/search',  cat:'inspire', lang:'en'},
+        {host:'instagram.com',       path:'/explore', cat:'sns',     lang:'ko'},
+        {host:'brunch.co.kr',        path:'/magazine',cat:'blog',    lang:'ko'},
+        {host:'29cm.co.kr',          path:'/category',cat:'shopping',lang:'ko'},
+        {host:'29cm.co.kr',          path:'/product', cat:'shopping',lang:'ko'},
+        {host:'naver.com',           path:'/search',  cat:'search',  lang:'ko'},
+        {host:'pixabay.com',         path:'/photos',  cat:'inspire', lang:'en'},
+        {host:'tumblr.com',          path:'/explore', cat:'sns',     lang:'en'},
+        {host:'medium.com',          path:'/topic/poetry',cat:'blog',lang:'en'},
+      ],
+      titles: ['감성 인테리어','인디 시집','북카페 추천','캘리그래피','민트색 소품']
+    },
+    'E_새벽운동러': {
+      sites: [
+        {host:'strava.com',          path:'/feed',    cat:'fitness', lang:'en'},
+        {host:'nike.com',            path:'/training',cat:'fitness', lang:'ko'},
+        {host:'myprotein.co.kr',     path:'/products',cat:'shopping',lang:'ko'},
+        {host:'google.com',          path:'/search',  cat:'search',  lang:'ko'},
+        {host:'youtube.com',         path:'/results', cat:'video',   lang:'ko'},
+        {host:'instagram.com',       path:'/explore', cat:'sns',     lang:'ko'},
+        {host:'29cm.co.kr',          path:'/category',cat:'shopping',lang:'ko'},
+        {host:'naver.com',           path:'/search',  cat:'search',  lang:'ko'},
+        {host:'soolife.kr',          path:'/products',cat:'shopping',lang:'ko'},
+      ],
+      titles: ['홈트레이닝 루틴','단백질 음료','러닝화 추천','크로스핏 동작','새벽 5시 루틴']
+    },
+    'F_육아탐색러': {
+      sites: [
+        {host:'naver.com',           path:'/cafe',    cat:'community',lang:'ko'},
+        {host:'mom-q.com',           path:'/board',   cat:'community',lang:'ko'},
+        {host:'coupang.com',         path:'/np',      cat:'shopping',lang:'ko'},
+        {host:'baby-soft.co.kr',     path:'/product', cat:'shopping',lang:'ko'},
+        {host:'youtube.com',         path:'/kids',    cat:'video',   lang:'ko'},
+        {host:'instagram.com',       path:'/explore', cat:'sns',     lang:'ko'},
+        {host:'pinkfong.com',        path:'/songs',   cat:'video',   lang:'ko'},
+        {host:'momtoday.co.kr',      path:'/news',    cat:'news',    lang:'ko'},
+        {host:'kakaopay.com',        path:'/benefits',cat:'tool',    lang:'ko'},
+      ],
+      titles: ['아기 이유식 레시피','육아용품 추천','어린이집 정보','피곤할 때 ASMR','맘카페 글']
+    }
+  };
+
+  const p = patterns[personaKey] || patterns['A_야행성덕후'];
+  const rows = [];
+  // 유튜브 데이터와 비슷한 시간 분포로 1.5배 더 생성 (웹서핑이 더 많음)
+  const numEntries = Math.floor(ytData.length * 1.5);
+  const startTime = new Date(ytData[0]?.watched_at || '2024-11-01').getTime();
+  const endTime = new Date(ytData[ytData.length-1]?.watched_at || '2025-11-30').getTime();
+
+  for(let i=0;i<numEntries;i++){
+    const t = startTime + Math.random()*(endTime-startTime);
+    const d = new Date(t);
+    const pad = n => String(n).padStart(2,'0');
+    const visited_at = `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+    const site = p.sites[Math.floor(Math.random()*p.sites.length)];
+    const title = p.titles[Math.floor(Math.random()*p.titles.length)];
+    const duration_sec = 30 + Math.floor(Math.random()*900); // 30초~15분
+    rows.push({
+      visited_at: visited_at,
+      host: site.host,
+      path: site.path,
+      page_title: title,
+      category: site.cat,
+      language: site.lang,
+      duration_sec: duration_sec,
+      device: Math.random()<0.6?'desktop':'mobile'
+    });
+  }
+  rows.sort((a,b)=>a.visited_at.localeCompare(b.visited_at));
+  return rows;
+}
+
+function genShopData(personaKey, ytData) {
+  const patterns = {
+    'A_야행성덕후': {
+      items: [
+        {name:'YOASOBI 신보 CD',         cat:'음반',     brand:'Sony Music',  price_range:[25000,45000]},
+        {name:'아이묭 한정 굿즈',         cat:'굿즈',     brand:'Music Japan', price_range:[15000,35000]},
+        {name:'애니메이션 피규어',         cat:'굿즈',     brand:'Good Smile',  price_range:[35000,120000]},
+        {name:'일본 만화 단행본',         cat:'도서',     brand:'대원씨아이',  price_range:[8000,12000]},
+        {name:'Ado 라이브 굿즈',         cat:'굿즈',     brand:'Sony Music',  price_range:[25000,55000]},
+        {name:'일본 한정 음반',           cat:'음반',     brand:'CD Japan',    price_range:[30000,55000]},
+        {name:'블루투스 헤드폰',         cat:'전자',     brand:'Sony',        price_range:[180000,450000]},
+      ]
+    },
+    'B_성장형직장인': {
+      items: [
+        {name:'IT 자기계발서',           cat:'도서',     brand:'한빛미디어',  price_range:[22000,38000]},
+        {name:'노트북 거치대',           cat:'전자',     brand:'PROBOX',      price_range:[35000,75000]},
+        {name:'기계식 키보드',           cat:'전자',     brand:'Keychron',    price_range:[120000,250000]},
+        {name:'노션 프리미엄 구독',       cat:'서비스',   brand:'Notion',      price_range:[10000,15000]},
+        {name:'데이터 분석 책',           cat:'도서',     brand:'위키북스',    price_range:[28000,42000]},
+        {name:'영어 학습 강의',           cat:'서비스',   brand:'야나두',      price_range:[150000,400000]},
+        {name:'스타벅스 리워드',          cat:'식음료',   brand:'스타벅스',    price_range:[4500,7000]},
+      ]
+    },
+    'C_주말탐험가': {
+      items: [
+        {name:'후쿠오카 항공권',         cat:'여행',     brand:'대한항공',    price_range:[350000,650000]},
+        {name:'에어비앤비 숙소',          cat:'여행',     brand:'Airbnb',      price_range:[80000,250000]},
+        {name:'캐리어',                   cat:'여행용품', brand:'쌤소나이트',  price_range:[280000,480000]},
+        {name:'맛집 예약',                cat:'식음료',   brand:'캐치테이블',  price_range:[40000,120000]},
+        {name:'카페 디저트',              cat:'식음료',   brand:'카페',        price_range:[8000,15000]},
+        {name:'일본 IC카드',              cat:'여행',     brand:'JR PASS',     price_range:[35000,85000]},
+        {name:'트래블 어댑터',            cat:'여행용품', brand:'Targus',      price_range:[18000,28000]},
+      ]
+    },
+    'D_감성인간': {
+      items: [
+        {name:'시집',                     cat:'도서',     brand:'창비',        price_range:[10000,14000]},
+        {name:'29CM 인테리어 소품',       cat:'생활',     brand:'29CM',        price_range:[18000,55000]},
+        {name:'캔들',                     cat:'생활',     brand:'요거맵',      price_range:[22000,45000]},
+        {name:'미니멀 노트',              cat:'문구',     brand:'몰스킨',      price_range:[28000,42000]},
+        {name:'식물',                     cat:'생활',     brand:'마켓비',      price_range:[15000,38000]},
+        {name:'인디 작가 굿즈',           cat:'굿즈',     brand:'그라폴리오',  price_range:[12000,28000]},
+        {name:'타로 카드',                cat:'취미',     brand:'알라딘',      price_range:[18000,32000]},
+      ]
+    },
+    'E_새벽운동러': {
+      items: [
+        {name:'단백질 보충제',           cat:'식음료',   brand:'MyProtein',   price_range:[35000,75000]},
+        {name:'러닝화',                   cat:'스포츠',   brand:'Nike',        price_range:[120000,280000]},
+        {name:'요가 매트',                cat:'스포츠',   brand:'Lululemon',   price_range:[65000,120000]},
+        {name:'스마트 워치',              cat:'전자',     brand:'Garmin',      price_range:[280000,650000]},
+        {name:'PT 정기권',                cat:'서비스',   brand:'헬스장',      price_range:[150000,350000]},
+        {name:'헬스 가방',                cat:'스포츠',   brand:'언더아머',    price_range:[55000,95000]},
+        {name:'스포츠 음료',              cat:'식음료',   brand:'포카리',      price_range:[2500,4000]},
+      ]
+    },
+    'F_육아탐색러': {
+      items: [
+        {name:'아기 옷',                  cat:'육아',     brand:'네네하우스',  price_range:[15000,45000]},
+        {name:'유아 책',                  cat:'도서',     brand:'한솔수북',    price_range:[8000,22000]},
+        {name:'분유',                     cat:'육아',     brand:'남양',        price_range:[35000,55000]},
+        {name:'기저귀',                   cat:'육아',     brand:'하기스',      price_range:[28000,45000]},
+        {name:'장난감',                   cat:'육아',     brand:'레고',        price_range:[25000,75000]},
+        {name:'유모차 액세서리',          cat:'육아',     brand:'스토케',      price_range:[35000,85000]},
+        {name:'간식',                     cat:'식음료',   brand:'마켓컬리',    price_range:[12000,28000]},
+      ]
+    }
+  };
+  const p = patterns[personaKey] || patterns['A_야행성덕후'];
+  const rows = [];
+  const numOrders = Math.floor(ytData.length * 0.25); // 유튜브 대비 1/4 정도
+  const startTime = new Date(ytData[0]?.watched_at || '2024-11-01').getTime();
+  const endTime = new Date(ytData[ytData.length-1]?.watched_at || '2025-11-30').getTime();
+  const channels = ['쿠팡','네이버페이','카카오페이','29CM','무신사','오늘의집'];
+
+  for(let i=0;i<numOrders;i++){
+    const t = startTime + Math.random()*(endTime-startTime);
+    const d = new Date(t);
+    const pad = n => String(n).padStart(2,'0');
+    const ordered_at = `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+    const it = p.items[Math.floor(Math.random()*p.items.length)];
+    const price = it.price_range[0] + Math.floor(Math.random()*(it.price_range[1]-it.price_range[0]));
+    const qty = Math.random()<0.85?1:1+Math.floor(Math.random()*3);
+    rows.push({
+      ordered_at: ordered_at,
+      product_name: it.name,
+      category: it.cat,
+      brand: it.brand,
+      price: price,
+      quantity: qty,
+      total_amount: price*qty,
+      channel: channels[Math.floor(Math.random()*channels.length)]
+    });
+  }
+  rows.sort((a,b)=>a.ordered_at.localeCompare(b.ordered_at));
+  return rows;
+}
+
 function swTab(m){
   S.dataMode=m;
   document.getElementById('tc-dummy').style.display=m==='dummy'?'block':'none';
