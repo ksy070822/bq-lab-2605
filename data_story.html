@@ -643,6 +643,126 @@
     }
 
     /* ===================================================
+       CLUSTER INSIGHT CARD
+    =================================================== */
+    #cluster-insight-card {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      border-radius: 16px;
+      padding: 18px 22px;
+      max-width: 280px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.10), 0 1px 4px rgba(0,0,0,0.06);
+      pointer-events: none;
+      opacity: 0;
+      transform: translateY(-6px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      z-index: 100;
+    }
+
+    #cluster-insight-card.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .cluster-card-emoji {
+      font-size: 22px;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .cluster-card-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-heading);
+      margin-bottom: 6px;
+      line-height: 1.3;
+    }
+
+    .cluster-card-desc {
+      font-size: 12.5px;
+      color: var(--text-sub);
+      line-height: 1.6;
+      word-break: keep-all;
+    }
+
+    /* ===================================================
+       USE CASES SECTION
+    =================================================== */
+    #use-cases {
+      background: var(--bg);
+    }
+
+    .use-cases-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+
+    .use-case-card {
+      background: var(--white);
+      border-radius: 16px;
+      padding: 28px;
+      box-shadow: var(--shadow-card);
+      border: 1px solid var(--border);
+      border-left-width: 4px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      cursor: default;
+    }
+
+    .use-case-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .use-case-icon {
+      font-size: 32px;
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .use-case-tag {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 100px;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+
+    .use-case-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      line-height: 1.35;
+    }
+
+    .use-case-desc {
+      font-size: 14.5px;
+      color: #475569;
+      line-height: 1.7;
+      word-break: keep-all;
+    }
+
+    .use-cases-footer {
+      margin-top: 40px;
+      text-align: center;
+      font-size: 15px;
+      color: var(--text-muted);
+      line-height: 1.7;
+      padding: 24px 32px;
+      background: var(--white);
+      border-radius: 14px;
+      border: 1px solid var(--border);
+    }
+
+    @media (max-width: 768px) {
+      .use-cases-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ===================================================
        GRAPH LEGEND
     =================================================== */
     .graph-legend {
@@ -807,10 +927,15 @@
         </div>
       </div>
 
-      <div class="graph-wrapper">
+      <div class="graph-wrapper" style="position:relative;">
         <svg id="force-graph"></svg>
         <div class="graph-hint">
           💡 점선 = 다른 영역이지만 같은 주제로 연결된 활동들
+        </div>
+        <div id="cluster-insight-card">
+          <span class="cluster-card-emoji" id="ci-emoji"></span>
+          <div class="cluster-card-title" id="ci-title"></div>
+          <div class="cluster-card-desc" id="ci-desc"></div>
         </div>
       </div>
 
@@ -953,6 +1078,153 @@
           </p>
         </div>
 
+        <!-- 카드 7: 네이버에서 살아요 -->
+        <div class="insight-card card-pink">
+          <span class="card-emoji">🌐</span>
+          <span class="card-tag">웹 라이프스타일</span>
+          <div class="card-title">네이버에서 살아요</div>
+          <span class="card-big-num">19,062</span>
+          <p class="card-desc" style="margin-top:4px;margin-bottom:12px;">
+            회 방문 (전체 웹 사용의 <strong style="color:var(--pink)">65%</strong>)
+          </p>
+          <p class="card-desc">
+            메이는 네이버에 산다고 봐도 돼요.<br />
+            뉴스·카페·블로그·지도·쇼핑 — <strong style="color:var(--pink)">다 네이버 안에서 끝</strong>.<br />
+            그 와중에 sakuticket.jp 111번 — 일본 공연 진심이에요.
+          </p>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;">
+            <span style="font-size:12px;background:var(--pink-bg);color:var(--pink);padding:3px 10px;border-radius:100px;font-weight:600;">Google 작업 633</span>
+            <span style="font-size:12px;background:var(--pink-bg);color:var(--pink);padding:3px 10px;border-radius:100px;font-weight:600;">localhost 214</span>
+            <span style="font-size:12px;background:var(--pink-bg);color:var(--pink);padding:3px 10px;border-radius:100px;font-weight:600;">Notion 185</span>
+            <span style="font-size:12px;background:var(--pink-bg);color:var(--pink);padding:3px 10px;border-radius:100px;font-weight:600;">Toss 176</span>
+            <span style="font-size:12px;background:var(--pink-bg);color:var(--pink);padding:3px 10px;border-radius:100px;font-weight:600;">sakuticket 111</span>
+          </div>
+        </div>
+
+        <!-- 카드 8: 검색어가 본 메이 -->
+        <div class="insight-card card-purple">
+          <span class="card-emoji">🪪</span>
+          <span class="card-tag">페르소나 정밀화</span>
+          <div class="card-title">검색어가 본 메이</div>
+          <p class="card-desc" style="margin-bottom:14px;">
+            데이터가 그린 메이의 얼굴 — 검색창에 다 남아 있었어요.
+          </p>
+          <div style="display:flex;flex-direction:column;gap:9px;">
+            <div style="font-size:14px;color:var(--text-body);line-height:1.5;">
+              🎵 테일러 스위프트 광팬 — <strong style="color:var(--purple)">147회</strong> 검색
+            </div>
+            <div style="font-size:14px;color:var(--text-body);line-height:1.5;">
+              ✈️ 여행 영상 즐겨봐요 — 곽튜브·빠니보틀·기안84
+            </div>
+            <div style="font-size:14px;color:var(--text-body);line-height:1.5;">
+              🇯🇵 일본 쇼와팝 — 마츠다 세이코·나카모리 아키나
+            </div>
+            <div style="font-size:14px;color:var(--text-body);line-height:1.5;">
+              🧑‍💻 직접 개발도 해요 — GCP·localhost <strong style="color:var(--purple)">233회</strong>
+            </div>
+            <div style="font-size:14px;color:var(--text-body);line-height:1.5;">
+              🐱 아픈 고양이 — 동물병원 <strong style="color:var(--purple)">26회</strong> 검색
+            </div>
+            <div style="font-size:14px;color:var(--text-body);line-height:1.5;">
+              🏖️ 양양 갈 계획 — 양양 <strong style="color:var(--purple)">369회</strong> 검색 (1위!)
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 3.5: USE CASES
+  ============================================================ -->
+  <section id="use-cases">
+    <div class="container">
+      <div class="section-label">활용 사례</div>
+      <h2 class="section-title">어디에 써먹어요?</h2>
+      <p class="section-desc">
+        이런 데이터가 정리돼 있으면, 회사에서 다양한 일에 쓸 수 있어요.
+      </p>
+
+      <div class="use-cases-grid">
+
+        <!-- 카드 1: 마케팅 푸시 최적화 -->
+        <div class="use-case-card" style="border-left-color:#3B82F6;">
+          <span class="use-case-icon">📱</span>
+          <span class="use-case-tag" style="background:rgba(59,130,246,0.12);color:#1D4ED8;">마케팅</span>
+          <div class="use-case-title" style="color:#3B82F6;">마케팅 푸시 최적화</div>
+          <p class="use-case-desc">
+            같은 알림도 평일 12시 vs 평일 23시는 반응이 천지차이예요.<br />
+            "<strong style="color:#3B82F6;">메이 같은 야간형 사용자에겐 22시 푸시가 효율 X배</strong>"<br />
+            시간대 시청 분포 + 시간대별 클릭률을 결합하면 발신 타이밍을 개인화할 수 있어요.
+          </p>
+        </div>
+
+        <!-- 카드 2: 콘텐츠 개인화 추천 -->
+        <div class="use-case-card" style="border-left-color:#8B5CF6;">
+          <span class="use-case-icon">🎬</span>
+          <span class="use-case-tag" style="background:rgba(139,92,246,0.12);color:#6D28D9;">추천 시스템</span>
+          <div class="use-case-title" style="color:#8B5CF6;">콘텐츠 개인화 추천</div>
+          <p class="use-case-desc">
+            "<strong style="color:#8B5CF6;">뉴스 30분 본 사람한테 무거운 시사보단 가벼운 브이로그를</strong>"<br />
+            한 사람의 카테고리 피로도를 실시간으로 추적해서 다음 추천 톤을 조정할 수 있어요.<br />
+            시간순 시청 시퀀스 + 카테고리 분포가 핵심 데이터예요.
+          </p>
+        </div>
+
+        <!-- 카드 3: 이탈 조기 감지 -->
+        <div class="use-case-card" style="border-left-color:#DC2626;">
+          <span class="use-case-icon">⚠️</span>
+          <span class="use-case-tag" style="background:rgba(220,38,38,0.12);color:#B91C1C;">리텐션</span>
+          <div class="use-case-title" style="color:#DC2626;">이탈 조기 감지</div>
+          <p class="use-case-desc">
+            평소 평균 615편 보던 사람이 이번 주 149편? <strong style="color:#DC2626;">위험 신호</strong>예요.<br />
+            자동 알림 발송, 또는 CRM이 개입할 타이밍을 캐치할 수 있어요.<br />
+            주간 행동 추이 + 이동평균 비교로 이탈 예측이 가능해요.
+          </p>
+        </div>
+
+        <!-- 카드 4: 광고 타겟 정밀화 -->
+        <div class="use-case-card" style="border-left-color:#F59E0B;">
+          <span class="use-case-icon">🎯</span>
+          <span class="use-case-tag" style="background:rgba(245,158,11,0.12);color:#B45309;">광고</span>
+          <div class="use-case-title" style="color:#F59E0B;">광고 타겟 정밀화</div>
+          <p class="use-case-desc">
+            "<strong style="color:#F59E0B;">여행 관심 ✅ + 음악·일본 ✅ + 야간 활성 ✅</strong>"<br />
+            3중 조건 매칭 사용자에게만 일본 항공권 광고를 보낼 수 있어요.<br />
+            다중 신호 동시 만족 세그먼트 추출이 핵심이에요.
+          </p>
+        </div>
+
+        <!-- 카드 5: 회사 데이터에 적용하면 -->
+        <div class="use-case-card" style="border-left-color:#059669;">
+          <span class="use-case-icon">💼</span>
+          <span class="use-case-tag" style="background:rgba(5,150,105,0.12);color:#047857;">업무 활용</span>
+          <div class="use-case-title" style="color:#059669;">회사 데이터에 적용하면</div>
+          <p class="use-case-desc">
+            우리 회사 데이터도 똑같아요. 결제 데이터 + 행동 로그 + CS 티켓을 한 군데 모아 정리하면,<br />
+            "<strong style="color:#059669;">결제 직전에 어떤 페이지 봤는지</strong>", "<strong style="color:#059669;">이탈 직전 CS 문의 패턴</strong>" 다 추적 가능해요.<br />
+            여러 출처 데이터를 통합해 인사이트로 바꾸는 게 핵심이에요.
+          </p>
+        </div>
+
+        <!-- 카드 6: 나를 더 잘 알기 -->
+        <div class="use-case-card" style="border-left-color:#EC4899;">
+          <span class="use-case-icon">🪞</span>
+          <span class="use-case-tag" style="background:rgba(236,72,153,0.12);color:#BE185D;">셀프 코칭</span>
+          <div class="use-case-title" style="color:#EC4899;">나를 더 잘 알기</div>
+          <p class="use-case-desc">
+            "<strong style="color:#EC4899;">야간 시청 34%, 기준의 3배</strong>" — 수면 부족 가능성 점검.<br />
+            "<strong style="color:#EC4899;">최근 2주 시청 급감</strong>" — 무슨 일 있었나 돌이켜보기.<br />
+            데이터가 나를 객관적으로 비춰주는 거울이 돼요.
+          </p>
+        </div>
+
+      </div>
+
+      <div class="use-cases-footer">
+        같은 데이터로 — 마케터는 광고를, 기획자는 추천을, 운영은 이탈 신호를.<br />
+        <strong style="color:var(--text-heading)">한 번 잘 쌓으면 영원히 우려먹어요.</strong>
       </div>
     </div>
   </section>
@@ -1048,6 +1320,52 @@
       web:     '#EC4899',
     };
 
+    // 클러스터 정의
+    const CLUSTERS = {
+      japan: {
+        emoji: '🇯🇵',
+        title: '일본 애호가',
+        desc: '음악·검색·지도·웹 다섯 군데에서 일본 관련 활동이 발견됐어요. 데이터가 본 메이는 "음악·일본 애호가"예요.',
+        nodes: ['yt-japan', 'sr-matsuda', 'sr-japan', 'mu-japan', 'mp-japan', 'wb-ticket', 'sr-japan-food', 'mu-drive', 'mp-food'],
+      },
+      ai: {
+        emoji: '🤖',
+        title: 'AI 학습 중',
+        desc: '작년엔 거의 없던 AI 관련 활동이 영상·검색·도구 4축으로 동시에 등장. 학습 의지가 데이터에 드러나요.',
+        nodes: ['yt-ai', 'sr-ai', 'sr-claude', 'wb-ai', 'wb-claude'],
+      },
+      yangyang: {
+        emoji: '🏖️',
+        title: '휴식이 필요해',
+        desc: '여행 검색과 지도 저장이 같은 시점에 늘어요. 떠나고 싶을 때 보이는 패턴이에요.',
+        nodes: ['sr-yangyang', 'mp-yangyang', 'mu-drive', 'wb-shop'],
+      },
+      concert: {
+        emoji: '🎵',
+        title: '공연러',
+        desc: '좋아하는 아티스트 검색 → 영어팝 재생 → 티켓 예매 사이트 방문. 소비 의도 시그널이에요.',
+        nodes: ['sr-taylor', 'mu-english', 'yt-mv', 'wb-ticketbook', 'mu-korean', 'mu-kpop'],
+      },
+      food: {
+        emoji: '🍜',
+        title: '맛집 탐색',
+        desc: '먹방 보다가 → 맛집 저장 → 일본 음식 검색. "오늘 뭐 먹지" 패턴이에요.',
+        nodes: ['yt-mukbang', 'mp-food', 'sr-japan-food', 'mu-ost'],
+      },
+      cat: {
+        emoji: '🐱',
+        title: '고양이집사',
+        desc: '병원 검색과 지도 동물병원 저장, 용품 쇼핑까지. 데이터가 고양이 집사임을 증명해요.',
+        nodes: ['sr-cat', 'mp-vet', 'wb-shop'],
+      },
+    };
+
+    // 노드별 클러스터 매핑 (hover 시 인사이트 카드 표시용)
+    const NODE_CLUSTER = {};
+    Object.entries(CLUSTERS).forEach(([key, cl]) => {
+      cl.nodes.forEach(nid => { NODE_CLUSTER[nid] = key; });
+    });
+
     const NODE_INFO = {
       'me': {
         emoji: '👩‍💻',
@@ -1079,73 +1397,103 @@
         title: '웹서핑',
         desc: '네이버·구글 검색, 일본 티켓 예약, AI 도구 탐색이 많아요. 업무 중 자료 찾기와 취미 서핑이 섞여 있어요.'
       },
-      // 2차 노드
-      'yt-news': { emoji: '📰', title: '뉴스', desc: '작년 37% → 올해 26%로 줄었어요. 자극적인 뉴스에 지쳤나봐요. 대신 브이로그가 늘었어요.' },
-      'yt-vlog': { emoji: '🎬', title: '브이로그', desc: '19.7% → 24.2%로 증가. 누군가의 일상을 보면서 대리만족 중인 것 같아요.' },
-      'yt-variety': { emoji: '🎭', title: '예능', desc: '힐링용이에요. 퇴근 후 가벼운 예능으로 하루를 마무리하는 패턴이에요.' },
-      'yt-ai': { emoji: '🤖', title: 'AI·교육', desc: '2.8% → 13.1%로 5배 증가! AI 관련 영상을 정말 많이 봤어요. 오빠두엑셀, 빌더조쉬가 자주 등장해요.' },
-      'yt-mv': { emoji: '🎤', title: '뮤직비디오', desc: '음악 감상과 영상 시청이 겹치는 영역이에요. 테일러 스위프트, 마츠다 세이코 뮤비를 자주 봤어요.' },
-      'sr-taylor': { emoji: '🎸', title: '테일러 스위프트', desc: '검색 top 5 아티스트 중 하나예요. Eras Tour 관련 검색이 엄청 많았어요.' },
-      'sr-matsuda': { emoji: '🌸', title: '마츠다 세이코', desc: '80년대 일본 팝 아이콘. 드라이브용 플레이리스트의 단골이에요.' },
-      'sr-ai': { emoji: '💡', title: 'AI 강의', desc: '클로드, 챗GPT, 제미나이 관련 검색이 많아요. 업무에 바로 써먹을 수 있는 실전 강의 위주로 찾아요.' },
-      'sr-japan': { emoji: '🗾', title: '일본 여행', desc: '올해 일본 여행 계획을 많이 세웠어요. 검색→지도→티켓 예약이 연결되는 패턴이에요.' },
-      'sr-claude': { emoji: '🤍', title: '클로드', desc: '이번 발표 준비도 클로드랑 같이 했어요. 저한테 없어선 안 될 존재예요.' },
-      'mu-korean': { emoji: '🎵', title: '한국가요', desc: '39%로 가장 많아요. K-POP부터 발라드까지 폭넓게 들어요.' },
-      'mu-english': { emoji: '🎸', title: '영어팝', desc: '37%. 테일러 스위프트, 빌리 아일리시 위주예요. 집중 작업할 때 많이 들어요.' },
-      'mu-japan': { emoji: '🚗', title: '일본 드라이브', desc: '22%. 드라이브할 때는 꼭 일본 음악이에요. City Pop 장르가 많아요.' },
-      'mu-kpop': { emoji: '✨', title: 'K-POP', desc: '한국가요 안에서도 K-POP 비중이 높아요. 운동할 때 많이 들어요.' },
-      'mu-jazz': { emoji: '🎷', title: '재즈', desc: '집중 작업 or 카페 분위기 낼 때 틀어요. 갑자기 어른이 된 것 같은 느낌이에요.' },
-      'mp-japan': { emoji: '⛩️', title: '일본 여행지', desc: '오사카, 도쿄, 교토 위주로 많이 검색했어요. 여행 계획 세울 때 지도 타임라인이 꽉 차요.' },
-      'mp-yangyang': { emoji: '🌊', title: '양양 여행', desc: '서핑 성지 양양. 여름 여행 계획 세울 때 자주 검색했어요.' },
-      'mp-food': { emoji: '🍜', title: '맛집', desc: '"오늘 뭐 먹지" 검색이 지도 기록의 상당 부분을 차지해요. 밥 선택이 어렵긴 해요.' },
-      'mp-cafe': { emoji: '☕', title: '카페', desc: '작업할 카페 찾기. 음악 들으며 노트북 펴는 게 취미예요.' },
-      'mp-biz': { emoji: '🏢', title: '출장지', desc: '회사 관련 장소 검색. 미팅 장소나 출장 때 많이 써요.' },
-      'wb-naver': { emoji: '🔎', title: '네이버 검색', desc: '국내 정보, 뉴스, 맛집 후기는 여전히 네이버가 편해요.' },
-      'wb-google': { emoji: '🔧', title: '구글 작업', desc: '업무·기술 검색은 구글이 더 잘 나와요. SQL, 에러 메시지 검색이 많아요.' },
-      'wb-ticket': { emoji: '✈️', title: '일본 티켓', desc: '항공권, 숙소, 공연 티켓까지. 일본 여행 준비는 웹서핑이 핵심이에요.' },
-      'wb-shop': { emoji: '🛍️', title: '쇼핑', desc: '필요한 게 생기면 바로 검색. 충동구매는 아니고 신중한 쇼핑이에요 (데이터가 그래요).' },
-      'wb-ai': { emoji: '🛠️', title: 'AI 도구', desc: '클로드, 챗GPT, 미드저니, 피그마 AI... 새로운 AI 도구 탐색이 많아요.' },
+      // 2차 노드 — 유튜브
+      'yt-news':    { emoji: '📰', title: '뉴스',       desc: '작년 37% → 올해 26%로 줄었어요. 자극적인 뉴스에 지쳤나봐요. 대신 브이로그가 늘었어요.' },
+      'yt-vlog':    { emoji: '🎬', title: '브이로그',   desc: '19.7% → 24.2%로 증가. 누군가의 일상을 보면서 대리만족 중인 것 같아요.' },
+      'yt-variety': { emoji: '🎭', title: '예능',       desc: '힐링용이에요. 퇴근 후 가벼운 예능으로 하루를 마무리하는 패턴이에요.' },
+      'yt-ai':      { emoji: '🤖', title: 'AI·교육',    desc: '2.8% → 13.1%로 5배 증가! AI 관련 영상을 정말 많이 봤어요. 오빠두엑셀, 빌더조쉬가 자주 등장해요.' },
+      'yt-mv':      { emoji: '🎤', title: '뮤직비디오', desc: '음악 감상과 영상 시청이 겹치는 영역이에요. 테일러 스위프트, 마츠다 세이코 뮤비를 자주 봤어요.' },
+      'yt-mukbang': { emoji: '🍱', title: '먹방',       desc: '먹방 보다가 맛집 지도 저장으로 이어지는 패턴이에요. "오늘 뭐 먹지" 고민의 시작이에요.' },
+      'yt-japan':   { emoji: '🎌', title: '일본 콘텐츠', desc: '일본 예능, 여행 브이로그, 문화 콘텐츠가 많아요. 일본 관심이 영상에도 진하게 나타나요.' },
+      // 2차 노드 — 검색
+      'sr-taylor':    { emoji: '🎸', title: '테일러 스위프트', desc: '검색 top 5 아티스트. Eras Tour 관련 검색이 엄청 많았어요.' },
+      'sr-matsuda':   { emoji: '🌸', title: '마츠다 세이코',   desc: '80년대 일본 팝 아이콘. 드라이브용 플레이리스트의 단골이에요.' },
+      'sr-ai':        { emoji: '💡', title: 'AI 강의',         desc: '클로드, 챗GPT, 제미나이 관련 검색이 많아요. 실전 강의 위주예요.' },
+      'sr-japan':     { emoji: '🗾', title: '일본 여행',       desc: '올해 일본 여행 계획을 많이 세웠어요. 검색→지도→티켓 예약이 연결되는 패턴이에요.' },
+      'sr-claude':    { emoji: '🤍', title: '클로드',          desc: '이번 발표 준비도 클로드랑 같이 했어요. 저한테 없어선 안 될 존재예요.' },
+      'sr-yangyang':  { emoji: '🌊', title: '양양',            desc: '서핑 성지 양양. 여름마다 가고 싶어서 검색하는 패턴이에요.' },
+      'sr-movie':     { emoji: '🎬', title: '최신영화',        desc: '개봉작·예고편·평점 검색이 많았어요. 보기 전에 미리 보는 스타일이에요.' },
+      'sr-cat':       { emoji: '🐱', title: '고양이병원',      desc: '고양이 건강 관련 검색이에요. 데이터가 집사임을 증명해요.' },
+      'sr-japan-food':{ emoji: '🍣', title: '일본 음식',       desc: '일본 음식 레시피, 맛집 검색이에요. 일본 여행 후 생긴 관심이에요.' },
+      // 2차 노드 — 음악
+      'mu-korean':  { emoji: '🎵', title: '한국가요',    desc: '39%로 가장 많아요. K-POP부터 발라드까지 폭넓게 들어요.' },
+      'mu-english': { emoji: '🎸', title: '영어팝',      desc: '37%. 테일러 스위프트, 빌리 아일리시 위주예요. 집중 작업할 때 많이 들어요.' },
+      'mu-japan':   { emoji: '🚗', title: '일본드라이브', desc: '22%. 드라이브할 때는 꼭 일본 음악이에요. City Pop 장르가 많아요.' },
+      'mu-kpop':    { emoji: '✨', title: 'K-POP',       desc: '한국가요 안에서도 K-POP 비중이 높아요. 운동할 때 많이 들어요.' },
+      'mu-jazz':    { emoji: '🎷', title: '재즈',        desc: '집중 작업 or 카페 분위기 낼 때 틀어요. 갑자기 어른이 된 것 같은 느낌이에요.' },
+      'mu-ost':     { emoji: '🎬', title: 'OST',         desc: '드라마·영화 OST도 많이 들어요. 먹방 보다가 OST 검색으로 이어지기도 해요.' },
+      'mu-drive':   { emoji: '🛣️', title: '드라이브 플리', desc: '드라이브 전용 플레이리스트예요. 일본 음악 + 영어팝이 섞인 구성이에요.' },
+      // 2차 노드 — 지도
+      'mp-japan':    { emoji: '⛩️', title: '일본 여행지', desc: '오사카, 도쿄, 교토 위주로 많이 검색했어요. 여행 계획 세울 때 지도 타임라인이 꽉 차요.' },
+      'mp-yangyang': { emoji: '🌊', title: '양양 여행',   desc: '서핑 성지 양양. 여름 여행 계획 세울 때 자주 검색했어요.' },
+      'mp-food':     { emoji: '🍜', title: '맛집',        desc: '"오늘 뭐 먹지" 검색이 지도 기록의 상당 부분을 차지해요. 밥 선택이 어렵긴 해요.' },
+      'mp-cafe':     { emoji: '☕', title: '카페',        desc: '작업할 카페 찾기. 음악 들으며 노트북 펴는 게 취미예요.' },
+      'mp-biz':      { emoji: '🏢', title: '출장지',      desc: '회사 관련 장소 검색. 미팅 장소나 출장 때 많이 써요.' },
+      'mp-concert':  { emoji: '🎪', title: '공연장',      desc: '공연 전 위치 확인. 좋아하는 아티스트 공연에 자주 가요.' },
+      'mp-vet':      { emoji: '🏥', title: '동물병원',    desc: '고양이 관련 지도 검색이에요. 근처 동물병원 즐겨찾기해뒀어요.' },
+      // 2차 노드 — 웹
+      'wb-naver':      { emoji: '🔎', title: '네이버검색', desc: '국내 정보, 뉴스, 맛집 후기는 여전히 네이버가 편해요.' },
+      'wb-naver-news': { emoji: '📰', title: '네이버뉴스', desc: '검색하다 자연스럽게 뉴스 탭으로. 정치·연예·경제 헤드라인 위주예요.' },
+      'wb-google':     { emoji: '🔧', title: '구글작업',   desc: '업무·기술 검색은 구글이 더 잘 나와요. SQL, 에러 메시지 검색이 많아요.' },
+      'wb-ticket':     { emoji: '✈️', title: '일본티켓',   desc: '항공권, 숙소, 공연 티켓까지. 일본 여행 준비는 웹서핑이 핵심이에요.' },
+      'wb-shop':       { emoji: '🛍️', title: '쇼핑',       desc: '필요한 게 생기면 바로 검색. 충동구매는 아니고 신중한 쇼핑이에요 (데이터가 그래요).' },
+      'wb-ai':         { emoji: '🛠️', title: 'AI 도구',    desc: '클로드, 챗GPT, 미드저니, 피그마 AI... 새로운 AI 도구 탐색이 많아요.' },
+      'wb-ticketbook': { emoji: '🎟️', title: '티켓예매',   desc: '인터파크, 멜론티켓 등. 공연 알림 뜨면 바로 예매하는 패턴이에요.' },
+      'wb-claude':     { emoji: '🤖', title: '클로드 사이트', desc: 'claude.ai 직접 접속. 업무·발표 준비·코딩 다방면으로 써요.' },
     };
 
     const nodes = [
       // center
       { id: 'me', label: '나', layer: 0, color: COLORS.center, r: 36, group: 'center' },
       // 1차
-      { id: 'youtube',  label: '유튜브',  layer: 1, color: COLORS.youtube, r: 24, group: 'youtube' },
-      { id: 'search',   label: '검색',    layer: 1, color: COLORS.search,  r: 24, group: 'search'  },
-      { id: 'music',    label: '음악',    layer: 1, color: COLORS.music,   r: 24, group: 'music'   },
-      { id: 'map',      label: '지도',    layer: 1, color: COLORS.map,     r: 24, group: 'map'     },
-      { id: 'web',      label: '웹서핑',  layer: 1, color: COLORS.web,     r: 24, group: 'web'     },
-      // 2차: 유튜브
+      { id: 'youtube', label: '유튜브', layer: 1, color: COLORS.youtube, r: 24, group: 'youtube' },
+      { id: 'search',  label: '검색',   layer: 1, color: COLORS.search,  r: 24, group: 'search'  },
+      { id: 'music',   label: '음악',   layer: 1, color: COLORS.music,   r: 24, group: 'music'   },
+      { id: 'map',     label: '지도',   layer: 1, color: COLORS.map,     r: 24, group: 'map'     },
+      { id: 'web',     label: '웹서핑', layer: 1, color: COLORS.web,     r: 24, group: 'web'     },
+      // 2차: 유튜브 (기존 5 + 신규 2)
       { id: 'yt-news',    label: '뉴스',       layer: 2, color: '#FED7AA', r: 14, group: 'youtube' },
       { id: 'yt-vlog',    label: '브이로그',   layer: 2, color: '#FED7AA', r: 14, group: 'youtube' },
       { id: 'yt-variety', label: '예능',       layer: 2, color: '#FED7AA', r: 14, group: 'youtube' },
       { id: 'yt-ai',      label: 'AI·교육',    layer: 2, color: '#FED7AA', r: 16, group: 'youtube' },
       { id: 'yt-mv',      label: '뮤직비디오', layer: 2, color: '#FED7AA', r: 14, group: 'youtube' },
-      // 2차: 검색
-      { id: 'sr-taylor',  label: '테일러스위프트', layer: 2, color: '#BAE6FD', r: 13, group: 'search' },
-      { id: 'sr-matsuda', label: '마츠다세이코',   layer: 2, color: '#BAE6FD', r: 13, group: 'search' },
-      { id: 'sr-ai',      label: 'AI 강의',        layer: 2, color: '#BAE6FD', r: 15, group: 'search' },
-      { id: 'sr-japan',   label: '일본 여행',      layer: 2, color: '#BAE6FD', r: 15, group: 'search' },
-      { id: 'sr-claude',  label: '클로드',         layer: 2, color: '#BAE6FD', r: 14, group: 'search' },
-      // 2차: 음악
-      { id: 'mu-korean',  label: '한국가요',    layer: 2, color: '#DDD6FE', r: 15, group: 'music' },
-      { id: 'mu-english', label: '영어팝',      layer: 2, color: '#DDD6FE', r: 14, group: 'music' },
-      { id: 'mu-japan',   label: '일본드라이브',layer: 2, color: '#DDD6FE', r: 13, group: 'music' },
-      { id: 'mu-kpop',    label: 'K-POP',       layer: 2, color: '#DDD6FE', r: 12, group: 'music' },
+      { id: 'yt-mukbang', label: '먹방',       layer: 2, color: '#FED7AA', r: 13, group: 'youtube' },
+      { id: 'yt-japan',   label: '일본 콘텐츠',layer: 2, color: '#FED7AA', r: 13, group: 'youtube' },
+      // 2차: 검색 (기존 5 + 신규 4)
+      { id: 'sr-taylor',    label: '테일러스위프트', layer: 2, color: '#BAE6FD', r: 16, group: 'search', volume: 'med' },
+      { id: 'sr-matsuda',   label: '마츠다세이코',   layer: 2, color: '#BAE6FD', r: 13, group: 'search', volume: 'low' },
+      { id: 'sr-ai',        label: 'AI 강의',        layer: 2, color: '#BAE6FD', r: 22, group: 'search', volume: 'high' },
+      { id: 'sr-japan',     label: '일본 여행',      layer: 2, color: '#BAE6FD', r: 20, group: 'search', volume: 'high' },
+      { id: 'sr-claude',    label: '클로드',         layer: 2, color: '#BAE6FD', r: 19, group: 'search', volume: 'high' },
+      { id: 'sr-yangyang',  label: '양양',           layer: 2, color: '#BAE6FD', r: 12, group: 'search', volume: 'low' },
+      { id: 'sr-movie',     label: '최신영화',       layer: 2, color: '#BAE6FD', r: 14, group: 'search', volume: 'med' },
+      { id: 'sr-cat',       label: '고양이병원',     layer: 2, color: '#BAE6FD', r: 15, group: 'search', volume: 'med' },
+      { id: 'sr-japan-food',label: '일본 음식',      layer: 2, color: '#BAE6FD', r: 14, group: 'search', volume: 'med' },
+      // 2차: 음악 (기존 5 + 신규 2)
+      { id: 'mu-korean',  label: '한국가요',     layer: 2, color: '#DDD6FE', r: 15, group: 'music' },
+      { id: 'mu-english', label: '영어팝',       layer: 2, color: '#DDD6FE', r: 14, group: 'music' },
+      { id: 'mu-japan',   label: '일본드라이브', layer: 2, color: '#DDD6FE', r: 13, group: 'music' },
+      { id: 'mu-kpop',    label: 'K-POP',        layer: 2, color: '#DDD6FE', r: 12, group: 'music' },
       { id: 'mu-jazz',    label: '재즈',         layer: 2, color: '#DDD6FE', r: 12, group: 'music' },
-      // 2차: 지도
-      { id: 'mp-japan',   label: '일본 여행지', layer: 2, color: '#FDE68A', r: 15, group: 'map' },
-      { id: 'mp-yangyang',label: '양양 여행',   layer: 2, color: '#FDE68A', r: 13, group: 'map' },
-      { id: 'mp-food',    label: '맛집',        layer: 2, color: '#FDE68A', r: 14, group: 'map' },
-      { id: 'mp-cafe',    label: '카페',        layer: 2, color: '#FDE68A', r: 12, group: 'map' },
-      { id: 'mp-biz',     label: '출장지',      layer: 2, color: '#FDE68A', r: 12, group: 'map' },
-      // 2차: 웹
-      { id: 'wb-naver',   label: '네이버검색', layer: 2, color: '#FBCFE8', r: 13, group: 'web' },
-      { id: 'wb-google',  label: '구글작업',   layer: 2, color: '#FBCFE8', r: 14, group: 'web' },
-      { id: 'wb-ticket',  label: '일본티켓',   layer: 2, color: '#FBCFE8', r: 14, group: 'web' },
-      { id: 'wb-shop',    label: '쇼핑',       layer: 2, color: '#FBCFE8', r: 12, group: 'web' },
-      { id: 'wb-ai',      label: 'AI 도구',    layer: 2, color: '#FBCFE8', r: 15, group: 'web' },
+      { id: 'mu-ost',     label: 'OST',          layer: 2, color: '#DDD6FE', r: 11, group: 'music' },
+      { id: 'mu-drive',   label: '드라이브 플리', layer: 2, color: '#DDD6FE', r: 12, group: 'music' },
+      // 2차: 지도 (기존 5 + 신규 2)
+      { id: 'mp-japan',    label: '일본 여행지', layer: 2, color: '#FDE68A', r: 15, group: 'map' },
+      { id: 'mp-yangyang', label: '양양 여행',   layer: 2, color: '#FDE68A', r: 13, group: 'map' },
+      { id: 'mp-food',     label: '맛집',        layer: 2, color: '#FDE68A', r: 14, group: 'map' },
+      { id: 'mp-cafe',     label: '카페',        layer: 2, color: '#FDE68A', r: 12, group: 'map' },
+      { id: 'mp-biz',      label: '출장지',      layer: 2, color: '#FDE68A', r: 12, group: 'map' },
+      { id: 'mp-concert',  label: '공연장',      layer: 2, color: '#FDE68A', r: 11, group: 'map' },
+      { id: 'mp-vet',      label: '동물병원',    layer: 2, color: '#FDE68A', r: 11, group: 'map' },
+      // 2차: 웹 (기존 5 + 신규 2)
+      { id: 'wb-naver',      label: '네이버검색',  layer: 2, color: '#FBCFE8', r: 18, group: 'web', volume: 'high' },
+      { id: 'wb-naver-news', label: '네이버뉴스',  layer: 2, color: '#FBCFE8', r: 14, group: 'web', volume: 'med' },
+      { id: 'wb-google',     label: '구글작업',    layer: 2, color: '#FBCFE8', r: 14, group: 'web' },
+      { id: 'wb-ticket',     label: '일본티켓',    layer: 2, color: '#FBCFE8', r: 14, group: 'web' },
+      { id: 'wb-shop',       label: '쇼핑',        layer: 2, color: '#FBCFE8', r: 12, group: 'web' },
+      { id: 'wb-ai',         label: 'AI 도구',     layer: 2, color: '#FBCFE8', r: 15, group: 'web' },
+      { id: 'wb-ticketbook', label: '티켓예매',    layer: 2, color: '#FBCFE8', r: 12, group: 'web' },
+      { id: 'wb-claude',     label: '클로드 사이트',layer: 2, color: '#FBCFE8', r: 13, group: 'web' },
     ];
 
     // 계층 엣지 (실선)
@@ -1162,44 +1510,108 @@
       { source: 'youtube', target: 'yt-variety' },
       { source: 'youtube', target: 'yt-ai' },
       { source: 'youtube', target: 'yt-mv' },
+      { source: 'youtube', target: 'yt-mukbang' },
+      { source: 'youtube', target: 'yt-japan' },
       // 1차→2차: 검색
       { source: 'search', target: 'sr-taylor' },
       { source: 'search', target: 'sr-matsuda' },
       { source: 'search', target: 'sr-ai' },
       { source: 'search', target: 'sr-japan' },
       { source: 'search', target: 'sr-claude' },
+      { source: 'search', target: 'sr-yangyang' },
+      { source: 'search', target: 'sr-movie' },
+      { source: 'search', target: 'sr-cat' },
+      { source: 'search', target: 'sr-japan-food' },
       // 1차→2차: 음악
       { source: 'music', target: 'mu-korean' },
       { source: 'music', target: 'mu-english' },
       { source: 'music', target: 'mu-japan' },
       { source: 'music', target: 'mu-kpop' },
       { source: 'music', target: 'mu-jazz' },
+      { source: 'music', target: 'mu-ost' },
+      { source: 'music', target: 'mu-drive' },
       // 1차→2차: 지도
       { source: 'map', target: 'mp-japan' },
       { source: 'map', target: 'mp-yangyang' },
       { source: 'map', target: 'mp-food' },
       { source: 'map', target: 'mp-cafe' },
       { source: 'map', target: 'mp-biz' },
+      { source: 'map', target: 'mp-concert' },
+      { source: 'map', target: 'mp-vet' },
       // 1차→2차: 웹
       { source: 'web', target: 'wb-naver' },
+      { source: 'web', target: 'wb-naver-news' },
       { source: 'web', target: 'wb-google' },
       { source: 'web', target: 'wb-ticket' },
       { source: 'web', target: 'wb-shop' },
       { source: 'web', target: 'wb-ai' },
+      { source: 'web', target: 'wb-ticketbook' },
+      { source: 'web', target: 'wb-claude' },
     ];
 
-    // 교차 연결 (점선)
+    // 교차 연결 (점선) — 클러스터별 색상
+    // cluster: 'japan'|'ai'|'yangyang'|'concert'|'food'|'cat'|'news'|'default'
     const dashedLinks = [
-      { source: 'yt-ai',    target: 'sr-ai' },
-      { source: 'yt-mv',    target: 'mu-korean' },
-      { source: 'sr-japan', target: 'mp-japan' },
-      { source: 'mp-japan', target: 'wb-ticket' },
-      { source: 'sr-japan', target: 'wb-ticket' },
-      { source: 'sr-taylor',target: 'mu-english' },
-      { source: 'sr-matsuda',target:'mu-japan' },
-      { source: 'yt-ai',    target: 'wb-ai' },
-      { source: 'sr-claude',target: 'wb-ai' },
+      // === 일본 클러스터 (amber) ===
+      { source: 'yt-japan',     target: 'sr-matsuda',   cluster: 'japan' },
+      { source: 'sr-matsuda',   target: 'mu-japan',     cluster: 'japan' },
+      { source: 'mu-japan',     target: 'mp-japan',     cluster: 'japan' },
+      { source: 'mp-japan',     target: 'wb-ticket',    cluster: 'japan' },
+      { source: 'wb-ticket',    target: 'sr-japan-food', cluster: 'japan' },
+      { source: 'mu-japan',     target: 'mu-drive',     cluster: 'japan' },
+      { source: 'sr-japan-food',target: 'mp-food',      cluster: 'japan' },
+      { source: 'sr-japan',     target: 'mp-japan',     cluster: 'japan' },
+
+      // === AI 클러스터 (green) ===
+      { source: 'yt-ai',    target: 'sr-ai',     cluster: 'ai' },
+      { source: 'sr-ai',    target: 'sr-claude', cluster: 'ai' },
+      { source: 'sr-claude',target: 'wb-ai',     cluster: 'ai' },
+      { source: 'wb-ai',    target: 'wb-claude', cluster: 'ai' },
+      { source: 'yt-ai',    target: 'wb-claude', cluster: 'ai' },
+
+      // === 양양·여행 클러스터 (coral) ===
+      { source: 'sr-yangyang', target: 'mp-yangyang', cluster: 'yangyang' },
+      { source: 'mp-yangyang', target: 'mu-drive',    cluster: 'yangyang' },
+      { source: 'sr-yangyang', target: 'wb-shop',     cluster: 'yangyang' },
+
+      // === 음악·공연 클러스터 (purple) ===
+      { source: 'sr-taylor',   target: 'mu-english',  cluster: 'concert' },
+      { source: 'mu-english',  target: 'yt-mv',       cluster: 'concert' },
+      { source: 'sr-taylor',   target: 'wb-ticketbook',cluster: 'concert' },
+      { source: 'mu-korean',   target: 'yt-mv',       cluster: 'concert' },
+      { source: 'mu-kpop',     target: 'yt-mv',       cluster: 'concert' },
+      { source: 'wb-ticketbook',target: 'mp-concert', cluster: 'concert' },
+
+      // === 맛집·먹방 클러스터 (pink) ===
+      { source: 'yt-mukbang',  target: 'mp-food',     cluster: 'food' },
+      { source: 'mp-food',     target: 'sr-japan-food',cluster: 'food' },
+      { source: 'yt-mukbang',  target: 'mu-ost',      cluster: 'food' },
+
+      // === 최신영화 클러스터 ===
+      { source: 'sr-movie',     target: 'yt-variety',  cluster: 'default' },
+
+      // === 고양이 클러스터 (default) ===
+      { source: 'sr-cat',      target: 'mp-vet',      cluster: 'cat' },
+      { source: 'sr-cat',      target: 'wb-shop',     cluster: 'cat' },
+
+      // === 뉴스↔검색 (default) ===
+      { source: 'yt-news',     target: 'wb-naver',    cluster: 'news' },
+      { source: 'yt-news',     target: 'wb-naver-news', cluster: 'news' },
+      { source: 'wb-naver',    target: 'wb-naver-news', cluster: 'news' },
     ];
+
+    // 클러스터별 점선 색상
+    const CLUSTER_DASH_COLORS = {
+      japan:    'rgba(245,158,11,0.85)',
+      ai:       'rgba(16,185,129,0.85)',
+      yangyang: 'rgba(239,68,68,0.85)',
+      concert:  'rgba(139,92,246,0.85)',
+      food:     'rgba(236,72,153,0.85)',
+      cat:      'rgba(79,70,229,0.85)',
+      news:     'rgba(71,85,105,0.75)',
+      movie:    'rgba(56,189,248,0.8)',
+      default:  'rgba(100,116,139,0.7)',
+    };
 
     /* ===================================================
        RENDER FORCE GRAPH
@@ -1208,7 +1620,7 @@
       const container = document.getElementById('force-graph');
       const rect = container.parentElement.getBoundingClientRect();
       const W = rect.width || 900;
-      const H = 620;
+      const H = 660;
 
       const svg = d3.select('#force-graph')
         .attr('width', W)
@@ -1216,8 +1628,39 @@
         .attr('viewBox', `0 0 ${W} ${H}`)
         .style('background', '#FFFFFF');
 
-      // defs: arrow marker (not used for dashed but kept for possible future)
+      // defs: glow filters
       const defs = svg.append('defs');
+
+      const glowColors = {
+        youtube: '#FB923C', search: '#60A5FA', music: '#A78BFA',
+        map: '#F59E0B', web: '#EC4899',
+      };
+      Object.entries(glowColors).forEach(([key, col]) => {
+        const filter = defs.append('filter').attr('id', `glow-${key}`).attr('x', '-50%').attr('y', '-50%').attr('width', '200%').attr('height', '200%');
+        filter.append('feGaussianBlur').attr('stdDeviation', '3').attr('result', 'coloredBlur');
+        const feMerge = filter.append('feMerge');
+        feMerge.append('feMergeNode').attr('in', 'coloredBlur');
+        feMerge.append('feMergeNode').attr('in', 'SourceGraphic');
+      });
+
+      // compute degree for hub detection
+      const degree = {};
+      nodes.forEach(n => { degree[n.id] = 0; });
+      [...solidLinks, ...dashedLinks].forEach(l => {
+        const s = typeof l.source === 'object' ? l.source.id : l.source;
+        const t = typeof l.target === 'object' ? l.target.id : l.target;
+        if (degree[s] !== undefined) degree[s]++;
+        if (degree[t] !== undefined) degree[t]++;
+      });
+
+      // adjust hub node sizes
+      nodes.forEach(n => {
+        if (n.layer === 2 && degree[n.id] >= 4) {
+          n.rHub = Math.min(n.r + 4, 20);
+        } else {
+          n.rHub = n.r;
+        }
+      });
 
       // build all links array for simulation
       const allLinks = [
@@ -1235,27 +1678,27 @@
             const s = typeof d.source === 'object' ? d.source : nodeMap[d.source];
             const t = typeof d.target === 'object' ? d.target : nodeMap[d.target];
             if (!s || !t) return 100;
-            if (s.layer === 0 && t.layer === 1) return 140;
-            if (s.layer === 1 && t.layer === 2) return 100;
-            return 160;
+            if (s.layer === 0 && t.layer === 1) return 150;
+            if (s.layer === 1 && t.layer === 2) return 110;
+            return 170;
           })
           .strength(d => {
             const s = typeof d.source === 'object' ? d.source : nodeMap[d.source];
             const t = typeof d.target === 'object' ? d.target : nodeMap[d.target];
             if (!s || !t) return 0.3;
-            if (d.dashed) return 0.05;
+            if (d.dashed) return 0.03;
             if (s.layer === 0) return 0.8;
-            return 0.6;
+            return 0.55;
           })
         )
         .force('charge', d3.forceManyBody()
-          .strength(d => d.layer === 0 ? -600 : d.layer === 1 ? -300 : -120)
+          .strength(d => d.layer === 0 ? -700 : d.layer === 1 ? -350 : -150)
         )
-        .force('center', d3.forceCenter(W / 2, H / 2).strength(0.3))
-        .force('collision', d3.forceCollide().radius(d => d.r + 14))
-        .force('x', d3.forceX(W / 2).strength(0.04))
-        .force('y', d3.forceY(H / 2).strength(0.04))
-        .alphaDecay(0.02);
+        .force('center', d3.forceCenter(W / 2, H / 2).strength(0.25))
+        .force('collision', d3.forceCollide().radius(d => d.rHub + 16))
+        .force('x', d3.forceX(W / 2).strength(0.03))
+        .force('y', d3.forceY(H / 2).strength(0.03))
+        .alphaDecay(0.018);
 
       // link groups
       const linkGroup = svg.append('g').attr('class', 'links');
@@ -1267,11 +1710,11 @@
         .attr('class', 'solid-link')
         .attr('stroke', d => {
           const s = nodeMap[d.source] || d.source;
-          return s.color || '#CBD5E1';
+          return (s && s.color) ? s.color : '#CBD5E1';
         })
         .attr('stroke-width', d => {
           const s = nodeMap[d.source] || d.source;
-          return s.layer === 0 ? 2.5 : 1.5;
+          return (s && s.layer === 0) ? 2.5 : 1.5;
         })
         .attr('stroke-opacity', 0.45);
 
@@ -1280,10 +1723,10 @@
         .enter()
         .append('line')
         .attr('class', 'dashed-link')
-        .attr('stroke', '#94A3B8')
-        .attr('stroke-width', 1.5)
-        .attr('stroke-opacity', 0.5)
-        .attr('stroke-dasharray', '5,4');
+        .attr('stroke', d => CLUSTER_DASH_COLORS[d.cluster] || CLUSTER_DASH_COLORS.default)
+        .attr('stroke-width', 2.2)
+        .attr('stroke-opacity', 1)
+        .attr('stroke-dasharray', d => d.cluster === 'japan' ? '5,4' : '6,5');
 
       // node groups
       const nodeGroup = svg.append('g').attr('class', 'nodes');
@@ -1303,17 +1746,21 @@
 
       // circles
       nodeSel.append('circle')
-        .attr('r', d => d.r)
+        .attr('r', d => d.rHub)
         .attr('fill', d => d.color)
         .attr('stroke', '#FFFFFF')
-        .attr('stroke-width', d => d.layer === 0 ? 4 : 2.5);
+        .attr('stroke-width', d => d.layer === 0 ? 4 : (d.rHub > d.r ? 3 : 2.5))
+        .attr('filter', d => {
+          if (d.layer === 2 && d.rHub > d.r) return `url(#glow-${d.group})`;
+          return null;
+        });
 
       // labels
       nodeSel.append('text')
         .attr('text-anchor', 'middle')
-        .attr('dy', d => d.layer === 2 ? d.r + 14 : d.r + 16)
+        .attr('dy', d => d.layer === 2 ? d.rHub + 14 : d.rHub + 16)
         .attr('font-size', d => d.layer === 0 ? '14px' : d.layer === 1 ? '13px' : '11px')
-        .attr('font-weight', d => d.layer <= 1 ? '700' : '500')
+        .attr('font-weight', d => d.layer <= 1 ? '700' : (d.rHub > d.r ? '700' : '500'))
         .attr('fill', '#334155')
         .attr('font-family', "'Noto Sans KR', system-ui, sans-serif")
         .text(d => d.label);
@@ -1332,6 +1779,11 @@
 
       // hover interactions
       const tooltip = document.getElementById('graph-tooltip');
+      const ciCard  = document.getElementById('cluster-insight-card');
+      const ciEmoji = document.getElementById('ci-emoji');
+      const ciTitle = document.getElementById('ci-title');
+      const ciDesc  = document.getElementById('ci-desc');
+      let ciTimer = null;
 
       nodeSel
         .on('mouseover', function(event, d) {
@@ -1349,21 +1801,40 @@
           });
 
           nodeSel.select('circle')
-            .attr('opacity', n => connectedIds.has(n.id) ? 1 : 0.2);
+            .attr('opacity', n => connectedIds.has(n.id) ? 1 : 0.18);
           nodeSel.select('text')
-            .attr('opacity', n => connectedIds.has(n.id) ? 1 : 0.2);
+            .attr('opacity', n => connectedIds.has(n.id) ? 1 : 0.18);
 
           solidSel.attr('stroke-opacity', l => {
             const sid = typeof l.source === 'object' ? l.source.id : l.source;
             const tid = typeof l.target === 'object' ? l.target.id : l.target;
-            return connectedIds.has(sid) && connectedIds.has(tid) ? 0.75 : 0.05;
+            return connectedIds.has(sid) && connectedIds.has(tid) ? 0.85 : 0.04;
           });
 
-          dashedSel.attr('stroke-opacity', l => {
-            const sid = typeof l.source === 'object' ? l.source.id : l.source;
-            const tid = typeof l.target === 'object' ? l.target.id : l.target;
-            return connectedIds.has(sid) && connectedIds.has(tid) ? 0.75 : 0.05;
-          });
+          dashedSel
+            .attr('stroke-opacity', l => {
+              const sid = typeof l.source === 'object' ? l.source.id : l.source;
+              const tid = typeof l.target === 'object' ? l.target.id : l.target;
+              return connectedIds.has(sid) && connectedIds.has(tid) ? 1 : 0.05;
+            })
+            .attr('stroke-width', l => {
+              const sid = typeof l.source === 'object' ? l.source.id : l.source;
+              const tid = typeof l.target === 'object' ? l.target.id : l.target;
+              return connectedIds.has(sid) && connectedIds.has(tid) ? 2.5 : 1.8;
+            });
+
+          // cluster insight card
+          const clusterKey = NODE_CLUSTER[d.id];
+          if (clusterKey && CLUSTERS[clusterKey]) {
+            const cl = CLUSTERS[clusterKey];
+            if (ciTimer) clearTimeout(ciTimer);
+            ciEmoji.textContent = cl.emoji;
+            ciTitle.textContent = cl.title;
+            ciDesc.textContent  = cl.desc;
+            ciCard.classList.add('visible');
+          } else {
+            ciCard.classList.remove('visible');
+          }
         })
         .on('mousemove', function(event) {
           tooltip.style.left = (event.clientX + 12) + 'px';
@@ -1374,21 +1845,23 @@
           nodeSel.select('circle').attr('opacity', 1);
           nodeSel.select('text').attr('opacity', 1);
           solidSel.attr('stroke-opacity', 0.45);
-          dashedSel.attr('stroke-opacity', 0.5);
+          dashedSel.attr('stroke-opacity', 1).attr('stroke-width', 1.8);
+
+          // fade out cluster card with delay
+          ciTimer = setTimeout(() => { ciCard.classList.remove('visible'); }, 200);
         })
         .on('click', function(event, d) {
           showNodeInfo(d);
-          // pulse animation
           d3.select(this).select('circle')
-            .transition().duration(150).attr('r', d.r * 1.25)
-            .transition().duration(150).attr('r', d.r);
+            .transition().duration(150).attr('r', d.rHub * 1.25)
+            .transition().duration(150).attr('r', d.rHub);
         });
 
       // tick
       simulation.on('tick', () => {
         nodeSel.attr('transform', d => {
-          d.x = Math.max(d.r + 10, Math.min(W - d.r - 10, d.x));
-          d.y = Math.max(d.r + 20, Math.min(H - d.r - 20, d.y));
+          d.x = Math.max(d.rHub + 12, Math.min(W - d.rHub - 12, d.x));
+          d.y = Math.max(d.rHub + 22, Math.min(H - d.rHub - 22, d.y));
           return `translate(${d.x},${d.y})`;
         });
 
@@ -1470,8 +1943,8 @@
     window.addEventListener('resize', () => {
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(() => {
-        const svg = document.getElementById('force-graph');
-        svg.innerHTML = '';
+        const svgEl = document.getElementById('force-graph');
+        svgEl.innerHTML = '';
         renderGraph();
       }, 400);
     });
