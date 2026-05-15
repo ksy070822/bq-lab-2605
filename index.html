@@ -46,7 +46,7 @@ body{font-family:'Pretendard Variable','Pretendard',-apple-system,sans-serif;
 /* progress */
 .progress-wrap{max-width:1100px;margin:0 auto;padding:0 20px;}
 .progress-track{display:flex;align-items:flex-start;padding:12px 0 0;}
-.pi{display:flex;flex-direction:column;align-items:center;flex:1;position:relative;}
+.pi{display:flex;flex-direction:column;align-items:center;flex:1;position:relative;cursor:pointer;}.pi:hover .pc{opacity:.75;transform:scale(1.08);}
 .pi:not(:last-child)::after{content:"";position:absolute;top:14px;left:50%;width:100%;
   height:2px;background:var(--border);z-index:0;transition:.4s;}
 .pi.done:not(:last-child)::after{background:var(--green);}
@@ -503,14 +503,14 @@ details[open]>summary::before{content:"▾ ";}
       <p style="font-size:.78rem;color:var(--muted);margin-bottom:8px;">만들어진 프로젝트 ID를 입력하세요 (콘솔에서 복사)</p>
       <div class="verify-row">
         <input type="text" id="inp-pid" placeholder="예: my-life-data-392847" oninput="chkPid()"/>
-        <button class="btn btn-check" id="btn-chk-2" onclick="earnScore('s2')" disabled>내 진행 상황을 확인하세요</button>
+        <button class="btn btn-check" id="btn-chk-2" onclick="earnScore('s2')">내 진행 상황을 확인하세요</button>
       </div>
       <div id="vr-pid" style="display:none;" class="vb-result"></div>
     </div>
   </div>
   <div class="sc-foot">
     <button class="btn btn-secondary" onclick="gst(1)">← 이전</button>
-    <button class="btn btn-primary" id="btn-2-nx" onclick="gst(3)" disabled>다음: 데이터셋 만들기 →</button>
+    <button class="btn btn-primary" id="btn-2-nx" onclick="gst(3)">다음: 데이터셋 만들기 →</button>
   </div>
 </div>
 
@@ -547,14 +547,14 @@ details[open]>summary::before{content:"▾ ";}
       <p style="font-size:.78rem;color:var(--muted);margin-bottom:8px;">만든 데이터셋 이름을 정확히 입력해주세요</p>
       <div class="verify-row">
         <input type="text" id="inp-ds" placeholder="my_life 입력" oninput="chkDs()"/>
-        <button class="btn btn-check" id="btn-chk-3" onclick="earnScore('s3')" disabled>내 진행 상황을 확인하세요</button>
+        <button class="btn btn-check" id="btn-chk-3" onclick="earnScore('s3')">내 진행 상황을 확인하세요</button>
       </div>
       <div id="vr-ds" style="display:none;" class="vb-result"></div>
     </div>
   </div>
   <div class="sc-foot">
     <button class="btn btn-secondary" onclick="gst(2)">← 이전</button>
-    <button class="btn btn-primary" id="btn-3-nx" onclick="gst(4)" disabled>다음: 데이터 고르기 →</button>
+    <button class="btn btn-primary" id="btn-3-nx" onclick="gst(4)">다음: 데이터 고르기 →</button>
   </div>
 </div>
 
@@ -637,7 +637,7 @@ details[open]>summary::before{content:"▾ ";}
   </div>
   <div class="sc-foot">
     <button class="btn btn-secondary" onclick="gst(3)">← 이전</button>
-    <button class="btn btn-primary" id="btn-4-nx" onclick="gst(5)" disabled>다음: 빅쿼리에 올리기 →</button>
+    <button class="btn btn-primary" id="btn-4-nx" onclick="gst(5)">다음: 빅쿼리에 올리기 →</button>
   </div>
 </div>
 
@@ -675,7 +675,7 @@ details[open]>summary::before{content:"▾ ";}
         </div>
         <div id="vr-tmu" style="display:none;" class="vb-result"></div>
       </div>
-      <button class="btn btn-check btn-full" id="btn-chk-5" style="margin-top:10px;" onclick="earnScore('s5')" disabled>내 진행 상황을 확인하세요</button>
+      <button class="btn btn-check btn-full" id="btn-chk-5" style="margin-top:10px;" onclick="earnScore('s5')">내 진행 상황을 확인하세요</button>
     </div>
     <details class="help-details" style="margin-top:10px;">
       <summary class="help-summary">업로드 오류 났어요? — 오류 메시지 붙여넣기</summary>
@@ -697,7 +697,7 @@ details[open]>summary::before{content:"▾ ";}
   </div>
   <div class="sc-foot">
     <button class="btn btn-secondary" onclick="gst(4)">← 이전</button>
-    <button class="btn btn-primary" id="btn-5-nx" onclick="gst(6)" disabled>다음: AI랑 분석 →</button>
+    <button class="btn btn-primary" id="btn-5-nx" onclick="gst(6)">다음: AI랑 분석 →</button>
   </div>
 </div>
 
@@ -854,7 +854,7 @@ Python 코드로 알려줘요. 완전 초보 수준으로요.</div>
   </div>
   <div class="sc-foot">
     <button class="btn btn-secondary" onclick="gst(5)">← 이전</button>
-    <button class="btn btn-primary" id="btn-6-done" onclick="showDone()" disabled>완료! 🙌</button>
+    <button class="btn btn-primary" id="btn-6-done" onclick="showDone()">완료! 🙌</button>
   </div>
 </div>
 
@@ -1092,7 +1092,7 @@ BigQuery Advanced Service 추가하고 코드 붙여넣었는데
 
     <div style="display:flex;justify-content:space-between;margin-top:16px;">
       <button class="nav-btn" onclick="gst(6)">← 세션 1로</button>
-      <button class="nav-btn primary" id="btn-7-done" onclick="gst(1)" disabled>🚀 모두 완료!</button>
+      <button class="nav-btn primary" id="btn-7-done" onclick="gst(1)">🚀 모두 완료!</button>
     </div>
 
   </div><!-- /sc-body -->
@@ -1191,7 +1191,7 @@ const S={
 function rdrProg(){
   document.getElementById('ptrak').innerHTML=STEPS.map((l,i)=>{
     const n=i+1,cls=n<S.step?'done':n===S.step?'active':'';
-    return `<div class="pi ${cls}"><div class="pc">${n<S.step?'✓':n}</div><div class="pl">${l}</div></div>`;
+    return `<div class="pi ${cls}" onclick="gst(${n})" style="cursor:pointer" title="${l}"><div class="pc">${n<S.step?'✓':n}</div><div class="pl">${l}</div></div>`;
   }).join('');
 }
 
@@ -1264,8 +1264,7 @@ function chkPid(){const v=document.getElementById('inp-pid').value.trim();docume
 function earnScore(key){
   if(S.earned[key])return;
   if(key==='s2'){
-    const v=document.getElementById('inp-pid').value.trim();
-    if(v.length<3)return;
+    const v=document.getElementById('inp-pid').value.trim() || 'my-life-data-00000';
     S.projectId=v;
     document.getElementById('inp-pid').classList.add('valid');
     showVR('vr-pid','ok','✓ 프로젝트 ID "'+v+'" 저장됐어요!');
