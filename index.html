@@ -78,7 +78,7 @@ body{font-family:'Pretendard Variable','Pretendard',-apple-system,sans-serif;
   display:flex;justify-content:space-between;align-items:center;}
 
 /* ── Score sidebar ── */
-.score-panel{background:var(--score-bg);border-radius:var(--r);padding:20px;
+.score-panel{position:sticky;top:70px;max-height:calc(100vh - 90px);overflow-y:auto;background:var(--score-bg);border-radius:var(--r);padding:20px;
   color:#fff;position:sticky;top:90px;}
 .sp-title{font-size:.9rem;font-weight:700;opacity:.7;margin-bottom:14px;
   display:flex;align-items:center;gap:6px;}
@@ -1055,38 +1055,94 @@ Install to Workspace를 눌렀는데 문제가 생겼어요.
         <pre class="code-box" id="s7-code">// 위에서 항목 선택 + 토큰 & 채널 입력하면 코드가 완성돼요</pre>
       </div>
 
-      <div style="background:#f8f9fa;border-radius:10px;padding:14px 16px;margin-top:14px;">
-        <p style="font-size:.85rem;font-weight:700;margin-bottom:10px;">📌 코드 실행 4단계</p>
-        <div class="step-row"><div class="step-num">1</div><div><h4><a href="https://script.google.com" target="_blank" style="color:var(--blue);">script.google.com</a> → 새 프로젝트</h4></div></div>
-        <div class="step-row"><div class="step-num">2</div><div><h4>좌측 <strong>"서비스 +"</strong> → <strong>BigQuery API</strong> 추가</h4></div></div>
-        <div class="step-row"><div class="step-num">3</div><div><h4>코드 붙여넣기 → <strong>sendWeeklyReport ▶ 실행</strong></h4><p>권한 허용 → 슬랙에서 메시지 확인!</p></div></div>
-        <div class="step-row"><div class="step-num">4</div><div><h4><strong>createWeeklyTrigger ▶ 실행</strong> → 자동화 완료! 🎉</h4></div></div>
+      <!-- Apps Script 실행 가이드 -->
+      <div class="slack-section" style="margin-top:14px;background:#f8f9ff;">
+        <div class="slack-sec-hdr" style="color:#1a237e;">🚀 지금 바로 슬랙으로 보내보기</div>
+
+        <div class="step-row"><div class="step-num">1</div><div>
+          <h4><a href="https://script.google.com" target="_blank" style="color:var(--blue);">script.google.com</a> → 새 프로젝트 만들기</h4>
+          <p>상단 "새 프로젝트" 클릭 → 이름은 아무거나 (예: <code>내데이터슬랙봇</code>)</p>
+        </div></div>
+
+        <div class="step-row"><div class="step-num">2</div><div>
+          <h4>BigQuery 서비스 연결하기</h4>
+          <p>왼쪽 패널 <strong>"서비스 +"</strong> 클릭 → <strong>BigQuery API</strong> 검색 → <strong>추가</strong></p>
+          <p style="margin-top:4px;color:#e65100;font-size:.78rem;">⚠️ 이걸 빠뜨리면 오류나요 — 꼭 추가해주세요</p>
+        </div></div>
+
+        <div class="step-row"><div class="step-num">3</div><div>
+          <h4>위 코드 전체 복사 후 붙여넣기</h4>
+          <p>에디터의 기본 코드 전체 지우고(<code>Ctrl+A</code> → <code>Delete</code>) → 위 코드 붙여넣기(<code>Ctrl+V</code>)</p>
+        </div></div>
+
+        <div class="step-row"><div class="step-num">4</div><div>
+          <h4>함수 선택 → <code>sendWeeklyReport</code> → <strong>▶ 실행</strong></h4>
+          <p>상단 드롭다운에서 <code>sendWeeklyReport</code> 선택 후 실행 버튼 클릭</p>
+        </div></div>
+
+        <div class="step-row"><div class="step-num">5</div><div>
+          <h4>권한 허용 팝업 → "고급" → "허용"</h4>
+          <p>"Google이 확인하지 않은 앱" 경고가 떠요 → <strong>고급</strong> 클릭 → <strong>"안전하지 않은 페이지로 이동"</strong> → 허용</p>
+        </div></div>
+
+        <div class="step-row" style="background:#e8f5e9;border-radius:8px;padding:10px 12px;"><div class="step-num" style="background:#2e7d32;">6</div><div>
+          <h4 style="color:#2e7d32;">🎉 슬랙 확인! 메시지가 왔나요?</h4>
+          <p>선택한 채널에 리포트 메시지가 도착했으면 성공이에요!</p>
+        </div></div>
       </div>
 
-      <details class="help-box" id="help-s7-pmt">
-        <summary class="help-summary">Apps Script 실행에서 막혔어요? — AI한테 물어보기</summary>
+      <!-- 자동화 설정 -->
+      <div class="slack-section" style="margin-top:10px;background:#fff8e1;">
+        <div class="slack-sec-hdr" style="color:#e65100;">⏰ 이제 자동화 설정 (매주 자동으로!)</div>
+
+        <div class="step-row"><div class="step-num">1</div><div>
+          <h4>함수 선택 → <code>createWeeklyTrigger</code> → <strong>▶ 실행</strong></h4>
+          <p>드롭다운에서 함수 바꿔서 실행하면 끝이에요</p>
+        </div></div>
+
+        <div class="step-row"><div class="step-num">2</div><div>
+          <h4>트리거 등록 확인</h4>
+          <p>왼쪽 메뉴 <strong>⏱ (트리거 아이콘)</strong> 클릭 → 목록에 <code>sendWeeklyReport</code>가 보이면 완료!</p>
+        </div></div>
+
+        <div style="background:#ff6f0020;border-radius:8px;padding:10px 14px;margin-top:8px;font-size:.82rem;color:#e65100;">
+          🔁 이제부터 설정한 주기마다 자동으로 슬랙에 리포트가 와요. 손 안 대도 돼요!
+        </div>
+      </div>
+
+      <!-- AI 도움 -->
+      <details class="help-box" id="help-s7-pmt" style="margin-top:10px;">
+        <summary class="help-summary">막혔어요? — AI한테 코드 설명 + 오류 해결 요청하기</summary>
         <div style="margin-top:8px;">
           <button class="open-ai-btn" onclick="openAI('gemini')">Gemini에서 열기</button>
           <button class="open-ai-btn" onclick="openAI('claude')" style="margin-left:6px;">Claude에서 열기</button>
         </div>
-        <div class="help-pmt">Google Apps Script에서 Slack 자동화 코드를 실행하려고 하는데 막혔어요.
-BigQuery Advanced Service 추가하고 코드 붙여넣었는데
-권한 오류 또는 실행 오류가 나요.
-어떻게 해결하나요?</div>
+        <div class="help-pmt" id="help-s7-code-pmt">Google Apps Script로 Slack 자동화 코드를 실행하려고 해요.
+
+[상황 설명: 아래 중 해당하는 것 골라서 붙여넣기]
+- BigQuery API 추가하는 메뉴를 못 찾겠어요
+- 권한 허용 팝업에서 막혔어요
+- 실행했는데 오류가 나요: (오류 메시지 복사해서 여기 붙여넣기)
+- 슬랙에 메시지가 안 와요
+- 트리거 등록이 안 돼요
+
+쉽게 해결 방법 알려줘요.</div>
       </details>
     </div>
 
     <!-- 검증 블록 -->
     <div class="verify-block" id="vr-s7">
-      <p style="font-size:.88rem;font-weight:600;margin-bottom:10px;">내 진행 상황을 확인하세요</p>
-      <p style="font-size:.8rem;color:var(--muted);margin-bottom:10px;">슬랙에서 리포트를 받으셨나요?</p>
-      <label style="display:flex;align-items:center;gap:8px;font-size:.83rem;margin-bottom:6px;cursor:pointer;">
-        <input type="checkbox" id="chk-s7-run"> sendWeeklyReport 실행 → 슬랙 메시지 받았어요 ✓
+      <p style="font-size:.88rem;font-weight:600;margin-bottom:4px;">✅ 완료 체크</p>
+      <p style="font-size:.8rem;color:var(--muted);margin-bottom:12px;">두 가지 모두 확인하면 +25점!</p>
+      <label style="display:flex;align-items:flex-start;gap:10px;font-size:.84rem;margin-bottom:10px;cursor:pointer;background:#f0faf0;border-radius:8px;padding:10px;">
+        <input type="checkbox" id="chk-s7-run" style="margin-top:2px;width:16px;height:16px;flex-shrink:0;">
+        <span><strong>슬랙에서 메시지 받았어요</strong><br><span style="color:var(--muted);font-size:.78rem;">sendWeeklyReport 실행 → 내 채널에 리포트 도착 확인</span></span>
       </label>
-      <label style="display:flex;align-items:center;gap:8px;font-size:.83rem;cursor:pointer;">
-        <input type="checkbox" id="chk-s7-trigger"> createWeeklyTrigger 실행 → 자동 등록 완료 ✓
+      <label style="display:flex;align-items:flex-start;gap:10px;font-size:.84rem;cursor:pointer;background:#fff8e1;border-radius:8px;padding:10px;">
+        <input type="checkbox" id="chk-s7-trigger" style="margin-top:2px;width:16px;height:16px;flex-shrink:0;">
+        <span><strong>자동화 트리거 등록 완료</strong><br><span style="color:var(--muted);font-size:.78rem;">createWeeklyTrigger 실행 → 트리거 목록에서 확인</span></span>
       </label>
-      <button class="vbtn" id="btn-chk-7" onclick="vrS7()" style="margin-top:12px;">내 진행 상황을 확인하세요</button>
+      <button class="vbtn" id="btn-chk-7" onclick="vrS7()" style="margin-top:12px;width:100%;">+25점 획득하기 🎉</button>
     </div>
     <div id="cel-area-s7"></div>
 
