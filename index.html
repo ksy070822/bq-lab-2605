@@ -518,21 +518,13 @@ details[open]>summary::before{content:"▾ ";}
 </head>
 <body>
 <script>
-// Gemini API 키 — 발표자(메이)가 임시로 임베드. 1주일 후 폐기.
-// 우선순위: URL ?key= → localStorage → 기본값(빈 문자열)
+// Vertex AI Cloud Run 프록시 (csopp 프로젝트) — 발표 후 1주일 한정
+// 배포: 실습앱/server/deploy.sh 실행 후 출력된 URL 입력
+window.CHAT_PROXY_URL = '__EMBED_CLOUD_RUN_URL_HERE__';
+// URL 파라미터로도 오버라이드 가능 (?proxy=https://...)
 (function(){
-  const urlKey = new URLSearchParams(location.search).get('key');
-  if(urlKey){
-    try{ localStorage.setItem('gemini_key', urlKey); }catch(e){}
-    window.GEMINI_KEY = urlKey;
-    return;
-  }
-  try{
-    const stored = localStorage.getItem('gemini_key');
-    if(stored){ window.GEMINI_KEY = stored; return; }
-  }catch(e){}
-  // 발표 시 메이가 여기에 임시 키 박아둠. 만료 후 빈 문자열로:
-  window.GEMINI_KEY = '__EMBED_GEMINI_KEY_HERE__';
+  const u = new URLSearchParams(location.search).get('proxy');
+  if(u) window.CHAT_PROXY_URL = u;
 })();
 </script>
 
@@ -3217,7 +3209,7 @@ function shAnaExample(key){
 // ═════════════════════════════════════════
 // AI 채팅 (Gemini API 직접 호출)
 // ═════════════════════════════════════════
-const GEMINI_API_KEY = window.GEMINI_KEY || '';  // 발표용 임시 키. 만료 시 비움.
+// (구) GEMINI_API_KEY 제거됨 — Cloud Run 프록시 사용. window.CHAT_PROXY_URL 참조.
 const GEMINI_EXPIRE_DATE = '2026-05-23';  // 1주일 한정
 
 let chatHistory = [];
@@ -3229,7 +3221,7 @@ function isChatExpired(){
 function chkExpireBanner(){
   const banner = document.getElementById('expire-banner');
   if(!banner) return;
-  if(isChatExpired() || !GEMINI_API_KEY){
+  if(isChatExpired() || !window.CHAT_PROXY_URL || window.CHAT_PROXY_URL.includes('__EMBED_')){
     banner.classList.add('expired');
     banner.innerHTML = '<span>⏰</span><span><strong>무료 체험 기간 종료</strong> · 이제 본인 Claude Code 또는 Gemini CLI로 진행하세요. 오른쪽 탭에서 프롬프트 복사 가능 →</span>';
     swAnaTab('prompt');
@@ -3399,7 +3391,8 @@ function md2html(text){
 }
 
 async function sendChat(){
-  if(isChatExpired() || !GEMINI_API_KEY){
+  const proxyUrl = window.CHAT_PROXY_URL || '';
+  if(isChatExpired() || !proxyUrl || proxyUrl.includes('__EMBED_')){
     chkExpireBanner();
     return;
   }
@@ -3442,28 +3435,23 @@ ${summary ? JSON.stringify(summary, null, 1) : '데이터 미생성'}
 - SQL 보여달라고 하지 않는 한 SQL은 보여주지 마
 - 한국어로, 빠르고 간결하게 (300~500자 정도)`;
 
-    const body = {
-      contents: chatHistory.map(m => ({
-        role: m.role === 'user' ? 'user' : 'model',
-        parts: [{text: m.text}]
-      })),
-      systemInstruction: {parts: [{text: systemPrompt}]},
-      generationConfig: {temperature: 0.7, maxOutputTokens: 1500}
-    };
-
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`;
-    const resp = await fetch(url, {
+    const resp = await fetch(proxyUrl.replace(/\/$/,'') + '/chat', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(body)
+      body: JSON.stringify({
+        messages: chatHistory.map(m => ({role: m.role==='model'?'model':'user', text: m.text})),
+        system: systemPrompt,
+        max_tokens: 1500,
+        temperature: 0.7
+      })
     });
 
     if(!resp.ok){
       const errText = await resp.text();
-      throw new Error(`API ${resp.status}: ${errText.substring(0,200)}`);
+      throw new Error(`Proxy ${resp.status}: ${errText.substring(0,200)}`);
     }
     const j = await resp.json();
-    const reply = j.candidates?.[0]?.content?.parts?.[0]?.text || '응답이 비었네요. 다시 한번 물어봐주세요!';
+    const reply = j.text || j.error || '응답이 비었네요. 다시 한번 물어봐주세요!';
 
     removeTyping();
     appendMsg('ai', md2html(reply));
