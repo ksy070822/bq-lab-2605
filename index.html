@@ -625,6 +625,7 @@ details[open]>summary::before{content:"▾ ";}
       <div class="help-pmt" id="help-ds-ai-pmt">안녕! 내 GCP 프로젝트에 빅쿼리 데이터셋 하나 만들어줘.
 
 조건:
+- 프로젝트 ID: <span id="ds-pid-slot">[2단계에서 만든 프로젝트 ID]</span>
 - 데이터셋 이름: my_life (언더바 주의)
 - 위치: asia-northeast3 (서울)
 - gcloud 인증은 이미 해뒀어 (application-default-credentials 있음)
@@ -657,7 +658,7 @@ details[open]>summary::before{content:"▾ ";}
         <div class="help-pmt" id="help-bq-pmt">안녕, 나 빅쿼리 데이터셋 만들려는데 막혔어.
 
 상황:
-- 프로젝트는 있어 (ID: my-life-data-392847 같은 형태)
+- 프로젝트 ID: <span id="bq-pid-slot">[2단계에서 만든 프로젝트 ID]</span>
 - gcloud auth login도 했어
 - 근데 [bq 명령어를 못 찾겠음 / 권한 오류 / 데이터셋 만들기 버튼이 안 보임] ← 내 상황으로 바꿀게
 
@@ -805,6 +806,7 @@ details[open]>summary::before{content:"▾ ";}
 폴더만 잡아주면 파일 찾는 거, 스키마 추측하는 거, 업로드까지 알아서 해줄 거지?
 
 기본 설정:
+- 프로젝트 ID: <span id="up-pid-slot">[2단계에서 만든 프로젝트 ID]</span>
 - 데이터셋: my_life (asia-northeast3, 이미 있음)
 - 테이블 이름은 파일명에서 .csv 빼고 그대로
 - 헤더 행 1줄 스킵, 스키마 자동 감지
@@ -1535,7 +1537,7 @@ function gst(n){
   S.step=n;rdrProg();
   document.querySelectorAll('.sp-check').forEach(el=>el.classList.remove('current'));
   if(S.session==='bq' && n>1){const el=document.getElementById('spc-s'+n);if(el&&!el.classList.contains('earned'))el.classList.add('current');}
-  if(S.session==='bq' && n===6)fillPid();
+  if(S.session==='bq' && (n===3 || n===5 || n===6))fillPid();
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
@@ -1547,7 +1549,8 @@ function earnScore(key){
     const v=document.getElementById('inp-pid').value.trim() || 'my-life-data-00000';
     S.projectId=v;
     document.getElementById('inp-pid').classList.add('valid');
-    showVR('vr-pid','ok','✓ 프로젝트 ID "'+v+'" 저장됐어요!');
+    fillPid();  // 모든 프롬프트 슬롯에 즉시 반영
+    showVR('vr-pid','ok','✓ 프로젝트 ID "'+v+'" 저장됐어요! 다음 단계 프롬프트에 자동 반영됩니다.');
     document.getElementById('btn-chk-2').classList.add('done');
     document.getElementById('btn-chk-2').textContent='✓ 확인 완료';
     document.getElementById('btn-2-nx').disabled=false;
@@ -2004,7 +2007,14 @@ function chkTbl(t){
 }
 
 // ── STEP 6 ──
-function fillPid(){const el=document.getElementById('p1pid');if(el&&S.projectId)el.textContent=S.projectId;}
+function fillPid(){
+  const pid = S.projectId || '[2단계에서 만든 프로젝트 ID]';
+  const ids = ['p1pid','ds-pid-slot','bq-pid-slot','up-pid-slot'];
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    if(el && S.projectId) el.textContent = pid;
+  });
+}
 // ── 분석 갤러리 ──
 const ANA_TITLES={
   time:'🕐 몇 시형 인간? — 시간대별 활동 분석',
