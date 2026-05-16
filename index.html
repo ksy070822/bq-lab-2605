@@ -401,6 +401,47 @@ details[open]>summary::before{content:"▾ ";}
   .int-grid{grid-template-columns:repeat(3,1fr);}
 }
 
+
+/* AI 채팅 (Step 6) */
+.expire-banner{background:linear-gradient(135deg,#fff7ed,#fef3c7);border:1.5px solid #f59e0b;border-radius:10px;padding:10px 14px;font-size:.8rem;color:#92400e;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.expire-banner.expired{background:#fee2e2;border-color:#ef4444;color:#991b1b;}
+.ana-tab-bar{display:flex;gap:2px;border-bottom:2px solid #e5e7eb;margin-bottom:14px;}
+.ana-tab{flex:1;padding:10px 14px;background:transparent;border:none;cursor:pointer;font-size:.86rem;font-weight:600;color:var(--muted);position:relative;transition:all .15s;}
+.ana-tab.active{color:var(--blue);}
+.ana-tab.active::after{content:'';position:absolute;bottom:-2px;left:0;right:0;height:2px;background:var(--blue);}
+.ana-tab:disabled{opacity:.4;cursor:not-allowed;}
+
+.chat-box-wrap{border:1px solid var(--line);border-radius:12px;background:#fafafe;overflow:hidden;}
+.chat-history{padding:12px;max-height:480px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;background:#fff;}
+.chat-msg{display:flex;gap:10px;align-items:flex-start;font-size:.85rem;line-height:1.6;}
+.chat-msg .avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
+.chat-msg .body{flex:1;padding:10px 14px;border-radius:12px;}
+.chat-msg.ai .avatar{background:linear-gradient(135deg,#1a73e8,#5e87ff);color:#fff;}
+.chat-msg.ai .body{background:#f3f4f6;}
+.chat-msg.user .avatar{background:#fef3c7;color:#92400e;}
+.chat-msg.user .body{background:#e0f2fe;}
+.chat-msg .body pre{background:rgba(0,0,0,.06);padding:8px 10px;border-radius:6px;margin:6px 0;font-size:.78rem;overflow-x:auto;white-space:pre-wrap;}
+.chat-msg .body code{background:rgba(0,0,0,.06);padding:1px 5px;border-radius:3px;font-size:.85em;font-family:'SF Mono',Consolas,monospace;}
+.chat-msg .body table{width:100%;border-collapse:collapse;font-size:.8rem;margin:6px 0;}
+.chat-msg .body th,.chat-msg .body td{padding:4px 8px;border-bottom:1px solid rgba(0,0,0,.08);text-align:left;}
+.chat-typing{display:flex;gap:4px;align-items:center;padding:8px 14px;}
+.chat-typing span{width:6px;height:6px;border-radius:50%;background:#6b7280;animation:typing 1.4s infinite;}
+.chat-typing span:nth-child(2){animation-delay:.2s;}
+.chat-typing span:nth-child(3){animation-delay:.4s;}
+@keyframes typing{0%,60%,100%{opacity:.3;transform:translateY(0);}30%{opacity:1;transform:translateY(-4px);}}
+
+.chat-input-bar{display:flex;gap:8px;padding:10px;border-top:1px solid var(--line);background:#fafafe;}
+.chat-input-bar input{flex:1;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-family:inherit;font-size:.86rem;background:#fff;}
+.chat-input-bar input:focus{outline:none;border-color:var(--blue);}
+.chat-input-bar input:disabled{background:#f3f4f6;color:#9ca3af;}
+.chat-send-btn{padding:10px 16px;background:var(--blue);color:#fff;border:none;border-radius:8px;font-weight:600;cursor:pointer;font-size:.86rem;}
+.chat-send-btn:hover{background:#0e4a82;}
+.chat-send-btn:disabled{background:#cbd5e1;cursor:not-allowed;}
+
+.quick-asks{padding:10px;border-top:1px solid var(--line);background:#fff;display:flex;gap:6px;flex-wrap:wrap;}
+.quick-asks .qa{padding:6px 11px;background:#f3f4f6;border:1px solid var(--line);border-radius:16px;font-size:.74rem;color:#374151;cursor:pointer;transition:all .15s;}
+.quick-asks .qa:hover{background:#e8f0fe;border-color:var(--blue);color:var(--blue);}
+
 /* 코드 탭 (sl6) */
 .code-tabs-bar{display:flex;gap:2px;border-bottom:2px solid #e0e3eb;margin-top:10px;}
 .code-tab{flex:1;padding:10px 14px;background:transparent;border:none;cursor:pointer;font-size:.85rem;font-weight:600;color:var(--muted);position:relative;transition:all .15s;}
@@ -476,6 +517,25 @@ details[open]>summary::before{content:"▾ ";}
 </style>
 </head>
 <body>
+<script>
+// Gemini API 키 — 발표자(메이)가 임시로 임베드. 1주일 후 폐기.
+// 우선순위: URL ?key= → localStorage → 기본값(빈 문자열)
+(function(){
+  const urlKey = new URLSearchParams(location.search).get('key');
+  if(urlKey){
+    try{ localStorage.setItem('gemini_key', urlKey); }catch(e){}
+    window.GEMINI_KEY = urlKey;
+    return;
+  }
+  try{
+    const stored = localStorage.getItem('gemini_key');
+    if(stored){ window.GEMINI_KEY = stored; return; }
+  }catch(e){}
+  // 발표 시 메이가 여기에 임시 키 박아둠. 만료 후 빈 문자열로:
+  window.GEMINI_KEY = '__EMBED_GEMINI_KEY_HERE__';
+})();
+</script>
+
 
 <!-- ═══ HEADER ═══ -->
 <div class="app-header">
@@ -948,12 +1008,58 @@ details[open]>summary::before{content:"▾ ";}
     <div class="sc-ttl"><h2>6단계 — AI랑 첫 분석하기</h2><p>이제 진짜 재밌어지는 부분</p></div>
   </div>
   <div class="sc-body">
-    <div class="alert alert-info" style="margin-bottom:14px;font-size:.83rem;line-height:1.6;">
-      인스타·유튜브는 이 데이터로 나를 파악해요.<br>
-      <strong>이제 내가 직접 파악해볼게요.</strong> 뭐가 궁금한지 골라보세요 →
+
+    <!-- 만료 안내 배너 -->
+    <div class="expire-banner" id="expire-banner">
+      <span>🎁</span>
+      <span><strong>이 화면에서 바로 AI랑 대화 가능!</strong> <span id="expire-date-text">발표 후 1주일간 무료 (~ 2026-05-23)</span>. 이후엔 본인 Claude Code/Gemini CLI로 진행해요.</span>
     </div>
 
-    <!-- 분석 갤러리 -->
+    <!-- 분석 방식 탭 -->
+    <div class="ana-tab-bar">
+      <button class="ana-tab active" id="ana-tab-chat" onclick="swAnaTab('chat')">💬 여기서 AI랑 채팅</button>
+      <button class="ana-tab" id="ana-tab-prompt" onclick="swAnaTab('prompt')">📋 직접 프롬프트로</button>
+    </div>
+
+    <!-- 채팅 영역 (메인) -->
+    <div id="ana-panel-chat">
+      <div class="chat-box-wrap">
+        <div class="chat-history" id="chat-history">
+          <div class="chat-msg ai">
+            <div class="avatar">🤖</div>
+            <div class="body" id="chat-greeting">
+              안녕! 저는 여러분의 데이터를 봐주는 친구예요.<br>
+              방금 만든 더미데이터 보고 있어요. 뭐가 궁금하세요?<br>
+              <em style="font-size:.78rem;color:#888;">(아래 빠른 질문 버튼을 눌러도 되고, 자유롭게 물어봐도 돼요)</em>
+            </div>
+          </div>
+        </div>
+        <div class="quick-asks">
+          <div class="qa" onclick="askPreset('time')">🕐 나는 몇 시형 인간?</div>
+          <div class="qa" onclick="askPreset('dna')">🧬 내 콘텐츠 DNA</div>
+          <div class="qa" onclick="askPreset('loyal')">⭐ 충성 채널 TOP10</div>
+          <div class="qa" onclick="askPreset('trend')">📈 관심사 변화</div>
+          <div class="qa" onclick="askPreset('weekend')">🌞 평일 vs 주말</div>
+          <div class="qa" onclick="askPreset('music')">🎬 미디어 행동 패턴</div>
+          <div class="qa" onclick="askPreset('persona')">🪞 내 페르소나</div>
+        </div>
+        <div class="chat-input-bar">
+          <input type="text" id="chat-input" placeholder="자유롭게 질문하세요 (예: 새벽엔 뭘 봤어?)" onkeypress="if(event.key==='Enter')sendChat()">
+          <button class="chat-send-btn" id="chat-send" onclick="sendChat()">전송</button>
+        </div>
+      </div>
+      <p style="font-size:.74rem;color:var(--muted);text-align:center;margin-top:8px;">
+        Powered by Google Gemini · 더미데이터 기반 시뮬레이션 분석
+      </p>
+    </div>
+
+    <!-- 기존 프롬프트 영역 (fallback 탭) -->
+    <div id="ana-panel-prompt" style="display:none;">
+      <div class="alert alert-info" style="margin-bottom:14px;font-size:.83rem;line-height:1.6;">
+        <strong>본인 AI랑 직접 작업하는 방법:</strong> 분석 카드를 골라 프롬프트를 복사하고, Claude Code나 Gemini CLI에 붙여넣어 보세요.
+      </div>
+
+      <!-- 분석 갤러리 -->
     <div class="ana-grid">
       <div class="ana-card" onclick="selAna('time',this)">
         <div class="ana-icon">🕐</div>
@@ -1043,9 +1149,11 @@ details[open]>summary::before{content:"▾ ";}
       </div>
     </details>
 
+    </div><!-- /ana-panel-prompt -->
+
     <div class="verify-block" style="margin-top:14px;">
       <div class="vb-hdr"><span class="vb-icon">🔍</span><h4>내 진행 상황을 확인하세요</h4><span class="vb-pts">+25점</span></div>
-      <p style="font-size:.78rem;color:var(--muted);margin-bottom:8px;">분석 카드 선택 후 프롬프트를 복사했으면 완료!</p>
+      <p style="font-size:.78rem;color:var(--muted);margin-bottom:8px;">AI랑 한 번 이상 채팅했거나, 프롬프트를 복사했으면 완료!</p>
       <button class="btn btn-check btn-full" id="btn-chk-6" onclick="earnScore('s6')" disabled>내 진행 상황을 확인하세요</button>
       <div id="vr-ai" style="display:none;" class="vb-result"></div>
     </div>
@@ -1602,6 +1710,7 @@ function gst(n){
   document.querySelectorAll('.sp-check').forEach(el=>el.classList.remove('current'));
   if(S.session==='bq' && n>1){const el=document.getElementById('spc-s'+n);if(el&&!el.classList.contains('earned'))el.classList.add('current');}
   if(S.session==='bq' && (n===3 || n===5 || n===6))fillPid();
+  if(S.session==='bq' && n===6 && typeof onEnterS6==='function') setTimeout(onEnterS6, 100);
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
@@ -2193,13 +2302,13 @@ function hdFiles(files){
 function gCat(t,c){
   const s=(t+' '+c).toLowerCase();
   if(/운동|헬스|홈트|workout|fitness|필라테스|요가|yoga/.test(s))return'fitness';
-  if(/아이|육아|뽀로로|핑크퐁|kids|어린이|유아/.test(s))return'kids';
-  if(/\bai\b|gpt|claude|코딩|파이썬|python|강의|개발|프로그래밍|llm|머신러닝/.test(s))return'ai_lecture';
-  if(/맛집|먹방|food|요리|레시피|cooking|baking/.test(s))return'food';
-  if(/여행|travel|vlog|브이로그|tour|trip/.test(s))return'travel';
-  if(/\bmv\b|music video|뮤직|kpop|k-pop|jpop|j-pop|아이돌|idol|concert|공연/.test(s))return'music';
-  if(/뉴스|news|시사|정치|경제/.test(s))return'news';
-  if(/게임|gaming|game|플레이|playthrough/.test(s))return'gaming';
+  if(/육아|뽀로로|핑크퐁|어린이|유아|\bkids\b|아기상어/.test(s))return'kids';
+  if(/\bai\b|gpt|claude|코딩|파이썬|\bpython\b|강의|개발|프로그래밍|\bllm\b|머신러닝/.test(s))return'ai_lecture';
+  if(/맛집|먹방|\bfood\b|요리|레시피|\bcooking\b|\bbaking\b/.test(s))return'food';
+  if(/여행|\btravel\b|\bvlog\b|브이로그|\btour\b|\btrip\b/.test(s))return'travel';
+  if(/\bmv\b|music.?video|뮤직|\bkpop\b|k-pop|\bjpop\b|j-pop|아이돌|\bidol\b|\bconcert\b|공연|official.?video/.test(s))return'music';
+  if(/뉴스|\bnews\b|시사|정치|경제/.test(s))return'news';
+  if(/게임|\bgaming\b|\bgame\b|플레이|playthrough/.test(s))return'gaming';
   return'etc';
 }
 
@@ -3102,6 +3211,285 @@ function shAnaExample(key){
     return;
   }
   area.innerHTML = ANA_EXAMPLES[key];
+}
+
+
+// ═════════════════════════════════════════
+// AI 채팅 (Gemini API 직접 호출)
+// ═════════════════════════════════════════
+const GEMINI_API_KEY = window.GEMINI_KEY || '';  // 발표용 임시 키. 만료 시 비움.
+const GEMINI_EXPIRE_DATE = '2026-05-23';  // 1주일 한정
+
+let chatHistory = [];
+
+function isChatExpired(){
+  return new Date() > new Date(GEMINI_EXPIRE_DATE + 'T23:59:59+09:00');
+}
+
+function chkExpireBanner(){
+  const banner = document.getElementById('expire-banner');
+  if(!banner) return;
+  if(isChatExpired() || !GEMINI_API_KEY){
+    banner.classList.add('expired');
+    banner.innerHTML = '<span>⏰</span><span><strong>무료 체험 기간 종료</strong> · 이제 본인 Claude Code 또는 Gemini CLI로 진행하세요. 오른쪽 탭에서 프롬프트 복사 가능 →</span>';
+    swAnaTab('prompt');
+    document.getElementById('ana-tab-chat').disabled = true;
+    const ci = document.getElementById('chat-input');
+    if(ci){ ci.disabled = true; ci.placeholder = '무료 체험 종료 — 옆 탭에서 프롬프트 복사하세요'; }
+    document.getElementById('chat-send').disabled = true;
+    return true;
+  }
+  return false;
+}
+
+function swAnaTab(tab){
+  document.getElementById('ana-tab-chat').classList.toggle('active', tab==='chat');
+  document.getElementById('ana-tab-prompt').classList.toggle('active', tab==='prompt');
+  document.getElementById('ana-panel-chat').style.display = tab==='chat' ? '' : 'none';
+  document.getElementById('ana-panel-prompt').style.display = tab==='prompt' ? '' : 'none';
+}
+
+// 페르소나 컨텍스트 (시스템 프롬프트용 동적 생성)
+function buildPersonaContext(){
+  const pid = S.projectId || 'YOUR_PROJECT_ID';
+  const mbti = S.mbti || '미선택';
+  const interests = (S.interests && S.interests.length) ? S.interests.join(', ') : '미선택';
+  const blend = S.blend || [];
+  const blendStr = blend.map(b => `${b.key.replace(/^[A-F]_/,'')} ${b.pct}%`).join(' · ');
+  const persona = S.persona ? PM[S.persona] : null;
+
+  // 더미데이터 통계 (간단 요약)
+  let dataStats = '데이터 미생성';
+  if(S.persona && PD[S.persona]){
+    const d = PD[S.persona];
+    if(!d.web) d.web = genWebData(S.persona, d.youtube);
+    if(!d.shop) d.shop = genShopData(S.persona, d.youtube);
+    dataStats = `유튜브 ${d.youtube.length}건, 음악 ${d.music.length}건, 웹 ${d.web.length}건, 쇼핑 ${d.shop.length}건`;
+  }
+
+  return {
+    pid, mbti, interests, blendStr,
+    personaName: persona?.name || '미정',
+    personaMbti: persona?.mbti || '',
+    personaDesc: persona?.desc || '',
+    personaPeak: persona?.peak || '',
+    dataStats,
+    data: S.persona ? PD[S.persona] : null
+  };
+}
+
+// 더미데이터 요약 통계 (실제 분석 가능한 형태로 추출)
+function summarizeData(personaKey){
+  if(!personaKey || !PD[personaKey]) return null;
+  const d = PD[personaKey];
+  if(!d.web) d.web = genWebData(personaKey, d.youtube);
+  if(!d.shop) d.shop = genShopData(personaKey, d.youtube);
+
+  // YouTube 시간대별
+  const ytHour = Array(24).fill(0);
+  const ytCat = {};
+  const ytChannel = {};
+  const ytLang = {};
+  d.youtube.forEach(r=>{
+    const h = parseInt(r.watched_at.substring(11,13));
+    ytHour[h]++;
+    ytCat[r.category] = (ytCat[r.category]||0)+1;
+    ytChannel[r.channel_name] = (ytChannel[r.channel_name]||0)+1;
+    ytLang[r.language] = (ytLang[r.language]||0)+1;
+  });
+
+  // Music
+  const muArtist = {};
+  const muGenre = {};
+  d.music.forEach(r=>{
+    muArtist[r.artist] = (muArtist[r.artist]||0)+1;
+    muGenre[r.genre] = (muGenre[r.genre]||0)+1;
+  });
+
+  // Web
+  const webHost = {};
+  const webCat = {};
+  d.web.forEach(r=>{
+    webHost[r.host] = (webHost[r.host]||0)+1;
+    webCat[r.category] = (webCat[r.category]||0)+1;
+  });
+
+  // Shop
+  const shopCat = {};
+  const shopBrand = {};
+  let shopTotal = 0;
+  d.shop.forEach(r=>{
+    shopCat[r.category] = (shopCat[r.category]||0)+1;
+    shopBrand[r.brand] = (shopBrand[r.brand]||0)+1;
+    shopTotal += (r.total_amount||0);
+  });
+
+  const top = (obj, n=5) => Object.entries(obj).sort((a,b)=>b[1]-a[1]).slice(0,n);
+
+  return {
+    yt: {
+      total: d.youtube.length,
+      hourly: ytHour.map((c,h)=>({h, c})).filter(x=>x.c>0),
+      cat_top: top(ytCat),
+      channel_top: top(ytChannel, 10),
+      lang: top(ytLang)
+    },
+    mu: { total: d.music.length, artist_top: top(muArtist, 5), genre_top: top(muGenre) },
+    web: { total: d.web.length, host_top: top(webHost, 8), cat_top: top(webCat) },
+    shop: { total: d.shop.length, total_amount: shopTotal, cat_top: top(shopCat), brand_top: top(shopBrand, 5) }
+  };
+}
+
+const PRESET_QUESTIONS = {
+  time: '내가 몇 시에 가장 활발한지, 평일 vs 주말 차이까지 한번에 봐줘',
+  dna: '내 콘텐츠 DNA — 어떤 카테고리/언어/완료율을 보이는지 분석해줘',
+  loyal: '내 충성 채널 TOP10이랑 충성 브랜드 TOP5 알려줘',
+  trend: '내 관심사가 1년 전이랑 지금 어떻게 달라졌는지 봐줘',
+  weekend: '평일의 나 vs 주말의 나가 얼마나 다른지 자세히 비교해줘',
+  music: '내 영상·음악·웹·쇼핑 행동이 어떻게 연결되는지 분석해줘',
+  persona: '나의 데이터 페르소나를 한 명의 인물로 그려줘'
+};
+
+function askPreset(key){
+  const q = PRESET_QUESTIONS[key];
+  if(!q) return;
+  document.getElementById('chat-input').value = q;
+  sendChat();
+}
+
+function appendMsg(role, html){
+  const hist = document.getElementById('chat-history');
+  const div = document.createElement('div');
+  div.className = 'chat-msg ' + role;
+  const av = role==='ai' ? '🤖' : '🙋';
+  div.innerHTML = `<div class="avatar">${av}</div><div class="body">${html}</div>`;
+  hist.appendChild(div);
+  hist.scrollTop = hist.scrollHeight;
+  return div;
+}
+
+function appendTyping(){
+  const hist = document.getElementById('chat-history');
+  const div = document.createElement('div');
+  div.className = 'chat-msg ai';
+  div.id = 'typing-indicator';
+  div.innerHTML = `<div class="avatar">🤖</div><div class="body"><div class="chat-typing"><span></span><span></span><span></span></div></div>`;
+  hist.appendChild(div);
+  hist.scrollTop = hist.scrollHeight;
+}
+
+function removeTyping(){
+  const t = document.getElementById('typing-indicator');
+  if(t) t.remove();
+}
+
+// 간단 마크다운 → HTML 변환
+function md2html(text){
+  if(!text) return '';
+  text = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  // code blocks
+  text = text.replace(/```(\w*)\n([\s\S]*?)```/g, (_,lang,code)=>`<pre>${code}</pre>`);
+  // inline code
+  text = text.replace(/`([^`]+)`/g, '<code>$1</code>');
+  // bold
+  text = text.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  // line breaks
+  text = text.replace(/\n/g, '<br>');
+  return text;
+}
+
+async function sendChat(){
+  if(isChatExpired() || !GEMINI_API_KEY){
+    chkExpireBanner();
+    return;
+  }
+  const input = document.getElementById('chat-input');
+  const msg = input.value.trim();
+  if(!msg) return;
+  input.value = '';
+  input.disabled = true;
+  document.getElementById('chat-send').disabled = true;
+
+  appendMsg('user', md2html(msg));
+  chatHistory.push({role:'user', text: msg});
+
+  appendTyping();
+
+  // 검증 활성화
+  document.getElementById('btn-chk-6').disabled = false;
+
+  try {
+    const ctx = buildPersonaContext();
+    const summary = summarizeData(S.persona);
+    const systemPrompt = `너는 친한 데이터 분석가 친구야. 사용자가 자기 데이터를 분석해달라고 부탁했어.
+
+📦 사용자 컨텍스트:
+- MBTI: ${ctx.mbti}
+- 관심사 5개: ${ctx.interests}
+- 페르소나 블렌드: ${ctx.blendStr}
+- 주력 페르소나: ${ctx.personaName} (${ctx.personaMbti})
+- 페르소나 특징: ${ctx.personaDesc}
+- 피크 시간대: ${ctx.personaPeak}
+
+📊 더미데이터 요약 통계 (실제 분석 가능):
+${summary ? JSON.stringify(summary, null, 1) : '데이터 미생성'}
+
+🎯 답변 규칙:
+- 친근한 반말 (예: "~봤어요" 가 아니라 "~봤어")
+- 위 통계 데이터를 활용해서 실제 숫자/카테고리/채널명 구체적으로 답변
+- 분석 결과를 표·차트(텍스트)·인사이트 박스 형태로 보여줘
+- 마지막에 한 줄 인사이트로 마무리
+- SQL 보여달라고 하지 않는 한 SQL은 보여주지 마
+- 한국어로, 빠르고 간결하게 (300~500자 정도)`;
+
+    const body = {
+      contents: chatHistory.map(m => ({
+        role: m.role === 'user' ? 'user' : 'model',
+        parts: [{text: m.text}]
+      })),
+      systemInstruction: {parts: [{text: systemPrompt}]},
+      generationConfig: {temperature: 0.7, maxOutputTokens: 1500}
+    };
+
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`;
+    const resp = await fetch(url, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(body)
+    });
+
+    if(!resp.ok){
+      const errText = await resp.text();
+      throw new Error(`API ${resp.status}: ${errText.substring(0,200)}`);
+    }
+    const j = await resp.json();
+    const reply = j.candidates?.[0]?.content?.parts?.[0]?.text || '응답이 비었네요. 다시 한번 물어봐주세요!';
+
+    removeTyping();
+    appendMsg('ai', md2html(reply));
+    chatHistory.push({role:'model', text: reply});
+
+  } catch(err){
+    removeTyping();
+    appendMsg('ai', '⚠️ AI 호출 실패: ' + err.message + '<br><br>옆 "직접 프롬프트로" 탭으로 본인 AI에서 진행해보세요!');
+  } finally {
+    input.disabled = false;
+    document.getElementById('chat-send').disabled = false;
+    input.focus();
+  }
+}
+
+// Step 6 진입 시 만료 체크 + 페르소나 컨텍스트 메시지 갱신
+function onEnterS6(){
+  chkExpireBanner();
+  const ctx = buildPersonaContext();
+  const greet = document.getElementById('chat-greeting');
+  if(greet && S.persona){
+    greet.innerHTML = `안녕! 저는 여러분의 데이터를 봐주는 친구예요.<br>
+      방금 만든 더미데이터 보고 있어요 — <strong>${ctx.dataStats}</strong><br>
+      MBTI: ${ctx.mbti} · 관심사: ${ctx.interests}<br>
+      뭐가 궁금하세요?`;
+  }
 }
 
 function selAna(key,card){
