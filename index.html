@@ -381,6 +381,26 @@ details[open]>summary::before{content:"▾ ";}
 .open-ai-btn[onclick*="claude"]:hover{background:#fdf3ee;border-color:#cc785c;}
 .open-ai-btn[onclick*="claude"]::before{content:'🤖';}
 
+
+/* MBTI/관심사 카드 */
+.mbti-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;}
+.mbti-card{background:#fff;border:1.5px solid #e5e7eb;border-radius:8px;padding:8px 6px;cursor:pointer;text-align:center;transition:all .15s;}
+.mbti-card:hover{border-color:#bcd4ff;background:#f7faff;}
+.mbti-card.sel{border-color:var(--blue);background:linear-gradient(135deg,#e8f0fe,#fff);box-shadow:0 2px 6px rgba(30,87,255,.18);}
+.mbti-card .mbti-code{font-weight:800;font-size:.85rem;color:var(--blue);}
+.mbti-card .mbti-name{font-size:.65rem;color:var(--muted);margin-top:2px;line-height:1.2;}
+.int-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;}
+.int-card{background:#fff;border:1.5px solid #e5e7eb;border-radius:8px;padding:10px 4px;cursor:pointer;text-align:center;transition:all .15s;}
+.int-card:hover{border-color:#bcd4ff;background:#f7faff;}
+.int-card.sel{border-color:#16a34a;background:linear-gradient(135deg,#f0fdf4,#fff);}
+.int-card .ie{font-size:1.3rem;display:block;margin-bottom:3px;}
+.int-card .il{font-size:.68rem;font-weight:600;line-height:1.2;color:#374151;}
+.int-card.disabled{opacity:.4;cursor:not-allowed;}
+@media(max-width:600px){
+  .mbti-grid{grid-template-columns:repeat(2,1fr);}
+  .int-grid{grid-template-columns:repeat(3,1fr);}
+}
+
 /* 코드 탭 (sl6) */
 .code-tabs-bar{display:flex;gap:2px;border-bottom:2px solid #e0e3eb;margin-top:10px;}
 .code-tab{flex:1;padding:10px 14px;background:transparent;border:none;cursor:pointer;font-size:.85rem;font-weight:600;color:var(--muted);position:relative;transition:all .15s;}
@@ -696,20 +716,46 @@ details[open]>summary::before{content:"▾ ";}
     </div>
 
     <div id="tc-dummy">
-      <p style="font-size:.83rem;font-weight:600;margin-bottom:8px;">① 유튜브에서 주로 뭘 보나요? <span style="font-size:.75rem;color:var(--muted);font-weight:400;">(하나만)</span></p>
-      <div class="ch-grid">
-        <div class="ch-card" data-g="yt" data-v="music_idol" onclick="pick(this,'yt')"><span class="ce">🎵</span><div class="cl">음악·아이돌</div><div class="cd">K-pop, J-pop, MV</div></div>
-        <div class="ch-card" data-g="yt" data-v="ai_study" onclick="pick(this,'yt')"><span class="ce">🤖</span><div class="cl">AI·자기계발</div><div class="cd">강의, 코딩, 영어</div></div>
-        <div class="ch-card" data-g="yt" data-v="food_travel" onclick="pick(this,'yt')"><span class="ce">🍜</span><div class="cl">맛집·여행</div><div class="cd">먹방, 여행 브이로그</div></div>
-        <div class="ch-card" data-g="yt" data-v="sport_life" onclick="pick(this,'yt')"><span class="ce">💪</span><div class="cl">운동·생활</div><div class="cd">홈트, 육아, 요리</div></div>
+      <p style="font-size:.85rem;font-weight:600;margin-bottom:6px;">① 내 MBTI는? <span style="font-size:.74rem;color:var(--muted);font-weight:400;">(하나만)</span></p>
+      <div class="mbti-grid" id="mbti-grid">
+        <div class="mbti-card" data-v="ISTJ" onclick="pickMbti(this,'ISTJ')"><div class="mbti-code">ISTJ</div><div class="mbti-name">청렴결백</div></div>
+        <div class="mbti-card" data-v="ISFJ" onclick="pickMbti(this,'ISFJ')"><div class="mbti-code">ISFJ</div><div class="mbti-name">용감한수호자</div></div>
+        <div class="mbti-card" data-v="INFJ" onclick="pickMbti(this,'INFJ')"><div class="mbti-code">INFJ</div><div class="mbti-name">선의의옹호자</div></div>
+        <div class="mbti-card" data-v="INTJ" onclick="pickMbti(this,'INTJ')"><div class="mbti-code">INTJ</div><div class="mbti-name">용의주도전략가</div></div>
+        <div class="mbti-card" data-v="ISTP" onclick="pickMbti(this,'ISTP')"><div class="mbti-code">ISTP</div><div class="mbti-name">만능재주꾼</div></div>
+        <div class="mbti-card" data-v="ISFP" onclick="pickMbti(this,'ISFP')"><div class="mbti-code">ISFP</div><div class="mbti-name">호기심예술가</div></div>
+        <div class="mbti-card" data-v="INFP" onclick="pickMbti(this,'INFP')"><div class="mbti-code">INFP</div><div class="mbti-name">열정적인중재자</div></div>
+        <div class="mbti-card" data-v="INTP" onclick="pickMbti(this,'INTP')"><div class="mbti-code">INTP</div><div class="mbti-name">논리적인사색가</div></div>
+        <div class="mbti-card" data-v="ESTP" onclick="pickMbti(this,'ESTP')"><div class="mbti-code">ESTP</div><div class="mbti-name">모험을즐기는사업가</div></div>
+        <div class="mbti-card" data-v="ESFP" onclick="pickMbti(this,'ESFP')"><div class="mbti-code">ESFP</div><div class="mbti-name">자유로운영혼의연예인</div></div>
+        <div class="mbti-card" data-v="ENFP" onclick="pickMbti(this,'ENFP')"><div class="mbti-code">ENFP</div><div class="mbti-name">재기발랄한활동가</div></div>
+        <div class="mbti-card" data-v="ENTP" onclick="pickMbti(this,'ENTP')"><div class="mbti-code">ENTP</div><div class="mbti-name">뜨거운논쟁가</div></div>
+        <div class="mbti-card" data-v="ESTJ" onclick="pickMbti(this,'ESTJ')"><div class="mbti-code">ESTJ</div><div class="mbti-name">엄격한관리자</div></div>
+        <div class="mbti-card" data-v="ESFJ" onclick="pickMbti(this,'ESFJ')"><div class="mbti-code">ESFJ</div><div class="mbti-name">사교적인외교관</div></div>
+        <div class="mbti-card" data-v="ENFJ" onclick="pickMbti(this,'ENFJ')"><div class="mbti-code">ENFJ</div><div class="mbti-name">정의로운사회운동가</div></div>
+        <div class="mbti-card" data-v="ENTJ" onclick="pickMbti(this,'ENTJ')"><div class="mbti-code">ENTJ</div><div class="mbti-name">대담한통솔자</div></div>
       </div>
-      <p style="font-size:.83rem;font-weight:600;margin:12px 0 8px;">② 음악은 어떤 걸 즐기나요? <span style="font-size:.75rem;color:var(--muted);font-weight:400;">(하나만)</span></p>
-      <div class="ch-grid">
-        <div class="ch-card" data-g="mu" data-v="jpop_citypop" onclick="pick(this,'mu')"><span class="ce">🇯🇵</span><div class="cl">J-pop·시티팝</div><div class="cd">일본 음악, 애니 OST</div></div>
-        <div class="ch-card" data-g="mu" data-v="indie_ballad" onclick="pick(this,'mu')"><span class="ce">🎸</span><div class="cl">인디·발라드</div><div class="cd">잔잔한 한국 인디</div></div>
-        <div class="ch-card" data-g="mu" data-v="kpop_dance" onclick="pick(this,'mu')"><span class="ce">💃</span><div class="cl">K-pop·댄스</div><div class="cd">신나는 아이돌</div></div>
-        <div class="ch-card" data-g="mu" data-v="hiphop_edm" onclick="pick(this,'mu')"><span class="ce">🔥</span><div class="cl">힙합·EDM</div><div class="cd">강한 비트</div></div>
-        <div class="ch-card" data-g="mu" data-v="calm_kids" onclick="pick(this,'mu')" style="grid-column:1/-1;"><span class="ce">🎠</span><div class="cl">잔잔한·동요</div><div class="cd">태교음악, 자장가, 자연 소리</div></div>
+
+      <div style="display:flex;align-items:baseline;justify-content:space-between;margin:14px 0 6px;">
+        <p style="font-size:.85rem;font-weight:600;">② 내 관심사 5개</p>
+        <span style="font-size:.78rem;color:var(--muted);"><span id="int-pick-cnt">0</span> / 5 선택됨</span>
+      </div>
+      <div class="int-grid" id="int-grid">
+        <div class="int-card" data-v="music_idol" onclick="pickInt(this,'music_idol')"><span class="ie">🎵</span><div class="il">음악·아이돌</div></div>
+        <div class="int-card" data-v="japan" onclick="pickInt(this,'japan')"><span class="ie">🇯🇵</span><div class="il">일본 콘텐츠</div></div>
+        <div class="int-card" data-v="ai_study" onclick="pickInt(this,'ai_study')"><span class="ie">🤖</span><div class="il">AI·자기계발</div></div>
+        <div class="int-card" data-v="coding" onclick="pickInt(this,'coding')"><span class="ie">💻</span><div class="il">코딩·개발</div></div>
+        <div class="int-card" data-v="food" onclick="pickInt(this,'food')"><span class="ie">🍜</span><div class="il">맛집·먹방</div></div>
+        <div class="int-card" data-v="travel" onclick="pickInt(this,'travel')"><span class="ie">✈️</span><div class="il">여행</div></div>
+        <div class="int-card" data-v="fitness" onclick="pickInt(this,'fitness')"><span class="ie">💪</span><div class="il">운동·헬스</div></div>
+        <div class="int-card" data-v="parenting" onclick="pickInt(this,'parenting')"><span class="ie">👶</span><div class="il">육아·반려</div></div>
+        <div class="int-card" data-v="indie" onclick="pickInt(this,'indie')"><span class="ie">🎨</span><div class="il">인디·감성</div></div>
+        <div class="int-card" data-v="game" onclick="pickInt(this,'game')"><span class="ie">🎮</span><div class="il">게임</div></div>
+        <div class="int-card" data-v="movie" onclick="pickInt(this,'movie')"><span class="ie">🎬</span><div class="il">영화·드라마</div></div>
+        <div class="int-card" data-v="fashion" onclick="pickInt(this,'fashion')"><span class="ie">👗</span><div class="il">패션·뷰티</div></div>
+        <div class="int-card" data-v="finance" onclick="pickInt(this,'finance')"><span class="ie">💰</span><div class="il">재테크·부동산</div></div>
+        <div class="int-card" data-v="cooking" onclick="pickInt(this,'cooking')"><span class="ie">🍳</span><div class="il">요리·홈쿠킹</div></div>
+        <div class="int-card" data-v="news" onclick="pickInt(this,'news')"><span class="ie">📰</span><div class="il">뉴스·시사</div></div>
       </div>
       <div id="persona-area"></div>
       <div id="dl-area" style="display:none;">
@@ -758,7 +804,25 @@ details[open]>summary::before{content:"▾ ";}
           <div class="chart-box"><canvas id="chart-rh"></canvas></div>
           <div class="chart-box"><canvas id="chart-rc"></canvas></div>
         </div>
-        <button class="btn btn-success btn-full" style="margin-top:10px;" onclick="dlRealCSV()">⬇️ youtube_history.csv 다운로드</button>
+        <p style="font-size:.83rem;font-weight:600;margin:12px 0 8px;">📥 CSV 파일 4개 모두 다운로드하세요</p>
+        <div class="dl-grid" style="grid-template-columns:1fr 1fr;">
+          <div class="dl-card" id="rdlc-yt" onclick="dlRealFile('youtube')">
+            <div class="dl-icon">📺</div><div class="dl-name">youtube_history.csv</div>
+            <div class="dl-sub" id="rdl-yt-cnt"></div><div class="dl-ok" id="rdl-yt-ok" style="display:none;">✓ 다운로드</div>
+          </div>
+          <div class="dl-card" id="rdlc-mu" onclick="dlRealFile('music')">
+            <div class="dl-icon">🎵</div><div class="dl-name">music_history.csv</div>
+            <div class="dl-sub" id="rdl-mu-cnt"></div><div class="dl-ok" id="rdl-mu-ok" style="display:none;">✓ 다운로드</div>
+          </div>
+          <div class="dl-card" id="rdlc-wb" onclick="dlRealFile('web')">
+            <div class="dl-icon">🌐</div><div class="dl-name">web_history.csv</div>
+            <div class="dl-sub" id="rdl-wb-cnt"></div><div class="dl-ok" id="rdl-wb-ok" style="display:none;">✓ 다운로드</div>
+          </div>
+          <div class="dl-card" id="rdlc-sh" onclick="dlRealFile('shop')">
+            <div class="dl-icon">🗺️</div><div class="dl-name">maps_saved.csv</div>
+            <div class="dl-sub" id="rdl-sh-cnt"></div><div class="dl-ok" id="rdl-sh-ok" style="display:none;">✓ 다운로드</div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -1426,7 +1490,7 @@ const SCORE_MAP={s2:15,s3:15,s4:20,s5:25,s6:25,s7:100};
 
 const S={
   session:'bq',
-  step:1,yt:[],mu:[],persona:null,
+  step:1,yt:[],mu:[],mbti:null,interests:[],persona:null,
   dlYt:false,dlMu:false,dlWb:false,dlSh:false,
   tYtOk:false,tMuOk:false,
   realData:null,dataMode:'dummy',
@@ -1602,31 +1666,118 @@ function chkDs(){
   document.getElementById('btn-chk-3').disabled=v.length===0;
 }
 
-// ── STEP 4 ──
+// ── STEP 4: MBTI + 관심사 5개 ──
+const MBTI_TRAITS = {
+  ISTJ:{tag:'책임감·정확',time:'아침형',vibe:'성장형'},
+  ISFJ:{tag:'헌신·세심',time:'규칙적',vibe:'육아탐색'},
+  INFJ:{tag:'통찰·이상주의',time:'야간형',vibe:'감성'},
+  INTJ:{tag:'전략·독립',time:'야간형',vibe:'성장형'},
+  ISTP:{tag:'문제해결',time:'주말집중',vibe:'주말탐험'},
+  ISFP:{tag:'온화·자율',time:'야간형',vibe:'감성'},
+  INFP:{tag:'이상·따뜻',time:'야간형',vibe:'감성'},
+  INTP:{tag:'논리·분석',time:'야간형',vibe:'성장형'},
+  ESTP:{tag:'활동·즉흥',time:'주말집중',vibe:'주말탐험'},
+  ESFP:{tag:'즐거움·사교',time:'저녁형',vibe:'주말탐험'},
+  ENFP:{tag:'영감·자유',time:'불규칙',vibe:'감성'},
+  ENTP:{tag:'발명·도전',time:'야간형',vibe:'성장형'},
+  ESTJ:{tag:'관리·실용',time:'아침형',vibe:'성장형'},
+  ESFJ:{tag:'배려·사교',time:'규칙적',vibe:'육아탐색'},
+  ENFJ:{tag:'영향·헌신',time:'주말집중',vibe:'감성'},
+  ENTJ:{tag:'리더·결단',time:'아침형',vibe:'성장형'}
+};
+
+// 관심사 → 페르소나 가중치
+const INT_WEIGHT = {
+  music_idol:  {A:4,D:1},
+  japan:       {A:5,D:1},
+  ai_study:    {B:5},
+  coding:      {B:4,A:1},
+  food:        {C:4,D:1},
+  travel:      {C:5},
+  fitness:     {E:5},
+  parenting:   {F:5,D:1},
+  indie:       {D:5},
+  game:        {A:3,B:1},
+  movie:       {C:2,D:2,A:1},
+  fashion:     {C:3,D:2},
+  finance:     {B:4,E:1},
+  cooking:     {F:3,D:1,C:1},
+  news:        {B:2,E:1,C:1}
+};
+
+function pickMbti(el,v){
+  document.querySelectorAll('.mbti-card').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel');
+  S.mbti = v;
+  tryShowPersona();
+}
+
+function pickInt(el,v){
+  const isSel = el.classList.contains('sel');
+  if(isSel){
+    el.classList.remove('sel');
+    const i = S.interests.indexOf(v);
+    if(i>-1) S.interests.splice(i,1);
+  } else {
+    if(S.interests.length>=5){
+      // 5개 가득 차면 첫 번째 해제
+      const firstV = S.interests[0];
+      const firstEl = document.querySelector('.int-card[data-v="'+firstV+'"]');
+      if(firstEl) firstEl.classList.remove('sel');
+      S.interests.shift();
+    }
+    el.classList.add('sel');
+    S.interests.push(v);
+  }
+  document.getElementById('int-pick-cnt').textContent = S.interests.length;
+  // 비활성화 처리
+  document.querySelectorAll('.int-card').forEach(c=>{
+    if(!c.classList.contains('sel') && S.interests.length>=5){
+      // 자동 교체 모드이므로 disabled 처리 안 함 (가장 오래된 거 자동 해제)
+    }
+  });
+  tryShowPersona();
+}
+
+function tryShowPersona(){
+  if(S.mbti && S.interests.length>=3){
+    shPersona();
+  } else {
+    document.getElementById('persona-area').innerHTML='';
+    document.getElementById('dl-area').style.display='none';
+    document.getElementById('vb-step4').style.display='none';
+  }
+}
+
+// 기존 호환용 pick() — real data 경로용
 function pick(el,g){
   const arr=g==='yt'?S.yt:S.mu,v=el.dataset.v;
   if(el.classList.contains('sel')){el.classList.remove('sel');const i=arr.indexOf(v);if(i>-1)arr.splice(i,1);}
   else{if(arr.length>=1){arr.shift();document.querySelectorAll('.ch-card.sel[data-g="'+g+'"]').forEach(c=>c.classList.remove('sel'));}el.classList.add('sel');arr.push(v);}
-  if(S.yt.length>0&&S.mu.length>0)shPersona();
-  else{document.getElementById('persona-area').innerHTML='';document.getElementById('dl-area').style.display='none';document.getElementById('vb-step4').style.display='none';}
 }
 function match(){
-  const sc={A_야행성덕후:0,B_성장형직장인:0,C_주말탐험가:0,D_감성인간:0,E_새벽운동러:0,F_육아탐색러:0};
-  S.yt.forEach(v=>{if(v==='music_idol'){sc.A_야행성덕후+=3;sc.D_감성인간+=1;}if(v==='ai_study')sc.B_성장형직장인+=3;if(v==='food_travel'){sc.C_주말탐험가+=2;sc.D_감성인간+=2;}if(v==='sport_life'){sc.E_새벽운동러+=2;sc.F_육아탐색러+=2;}});
-  S.mu.forEach(v=>{if(v==='jpop_citypop'){sc.A_야행성덕후+=3;sc.D_감성인간+=2;}if(v==='indie_ballad'){sc.B_성장형직장인+=2;sc.D_감성인간+=2;sc.F_육아탐색러+=1;}if(v==='kpop_dance'){sc.A_야행성덕후+=1;sc.C_주말탐험가+=3;}if(v==='hiphop_edm')sc.E_새벽운동러+=4;if(v==='calm_kids'){sc.F_육아탐색러+=4;sc.D_감성인간+=1;}});
-  return Object.entries(sc).sort((a,b)=>b[1]-a[1])[0][0];
+  return matchBlend()[0].key;
 }
 
-// 다중 페르소나 블렌드 — TOP3 비율 반환
+// 5개 관심사 + MBTI 기반 블렌드
 function matchBlend(){
   const sc={A_야행성덕후:0,B_성장형직장인:0,C_주말탐험가:0,D_감성인간:0,E_새벽운동러:0,F_육아탐색러:0};
-  S.yt.forEach(v=>{if(v==='music_idol'){sc.A_야행성덕후+=3;sc.D_감성인간+=1;}if(v==='ai_study'){sc.B_성장형직장인+=3;sc.D_감성인간+=1;}if(v==='food_travel'){sc.C_주말탐험가+=2;sc.D_감성인간+=2;}if(v==='sport_life'){sc.E_새벽운동러+=2;sc.F_육아탐색러+=2;sc.B_성장형직장인+=1;}});
-  S.mu.forEach(v=>{if(v==='jpop_citypop'){sc.A_야행성덕후+=3;sc.D_감성인간+=2;}if(v==='indie_ballad'){sc.B_성장형직장인+=2;sc.D_감성인간+=2;sc.F_육아탐색러+=1;}if(v==='kpop_dance'){sc.A_야행성덕후+=1;sc.C_주말탐험가+=3;sc.D_감성인간+=1;}if(v==='hiphop_edm'){sc.E_새벽운동러+=4;sc.C_주말탐험가+=1;}if(v==='calm_kids'){sc.F_육아탐색러+=4;sc.D_감성인간+=1;}});
+  const ABBR = {A:'A_야행성덕후',B:'B_성장형직장인',C:'C_주말탐험가',D:'D_감성인간',E:'E_새벽운동러',F:'F_육아탐색러'};
+  // 관심사 가중치 합산
+  S.interests.forEach(v=>{
+    const w = INT_WEIGHT[v] || {};
+    Object.entries(w).forEach(([k,wgt])=>{ sc[ABBR[k]] = (sc[ABBR[k]]||0) + wgt; });
+  });
+  // MBTI vibe 가중치 (보너스 +2)
+  if(S.mbti){
+    const vibeMap = {'성장형':'B_성장형직장인','감성':'D_감성인간','주말탐험':'C_주말탐험가','육아탐색':'F_육아탐색러'};
+    const vibe = MBTI_TRAITS[S.mbti]?.vibe;
+    if(vibe && vibeMap[vibe]) sc[vibeMap[vibe]] += 2;
+  }
   const total = Object.values(sc).reduce((a,b)=>a+b,0) || 1;
   return Object.entries(sc).filter(([,v])=>v>0).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([k,v])=>({key:k, pct:Math.round(v/total*100)}));
 }
 
-// 블렌드 별명 생성 (TOP2 키워드 조합)
 function blendName(blend){
   const traits = {
     A_야행성덕후: {tag:'야행성', kw:'덕후'},
@@ -1638,15 +1789,20 @@ function blendName(blend){
   };
   if(blend.length===1) return traits[blend[0].key].tag + ' ' + traits[blend[0].key].kw;
   const t1 = traits[blend[0].key], t2 = traits[blend[1].key];
-  return t1.tag + ' ' + t2.kw + ' (sub: ' + (traits[blend[2]?.key]?.tag || '?') + ')';
+  return t1.tag + ' ' + t2.kw + (blend[2] ? ' · ' + traits[blend[2].key].tag : '');
 }
 function shPersona(){
   const blend = matchBlend();
+  if(!blend.length){
+    document.getElementById('persona-area').innerHTML='';
+    return;
+  }
   const key = blend[0].key;
   S.persona = key;
   S.blend = blend;
   const m=PM[key],d=PD[key];
   const nickName = blendName(blend);
+  const mbtiInfo = S.mbti ? MBTI_TRAITS[S.mbti] : null;
 
   // 블렌드 바 HTML
   const blendBars = blend.map(b => {
@@ -1660,15 +1816,32 @@ function shPersona(){
     </div>`;
   }).join('');
 
+  // 관심사 칩
+  const intLabels = {
+    music_idol:'🎵 음악·아이돌',japan:'🇯🇵 일본 콘텐츠',ai_study:'🤖 AI·자기계발',
+    coding:'💻 코딩',food:'🍜 맛집',travel:'✈️ 여행',fitness:'💪 운동',parenting:'👶 육아',
+    indie:'🎨 인디·감성',game:'🎮 게임',movie:'🎬 영화',fashion:'👗 패션',
+    finance:'💰 재테크',cooking:'🍳 요리',news:'📰 뉴스'
+  };
+  const intChips = S.interests.map(v=>`<span style="display:inline-block;background:#f0f9ff;color:#0369a1;font-size:.72rem;padding:3px 9px;border-radius:12px;margin:2px;">${intLabels[v]}</span>`).join('');
+
+  const mbtiBadge = mbtiInfo ? `<div style="display:inline-block;background:linear-gradient(135deg,#7c3aed,#a78bfa);color:#fff;font-size:.72rem;font-weight:700;padding:3px 9px;border-radius:6px;margin-right:6px;">${S.mbti} · ${mbtiInfo.tag}</div>` : '';
+
   document.getElementById('persona-area').innerHTML=`
     <div class="persona-card">
       <span class="pc-emoji">${m.emoji}</span>
       <div class="pc-name">${nickName}</div>
-      <div class="pc-mbti">${m.mbti} · 데이터로 본 당신</div>
+      <div style="margin:6px 0;">${mbtiBadge}</div>
       <div class="pc-desc">${m.desc}</div>
       <div style="font-size:.75rem;color:var(--muted);margin-top:6px;">⏰ ${m.peak}</div>
+
+      <div style="margin-top:12px;">
+        <div style="font-size:.72rem;font-weight:700;color:#374151;margin-bottom:4px;">📌 선택한 관심사</div>
+        ${intChips}
+      </div>
+
       <div style="margin-top:14px;padding:10px 12px;background:rgba(255,255,255,0.6);border-radius:8px;">
-        <div style="font-size:.75rem;font-weight:700;margin-bottom:6px;color:#374151;">🎨 페르소나 블렌드 (당신의 비율)</div>
+        <div style="font-size:.75rem;font-weight:700;margin-bottom:6px;color:#374151;">🎨 페르소나 블렌드</div>
         ${blendBars}
       </div>
       <div class="pc-stats" style="margin-top:14px;">
@@ -1966,29 +2139,280 @@ function hdDrop(e){e.preventDefault();document.getElementById('upa').classList.r
 function hdFiles(files){
   Promise.all(Array.from(files).filter(f=>f.name.endsWith('.json')).map(f=>new Promise(res=>{const r=new FileReader();r.onload=e=>res(e.target.result);r.readAsText(f);}))).then(results=>{
     const all=[];
-    results.forEach(c=>{try{JSON.parse(c).forEach(item=>{if(!item.titleUrl||!item.time)return;const m=item.titleUrl.match(/v=([^&]+)/);if(!m)return;const t=(item.title||'').replace(/^동영상 시청:\s*/,'');const ch=(item.subtitles&&item.subtitles[0])?item.subtitles[0].name:'';const kst=new Date(new Date(item.time).getTime()+9*3600000);const p=n=>String(n).padStart(2,'0');all.push({watched_at:`${kst.getFullYear()}-${p(kst.getMonth()+1)}-${p(kst.getDate())} ${p(kst.getHours())}:${p(kst.getMinutes())}:${p(kst.getSeconds())}`,title:t,channel_name:ch,category:gCat(t,ch),language:'ko'});});}catch(e){}});
-    if(!all.length){alert('watch-history.json 파일을 찾을 수 없어요.');return;}
-    all.sort((a,b)=>a.watched_at.localeCompare(b.watched_at));S.realData=all;
-    shReal(all);document.getElementById('vb-step4').style.display='block';
+    results.forEach(c=>{
+      try{
+        JSON.parse(c).forEach(item=>{
+          if(!item.titleUrl||!item.time)return;
+          const m=item.titleUrl.match(/v=([^&]+)/);
+          if(!m)return;
+          // 한국어·영어·일본어 제목 접두/접미사 제거
+          let t=(item.title||'')
+            .replace(/^동영상 시청:\s*/,'')
+            .replace(/^Watched\s+/i,'')
+            .replace(/^動画を視聴しました:\s*/,'')
+            .replace(/\s*(을|를)\s*시청했습니다\.?\s*$/,'')
+            .replace(/\s*を視聴しました[。.]?\s*$/,'')
+            .trim();
+          const ch=(item.subtitles&&item.subtitles[0])?item.subtitles[0].name:'';
+          const kst=new Date(new Date(item.time).getTime()+9*3600000);
+          const p=n=>String(n).padStart(2,'0');
+          const cat=gCat(t,ch);
+          const lang=gLang(t,ch);
+          const dur=gDur(cat);
+          const devices=['mobile','mobile','mobile','pc','tablet'];
+          all.push({
+            watched_at:`${kst.getFullYear()}-${p(kst.getMonth()+1)}-${p(kst.getDate())} ${p(kst.getHours())}:${p(kst.getMinutes())}:${p(kst.getSeconds())}`,
+            title:t, channel_name:ch, category:cat, language:lang,
+            duration_sec:dur,
+            watch_sec:Math.floor(dur*(0.45+Math.random()*0.55)),
+            device:devices[Math.floor(Math.random()*devices.length)]
+          });
+        });
+      }catch(e){}
+    });
+    if(!all.length){alert('watch-history.json 파일을 찾을 수 없어요.\n(YouTube 시청기록 JSON 파일인지 확인해주세요)');return;}
+    all.sort((a,b)=>a.watched_at.localeCompare(b.watched_at));
+    // 4개 데이터셋 생성
+    S.realData={
+      youtube:all,
+      music:genRealMusic(all),
+      web:genRealWeb(all),
+      shop:genRealMaps(all)
+    };
+    shReal(all);
+    document.getElementById('vb-step4').style.display='block';
+    // 카운트 업데이트
+    document.getElementById('rdl-yt-cnt').textContent=all.length.toLocaleString()+'건';
+    document.getElementById('rdl-mu-cnt').textContent=S.realData.music.length.toLocaleString()+'건';
+    document.getElementById('rdl-wb-cnt').textContent=S.realData.web.length.toLocaleString()+'건';
+    document.getElementById('rdl-sh-cnt').textContent=S.realData.shop.length.toLocaleString()+'건';
   });
 }
-function gCat(t,c){const s=(t+' '+c).toLowerCase();if(/운동|헬스|홈트|workout|fitness/.test(s))return'fitness';if(/아이|육아|뽀로로|핑크퐁|kids/.test(s))return'kids';if(/ai|gpt|claude|코딩|파이썬|강의/.test(s))return'ai_lecture';if(/맛집|먹방|food/.test(s))return'food';if(/여행|travel|vlog/.test(s))return'travel';if(/mv|music|뮤직|kpop|jpop|아이돌/.test(s))return'music';return'etc';}
+
+// 카테고리 분류
+function gCat(t,c){
+  const s=(t+' '+c).toLowerCase();
+  if(/운동|헬스|홈트|workout|fitness|필라테스|요가|yoga/.test(s))return'fitness';
+  if(/아이|육아|뽀로로|핑크퐁|kids|어린이|유아/.test(s))return'kids';
+  if(/\bai\b|gpt|claude|코딩|파이썬|python|강의|개발|프로그래밍|llm|머신러닝/.test(s))return'ai_lecture';
+  if(/맛집|먹방|food|요리|레시피|cooking|baking/.test(s))return'food';
+  if(/여행|travel|vlog|브이로그|tour|trip/.test(s))return'travel';
+  if(/\bmv\b|music video|뮤직|kpop|k-pop|jpop|j-pop|아이돌|idol|concert|공연/.test(s))return'music';
+  if(/뉴스|news|시사|정치|경제/.test(s))return'news';
+  if(/게임|gaming|game|플레이|playthrough/.test(s))return'gaming';
+  return'etc';
+}
+
+// 언어 감지
+function gLang(t,c){
+  const s=t+' '+c;
+  if(/[぀-ゟ゠-ヿ]/.test(s))return'ja';  // 히라가나·가타카나
+  if(/[가-힯]/.test(s))return'ko';               // 한글
+  if(/[a-zA-Z]{4,}/.test(s)&&!/[가-힯぀-ヿ]/.test(s))return'en';
+  return'ko';
+}
+
+// 카테고리별 영상 길이 추정
+function gDur(cat){
+  const r={fitness:[900,2700],ai_lecture:[600,3600],music:[180,420],food:[300,900],
+           travel:[600,1800],kids:[180,600],news:[120,600],gaming:[600,3600],etc:[300,1200]};
+  const [mn,mx]=r[cat]||[300,1200];
+  return Math.floor(mn+Math.random()*(mx-mn));
+}
+
+// ── 실제 데이터 기반 생성기 ──
+
+function genRealMusic(ytRows){
+  const catCnt={};
+  ytRows.forEach(r=>catCnt[r.category]=(catCnt[r.category]||0)+1);
+  const sorted=Object.entries(catCnt).sort((a,b)=>b[1]-a[1]);
+  const topCat=sorted[0]?.[0]||'etc';
+
+  const genreMap={
+    music:['kpop','jpop','pop'],ai_lecture:['lo-fi','ambient'],
+    fitness:['edm','hiphop'],food:['jazz','acoustic'],
+    travel:['acoustic','worldmusic'],kids:['동요','pop'],
+    gaming:['edm','hiphop'],news:['jazz'],etc:['pop','kpop']
+  };
+  const artistMap={
+    kpop:['아이유','뉴진스','BTS','에스파','세븐틴','(여자)아이들'],
+    jpop:['Ado','YOASOBI','あいみょん','Official髭男dism','米津玄師'],
+    pop:['Taylor Swift','Bruno Mars','Ed Sheeran','Dua Lipa'],
+    'lo-fi':['Lofi Girl','ChilledCow','nujabes'],
+    ambient:['Brian Eno','오감도'],
+    edm:['Marshmello','Alan Walker','DJ Snake'],
+    hiphop:['ZICO','pH-1','기리보이','Jay Park'],
+    jazz:['Norah Jones','Jazz Playlist'],
+    acoustic:['볼빨간사춘기','10cm','검정치마'],
+    worldmusic:['Bad Bunny','Rosalía'],
+    동요:['핑크퐁','뽀로로 OST'],
+  };
+  const titlePfx={
+    kpop:['Summer','LOVE','밤편지','Celebrity','사랑에 빠진다','After LIKE'],
+    jpop:['うっせぇわ','夜に駆ける','マリーゴールド','Pretender','群青'],
+    pop:['Cruel Summer','Die With A Smile','Blinding Lights','As It Was'],
+    'lo-fi':['Study with me','Rainy Day','Coffee Shop','Chill Beats'],
+    ambient:['Forest Rain','Morning Light','Drift'],
+    edm:['Silence','Faded','Alone','Sky'],
+    hiphop:['자유','SPOT!','기다릴게','Smoke'],
+    jazz:['Autumn Leaves','Blue in Green','Fly Me to the Moon'],
+    acoustic:['좋아좋아','오늘도 맑음','내 맘이 들리니'],
+    worldmusic:['Tití Me Preguntó','Con Altura'],
+    동요:['아기상어','상어가족','핑크퐁'],
+  };
+
+  const genres=genreMap[topCat]||['pop','kpop'];
+  const n=Math.min(Math.floor(ytRows.length*0.7)+30, 350);
+  const rows=[];
+  for(let i=0;i<n;i++){
+    const ref=ytRows[Math.floor(Math.random()*ytRows.length)];
+    const dt=new Date(ref.watched_at.replace(' ','T'));
+    dt.setMinutes(dt.getMinutes()-Math.floor(Math.random()*180)+30);
+    if(dt<new Date('2000-01-01'))continue;
+    const p=n=>String(n).padStart(2,'0');
+    const g=genres[Math.floor(Math.random()*genres.length)];
+    const arts=artistMap[g]||['Unknown'];
+    const art=arts[Math.floor(Math.random()*arts.length)];
+    const titles=titlePfx[g]||['Track'];
+    const title=titles[Math.floor(Math.random()*titles.length)];
+    const dur=Math.floor(170+Math.random()*200);
+    rows.push({
+      played_at:`${dt.getFullYear()}-${p(dt.getMonth()+1)}-${p(dt.getDate())} ${p(dt.getHours())}:${p(dt.getMinutes())}:${p(dt.getSeconds())}`,
+      title,artist:art,genre:g,
+      duration_sec:dur,
+      play_sec:Math.floor(dur*(0.65+Math.random()*0.35)),
+      context:Math.random()<0.65?'playlist':'single'
+    });
+  }
+  return rows.sort((a,b)=>a.played_at.localeCompare(b.played_at));
+}
+
+function genRealWeb(ytRows){
+  const catCnt={};
+  ytRows.forEach(r=>catCnt[r.category]=(catCnt[r.category]||0)+1);
+  const topCat=Object.entries(catCnt).sort((a,b)=>b[1]-a[1])[0]?.[0]||'etc';
+
+  // 공통 도메인 (누구나 방문)
+  const common=[
+    {d:'naver.com',t:'NAVER',tr:'typed'},
+    {d:'google.com',t:'Google',tr:'typed'},
+    {d:'youtube.com',t:'YouTube',tr:'typed'},
+    {d:'kakao.com',t:'카카오',tr:'link'},
+    {d:'namu.wiki',t:'나무위키',tr:'link'},
+  ];
+  // 카테고리별 도메인
+  const catDomains={
+    ai_lecture:[{d:'github.com',t:'GitHub'},{d:'claude.ai',t:'Claude'},{d:'openai.com',t:'OpenAI'},{d:'velog.io',t:'Velog'},{d:'stackoverflow.com',t:'Stack Overflow'}],
+    fitness:[{d:'coupang.com',t:'쿠팡'},{d:'musinsa.com',t:'무신사'},{d:'naver.com',t:'운동 루틴 검색'}],
+    food:[{d:'baemin.com',t:'배달의민족'},{d:'coupangeats.com',t:'쿠팡이츠'},{d:'10x10.co.kr',t:'맛집 검색'},{d:'mangobplate.com',t:'망고플레이트'}],
+    travel:[{d:'airbnb.com',t:'Airbnb'},{d:'booking.com',t:'Booking.com'},{d:'naver.com',t:'항공권 검색'},{d:'tripadvisor.com',t:'TripAdvisor'}],
+    music:[{d:'melon.com',t:'멜론'},{d:'bugs.co.kr',t:'벅스'},{d:'instagram.com',t:'Instagram'},{d:'naver.com',t:'가수 검색'}],
+    kids:[{d:'coupang.com',t:'쿠팡'},{d:'gmarket.co.kr',t:'G마켓'},{d:'naver.com',t:'육아 검색'},{d:'11st.co.kr',t:'11번가'}],
+    gaming:[{d:'steam.com',t:'Steam'},{d:'dcinside.com',t:'디시인사이드'},{d:'twitch.tv',t:'Twitch'},{d:'ggulzorist.com',t:'꿀조리스트'}],
+    etc:[{d:'naver.com',t:'NAVER'},{d:'daum.net',t:'Daum'},{d:'instagram.com',t:'Instagram'}],
+  };
+  const catList=[...common,...(catDomains[topCat]||catDomains.etc)];
+
+  const n=Math.min(Math.floor(ytRows.length*4)+100, 3000);
+  const rows=[];
+  for(let i=0;i<n;i++){
+    const ref=ytRows[Math.floor(Math.random()*ytRows.length)];
+    const dt=new Date(ref.watched_at.replace(' ','T'));
+    dt.setSeconds(dt.getSeconds()-Math.floor(Math.random()*3600));
+    if(dt<new Date('2000-01-01'))continue;
+    const p=n=>String(n).padStart(2,'0');
+    const site=catList[Math.floor(Math.random()*catList.length)];
+    rows.push({
+      visited_at_kst:`${dt.getFullYear()}-${p(dt.getMonth()+1)}-${p(dt.getDate())} ${p(dt.getHours())}:${p(dt.getMinutes())}:${p(dt.getSeconds())}`,
+      domain:site.d,
+      page_title:`${site.t} | 페이지`,
+      url:`https://${site.d}/`,
+      transition:site.tr||'link'
+    });
+  }
+  return rows.sort((a,b)=>a.visited_at_kst.localeCompare(b.visited_at_kst));
+}
+
+function genRealMaps(ytRows){
+  const catCnt={};
+  ytRows.forEach(r=>catCnt[r.category]=(catCnt[r.category]||0)+1);
+  const topCat=Object.entries(catCnt).sort((a,b)=>b[1]-a[1])[0]?.[0]||'etc';
+
+  const placePool={
+    food:[
+      {n:'성수동 맛집',c:'음식점',a:'서울 성동구 성수일로',lat:37.5442,lon:127.0557},
+      {n:'이태원 브런치카페',c:'카페',a:'서울 용산구 이태원로',lat:37.5345,lon:126.9940},
+      {n:'망원동 파스타',c:'음식점',a:'서울 마포구 망원동',lat:37.5562,lon:126.9103},
+    ],
+    travel:[
+      {n:'제주 카페 산책',c:'카페',a:'제주특별자치도 제주시',lat:33.4890,lon:126.4983},
+      {n:'경복궁',c:'관광명소',a:'서울 종로구 사직로',lat:37.5796,lon:126.9770},
+      {n:'남산타워',c:'관광명소',a:'서울 용산구 남산공원길',lat:37.5512,lon:126.9882},
+    ],
+    fitness:[
+      {n:'스쿼시 센터',c:'스포츠시설',a:'서울 강남구 테헤란로',lat:37.5065,lon:127.0536},
+      {n:'한강공원 운동장',c:'공원',a:'서울 영등포구 여의서로',lat:37.5284,lon:126.9317},
+    ],
+    ai_lecture:[
+      {n:'스타벅스 강남점',c:'카페',a:'서울 강남구 강남대로',lat:37.4979,lon:127.0276},
+      {n:'COEX 코엑스몰',c:'쇼핑몰',a:'서울 강남구 봉은사로',lat:37.5115,lon:127.0595},
+    ],
+    etc:[
+      {n:'홈플러스 월드컵점',c:'마트',a:'서울 마포구 월드컵로',lat:37.5698,lon:126.9026},
+      {n:'CGV 왕십리',c:'영화관',a:'서울 성동구 왕십리로',lat:37.5616,lon:127.0375},
+      {n:'롯데마트 잠실점',c:'마트',a:'서울 송파구 올림픽로',lat:37.5130,lon:127.1000},
+    ],
+  };
+  const pool=[...(placePool[topCat]||[]),...placePool.etc];
+  const n=Math.min(8+Math.floor(Math.random()*8), 15);
+  const rows=[];
+  const used=new Set();
+  for(let i=0;i<n;i++){
+    const pl=pool[i%pool.length];
+    const key=pl.n;
+    if(used.has(key))continue;
+    used.add(key);
+    const ref=ytRows[Math.floor(Math.random()*ytRows.length)];
+    const dt=new Date(ref.watched_at.replace(' ','T'));
+    const p=n=>String(n).padStart(2,'0');
+    rows.push({
+      saved_at_kst:`${dt.getFullYear()}-${p(dt.getMonth()+1)}-${p(dt.getDate())} ${p(dt.getHours())}:${p(dt.getMinutes())}:${p(dt.getSeconds())}`,
+      place_name:pl.n, category:pl.c, address:pl.a,
+      lat:pl.lat+(Math.random()-0.5)*0.01,
+      lon:pl.lon+(Math.random()-0.5)*0.01
+    });
+  }
+  return rows.sort((a,b)=>a.saved_at_kst.localeCompare(b.saved_at_kst));
+}
+
 function shReal(rows){
   document.getElementById('real-out').style.display='block';
-  document.getElementById('real-msg').textContent='✓ '+rows.length.toLocaleString()+'건 파싱 완료!';
+  document.getElementById('real-msg').textContent='✓ '+rows.length.toLocaleString()+'건 파싱 완료! music·web·maps 데이터도 자동 생성했어요.';
   const h=Array(24).fill(0);rows.forEach(r=>h[parseInt(r.watched_at.substring(11,13))]++);
   const cm={};rows.forEach(r=>{cm[r.channel_name]=(cm[r.channel_name]||0)+1;});
   const top=Object.entries(cm).sort((a,b)=>b[1]-a[1]).slice(0,8);
   ['rh','rc'].forEach(k=>{if(S.charts[k])S.charts[k].destroy();});
-  const h2=document.getElementById('chart-rh');if(h2)S.charts['rh']=new Chart(h2.getContext('2d'),{type:'bar',data:{labels:Array.from({length:24},(_,i)=>i+'시'),datasets:[{data:h,backgroundColor:'rgba(37,99,235,.6)',borderRadius:3}]},options:{plugins:{legend:{display:false},title:{display:true,text:'시간대별 활동'}},scales:{y:{beginAtZero:true,grid:{display:false}},x:{grid:{display:false}}}}});
-  const h3=document.getElementById('chart-rc');if(h3)S.charts['rc']=new Chart(h3.getContext('2d'),{type:'bar',data:{labels:top.map(([k])=>k.substring(0,8)),datasets:[{data:top.map(([,v])=>v),backgroundColor:'rgba(22,163,74,.7)',borderRadius:3}]},options:{indexAxis:'y',plugins:{legend:{display:false},title:{display:true,text:'채널 TOP8'}},scales:{x:{beginAtZero:true,grid:{display:false}},y:{grid:{display:false}}}}});
+  const h2=document.getElementById('chart-rh');if(h2)S.charts['rh']=new Chart(h2.getContext('2d'),{type:'bar',data:{labels:Array.from({length:24},(_,i)=>i+'시'),datasets:[{data:h,backgroundColor:'rgba(37,99,235,.6)',borderRadius:3}]},options:{plugins:{legend:{display:false},title:{display:true,text:'내 시간대별 활동'}},scales:{y:{beginAtZero:true,grid:{display:false}},x:{grid:{display:false}}}}});
+  const h3=document.getElementById('chart-rc');if(h3)S.charts['rc']=new Chart(h3.getContext('2d'),{type:'bar',data:{labels:top.map(([k])=>k.substring(0,10)),datasets:[{data:top.map(([,v])=>v),backgroundColor:'rgba(22,163,74,.7)',borderRadius:3}]},options:{indexAxis:'y',plugins:{legend:{display:false},title:{display:true,text:'내 채널 TOP8'}},scales:{x:{beginAtZero:true,grid:{display:false}},y:{grid:{display:false}}}}});
 }
-function dlRealCSV(){
+
+function dlRealFile(type){
   if(!S.realData)return;
-  const keys=Object.keys(S.realData[0]);
-  const csv=keys.join(',')+'\n'+S.realData.map(r=>keys.map(k=>{const v=String(r[k]??'');return v.includes(',')?`"${v}"`:v;}).join(',')).join('\n');
-  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='youtube_history.csv';a.click();
-  S.dlYt=true;
+  const map={
+    youtube:{rows:S.realData.youtube, file:'youtube_history.csv', card:'rdlc-yt', ok:'rdl-yt-ok'},
+    music:{rows:S.realData.music,   file:'music_history.csv',   card:'rdlc-mu', ok:'rdl-mu-ok'},
+    web:{rows:S.realData.web,       file:'web_history.csv',     card:'rdlc-wb', ok:'rdl-wb-ok'},
+    shop:{rows:S.realData.shop,     file:'maps_saved.csv',      card:'rdlc-sh', ok:'rdl-sh-ok'},
+  };
+  const {rows,file,card,ok}=map[type];
+  if(!rows||!rows.length){alert('데이터 없음');return;}
+  const keys=Object.keys(rows[0]);
+  const csv=keys.join(',')+'\n'+rows.map(r=>keys.map(k=>{const v=String(r[k]??'').replace(/"/g,'""');return v.includes(',')||v.includes('"')?`"${v}"`:v;}).join(',')).join('\n');
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob(['﻿'+csv],{type:'text/csv;charset=utf-8;'}));
+  a.download=file;a.click();
+  document.getElementById(card).classList.add('got');
+  document.getElementById(ok).style.display='block';
 }
 
 // ── STEP 5 ──
