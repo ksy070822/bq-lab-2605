@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>나의 디지털 라이프 분석 · 마케팅 인사이트 리포트</title>
+<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#0a0e1a;
+    --bg-2:#0f1428;
+    --card:#161b2e;
+    --card-2:#1e2542;
+    --line:#2a3157;
+    --text:#e8eaf6;
+    --text-dim:#a0a8c4;
+    --text-mute:#6b7393;
+    --ai:#a855f7;
+    --music:#ec4899;
+    --travel:#06b6d4;
+    --ent:#fbbf24;
+    --food:#10b981;
+    --accent:#6366f1;
+    --gold:#fcd34d;
+  }
+  html,body{
+    font-family:'Pretendard',-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    line-height:1.5;
+    letter-spacing:-0.01em;
+    min-height:100vh;
+  }
+  body{
+    background:
+      radial-gradient(circle at 15% 10%, rgba(168,85,247,0.12), transparent 40%),
+      radial-gradient(circle at 85% 80%, rgba(6,182,212,0.10), transparent 40%),
+      var(--bg);
+    background-attachment:fixed;
+    padding:48px 32px 80px;
+  }
+  .wrap{max-width:1280px;margin:0 auto}
+
+  /* ============= HERO ============= */
+  .hero{
+    text-align:center;
+    padding:48px 24px 32px;
+    margin-bottom:48px;
+  }
+  .hero .badge{
+    display:inline-block;
+    padding:6px 14px;
+    background:rgba(168,85,247,0.15);
+    border:1px solid rgba(168,85,247,0.4);
+    border-radius:999px;
+    color:var(--ai);
+    font-size:12px;
+    font-weight:600;
+    letter-spacing:0.05em;
+    text-transform:uppercase;
+    margin-bottom:20px;
+  }
+  .hero h1{
+    font-size:56px;
+    font-weight:800;
+    line-height:1.15;
+    background:linear-gradient(135deg, #e8eaf6 0%, #a0a8c4 100%);
+    -webkit-background-clip:text;
+    background-clip:text;
+    -webkit-text-fill-color:transparent;
+    margin-bottom:16px;
+  }
+  .hero h1 .accent{
+    background:linear-gradient(135deg, var(--ai) 0%, var(--music) 100%);
+    -webkit-background-clip:text;
+    background-clip:text;
+    -webkit-text-fill-color:transparent;
+  }
+  .hero .subtitle{
+    font-size:18px;
+    color:var(--text-dim);
+    max-width:680px;
+    margin:0 auto;
+  }
+  .hero .meta{
+    margin-top:24px;
+    display:flex;
+    gap:24px;
+    justify-content:center;
+    flex-wrap:wrap;
+    font-size:13px;
+    color:var(--text-mute);
+  }
+  .hero .meta span::before{
+    content:"●";
+    color:var(--accent);
+    margin-right:6px;
+  }
+
+  /* ============= SECTION ============= */
+  .section{margin-bottom:48px}
+  .section-title{
+    font-size:13px;
+    font-weight:700;
+    color:var(--text-mute);
+    letter-spacing:0.15em;
+    text-transform:uppercase;
+    margin-bottom:14px;
+  }
+  .section-head{
+    font-size:32px;
+    font-weight:800;
+    margin-bottom:6px;
+  }
+  .section-sub{
+    font-size:15px;
+    color:var(--text-dim);
+    margin-bottom:24px;
+  }
+
+  /* ============= KPI ============= */
+  .kpi-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:16px;
+    margin-bottom:48px;
+  }
+  .kpi{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:24px;
+    position:relative;
+    overflow:hidden;
+  }
+  .kpi::after{
+    content:"";
+    position:absolute;
+    top:0;left:0;right:0;
+    height:3px;
+    background:linear-gradient(90deg, var(--c1), var(--c2));
+  }
+  .kpi.k1{--c1:var(--ai);--c2:var(--music)}
+  .kpi.k2{--c1:var(--music);--c2:var(--ent)}
+  .kpi.k3{--c1:var(--travel);--c2:var(--accent)}
+  .kpi.k4{--c1:var(--food);--c2:var(--travel)}
+  .kpi .label{
+    font-size:12px;
+    color:var(--text-mute);
+    font-weight:600;
+    letter-spacing:0.05em;
+    text-transform:uppercase;
+    margin-bottom:8px;
+  }
+  .kpi .value{
+    font-size:36px;
+    font-weight:800;
+    line-height:1;
+    margin-bottom:8px;
+  }
+  .kpi .delta{
+    font-size:13px;
+    color:var(--text-dim);
+  }
+  .kpi .delta.up{color:var(--food)}
+  .kpi .delta.hot{color:var(--ai)}
+
+  /* ============= CARD ============= */
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:20px;
+    padding:28px;
+  }
+  .card-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:20px;
+  }
+  .card-head h3{
+    font-size:20px;
+    font-weight:700;
+  }
+  .card-head .tag{
+    font-size:11px;
+    color:var(--text-mute);
+    padding:4px 10px;
+    background:var(--card-2);
+    border-radius:6px;
+    letter-spacing:0.05em;
+  }
+
+  .grid-2{display:grid;grid-template-columns:1.5fr 1fr;gap:20px}
+  .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px}
+
+  /* ============= CHART ============= */
+  .chart-wrap{position:relative;height:300px}
+  .chart-wrap.tall{height:360px}
+
+  /* ============= SEQUENCE ============= */
+  .seq{
+    display:grid;
+    grid-template-columns:1fr 40px 1fr 40px 1fr;
+    gap:0;
+    align-items:stretch;
+  }
+  .seq-step{
+    background:var(--card-2);
+    border-radius:14px;
+    padding:20px;
+    position:relative;
+  }
+  .seq-step.s1{border-left:3px solid var(--music)}
+  .seq-step.s2{border-left:3px solid var(--ai)}
+  .seq-step.s3{border-left:3px solid var(--food)}
+  .seq-step .num{
+    position:absolute;
+    top:14px;right:14px;
+    font-size:11px;
+    color:var(--text-mute);
+    font-weight:700;
+    letter-spacing:0.05em;
+  }
+  .seq-step .label{
+    font-size:11px;
+    color:var(--text-mute);
+    font-weight:600;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    margin-bottom:6px;
+  }
+  .seq-step .title{font-size:18px;font-weight:700;margin-bottom:14px}
+  .seq-arrow{
+    align-self:center;
+    text-align:center;
+    color:var(--text-mute);
+    font-size:24px;
+  }
+  .seq-item{
+    background:rgba(255,255,255,0.03);
+    border-radius:8px;
+    padding:10px 12px;
+    margin-bottom:8px;
+    font-size:13px;
+  }
+  .seq-item:last-child{margin-bottom:0}
+  .seq-item .meta{color:var(--text-mute);font-size:11px;margin-top:2px}
+
+  /* ============= LIFECYCLE ============= */
+  .lifecycle{
+    background:var(--card-2);
+    border-radius:14px;
+    padding:18px;
+  }
+  .lifecycle .head{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:14px;
+  }
+  .lifecycle .head .icon{
+    width:36px;height:36px;
+    border-radius:10px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:18px;
+  }
+  .lifecycle.new .head .icon{background:rgba(168,85,247,0.15);color:var(--ai)}
+  .lifecycle.up  .head .icon{background:rgba(236,72,153,0.15);color:var(--music)}
+  .lifecycle.stable .head .icon{background:rgba(16,185,129,0.15);color:var(--food)}
+  .lifecycle h4{font-size:15px;font-weight:700}
+  .lifecycle .count{font-size:11px;color:var(--text-mute);margin-top:2px}
+  .ch-row{
+    display:flex;
+    justify-content:space-between;
+    padding:8px 0;
+    border-bottom:1px dashed var(--line);
+    font-size:13px;
+  }
+  .ch-row:last-child{border-bottom:0}
+  .ch-row .name{color:var(--text)}
+  .ch-row .val{color:var(--text-dim);font-variant-numeric:tabular-nums}
+
+  /* ============= MARKETING TABLE ============= */
+  .mk-table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:14px;
+  }
+  .mk-table th{
+    text-align:left;
+    padding:14px 16px;
+    background:var(--card-2);
+    color:var(--text-dim);
+    font-weight:600;
+    font-size:12px;
+    letter-spacing:0.05em;
+    text-transform:uppercase;
+  }
+  .mk-table th:first-child{border-radius:10px 0 0 10px}
+  .mk-table th:last-child{border-radius:0 10px 10px 0}
+  .mk-table td{
+    padding:14px 16px;
+    border-bottom:1px solid var(--line);
+  }
+  .mk-table tr:last-child td{border-bottom:none}
+  .mk-cat{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    font-weight:600;
+  }
+  .mk-cat .dot{width:10px;height:10px;border-radius:50%}
+  .mk-time{
+    font-variant-numeric:tabular-nums;
+    font-weight:700;
+    color:var(--gold);
+  }
+  .mk-action{color:var(--text-dim);font-size:13px}
+
+  /* ============= TRAVEL ============= */
+  .travel-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  .bar-row{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:10px;
+    font-size:13px;
+  }
+  .bar-row .name{width:120px;color:var(--text)}
+  .bar-row .bar{
+    flex:1;
+    height:12px;
+    background:var(--card-2);
+    border-radius:6px;
+    overflow:hidden;
+    position:relative;
+  }
+  .bar-row .bar .fill{
+    height:100%;
+    background:linear-gradient(90deg, var(--travel), var(--accent));
+    border-radius:6px;
+  }
+  .bar-row .val{
+    width:50px;
+    text-align:right;
+    color:var(--text-dim);
+    font-variant-numeric:tabular-nums;
+  }
+
+  /* ============= PERSONA ============= */
+  .persona{
+    background:linear-gradient(135deg, rgba(168,85,247,0.12), rgba(6,182,212,0.08));
+    border:1px solid rgba(168,85,247,0.3);
+    border-radius:24px;
+    padding:40px;
+    text-align:center;
+  }
+  .persona .tag-row{
+    display:flex;
+    gap:8px;
+    justify-content:center;
+    flex-wrap:wrap;
+    margin-bottom:20px;
+  }
+  .persona .tag-row .pill{
+    padding:6px 14px;
+    background:rgba(255,255,255,0.05);
+    border:1px solid var(--line);
+    border-radius:999px;
+    font-size:13px;
+    color:var(--text-dim);
+  }
+  .persona h2{
+    font-size:36px;
+    font-weight:800;
+    margin-bottom:16px;
+    background:linear-gradient(135deg, #fff, #a855f7);
+    -webkit-background-clip:text;
+    background-clip:text;
+    -webkit-text-fill-color:transparent;
+  }
+  .persona p{
+    color:var(--text-dim);
+    font-size:16px;
+    max-width:680px;
+    margin:0 auto;
+    line-height:1.7;
+  }
+
+  /* ============= FOOTER ============= */
+  .foot{
+    text-align:center;
+    margin-top:48px;
+    padding-top:32px;
+    border-top:1px solid var(--line);
+    font-size:12px;
+    color:var(--text-mute);
+  }
+
+  /* responsive */
+  @media (max-width: 960px) {
+    .kpi-grid{grid-template-columns:repeat(2,1fr)}
+    .grid-2,.grid-3{grid-template-columns:1fr}
+    .seq{grid-template-columns:1fr;gap:12px}
+    .seq-arrow{transform:rotate(90deg)}
+    .hero h1{font-size:36px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- =================== HERO =================== -->
+  <section class="hero">
+    <div class="badge">DATA-DRIVEN PERSONA REPORT</div>
+    <h1>데이터로 본 나,<br>그리고 <span class="accent">마케팅 인사이트</span></h1>
+    <p class="subtitle">Google Takeout 1년치 71,145건의 디지털 활동 데이터를 BigQuery로 분석한 결과</p>
+    <div class="meta">
+      <span>YouTube 시청 29,396건</span>
+      <span>검색 6,717건</span>
+      <span>저장 장소 234건</span>
+      <span>NotebookLM 11권</span>
+    </div>
+  </section>
+
+  <!-- =================== KPI =================== -->
+  <section class="kpi-grid">
+    <div class="kpi k1">
+      <div class="label">AI 영상 시청 증가율</div>
+      <div class="value">+2,850%</div>
+      <div class="delta hot">26Q1, 8건 → 236건 폭증</div>
+    </div>
+    <div class="kpi k2">
+      <div class="label">음악 시청 1년 증가</div>
+      <div class="value">3.8x</div>
+      <div class="delta up">206 → 780건 (25Q1 → 26Q1)</div>
+    </div>
+    <div class="kpi k3">
+      <div class="label">여행 위시리스트</div>
+      <div class="value">231</div>
+      <div class="delta">+ 실제 저장 234곳 = 꿈과 실현의 균형</div>
+    </div>
+    <div class="kpi k4">
+      <div class="label">학습 노트북</div>
+      <div class="value">11권</div>
+      <div class="delta up">AI · 사업 · 개발 4개월 집중</div>
+    </div>
+  </section>
+
+  <!-- =================== 1년 흐름 =================== -->
+  <section class="section">
+    <div class="section-title">PART 01 · INTEREST EVOLUTION</div>
+    <h2 class="section-head">1년의 관심사 흐름</h2>
+    <p class="section-sub">분기별 카테고리별 YouTube 시청량 변화 — <strong style="color:var(--ai)">AI에 빠진 순간이 데이터로 보입니다</strong></p>
+    <div class="card">
+      <div class="card-head">
+        <h3>분기별 시청량 추이 (Top 5 카테고리)</h3>
+        <span class="tag">2025 Q1 ~ 2026 Q2</span>
+      </div>
+      <div class="chart-wrap tall">
+        <canvas id="trendChart"></canvas>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== 시퀀스 =================== -->
+  <section class="section">
+    <div class="section-title">PART 02 · BEHAVIOR SEQUENCE</div>
+    <h2 class="section-head">시청 → 검색 → 구매</h2>
+    <p class="section-sub">콘텐츠 소비가 어떻게 구매로 이어지는가 — 30분 내 인과관계가 추적된 실제 시퀀스</p>
+    <div class="card">
+      <div class="seq">
+        <div class="seq-step s1">
+          <div class="num">STEP 01</div>
+          <div class="label">🎬 시청 (TRIGGER)</div>
+          <div class="title">콘텐츠 트리거</div>
+          <div class="seq-item">
+            <strong>HYBE LABELS</strong> · 음악
+            <div class="meta">BTS 'SWIM' Official MV</div>
+          </div>
+          <div class="seq-item">
+            <strong>맛있겠다 Yummy</strong> · 푸드
+            <div class="meta">제물포 아재들의 이모카세</div>
+          </div>
+          <div class="seq-item">
+            <strong>전매특허정우</strong> · 분석
+            <div class="meta">BTS 완전체 얼굴 분석 6탄</div>
+          </div>
+        </div>
+        <div class="seq-arrow">→</div>
+        <div class="seq-step s2">
+          <div class="num">STEP 02</div>
+          <div class="label">🔎 검색 (INTENT)</div>
+          <div class="title">관심 → 의도</div>
+          <div class="seq-item">
+            <strong>"bts"</strong>
+            <div class="meta">3/21 13:40 · 시청 후 22분 뒤</div>
+          </div>
+          <div class="seq-item">
+            <strong>"물회육수"</strong>
+            <div class="meta">4/26 22:13 · 음식 영상 시청 직후</div>
+          </div>
+          <div class="seq-item">
+            <strong>"푸룬주스"</strong>
+            <div class="meta">5/13 11:31 · 건강 콘텐츠 직후</div>
+          </div>
+        </div>
+        <div class="seq-arrow">→</div>
+        <div class="seq-step s3">
+          <div class="num">STEP 03</div>
+          <div class="label">🛒 구매 (CONVERSION)</div>
+          <div class="title">검색 → 결제</div>
+          <div class="seq-item">
+            <strong>BTS 굿즈 결제</strong>
+            <div class="meta">검색 후 22~43분</div>
+          </div>
+          <div class="seq-item">
+            <strong>물회 밀키트</strong>
+            <div class="meta">검색 후 약 10분</div>
+          </div>
+          <div class="seq-item">
+            <strong>건강식품 (푸룬주스)</strong>
+            <div class="meta">검색 후 약 15분</div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:24px;padding:18px 22px;background:var(--card-2);border-radius:12px;display:flex;gap:32px;flex-wrap:wrap">
+        <div><strong style="color:var(--gold);font-size:24px">22<span style="font-size:14px;color:var(--text-mute)">분</span></strong><div style="font-size:12px;color:var(--text-mute);margin-top:2px">평균 검색→구매 latency</div></div>
+        <div><strong style="color:var(--gold);font-size:24px">30<span style="font-size:14px;color:var(--text-mute)">분 이내</span></strong><div style="font-size:12px;color:var(--text-mute);margin-top:2px">시청→검색 발생 윈도우</div></div>
+        <div><strong style="color:var(--gold);font-size:24px">42.7<span style="font-size:14px;color:var(--text-mute)">%</span></strong><div style="font-size:12px;color:var(--text-mute);margin-top:2px">저녁 18-22시 구매 집중도</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== 시간 패턴 =================== -->
+  <section class="section">
+    <div class="section-title">PART 03 · TIMING</div>
+    <h2 class="section-head">언제 / 무엇을 / 어떻게</h2>
+    <p class="section-sub">카테고리별 골든타임 + 결제 시간대 분포 → 마케팅 푸시 최적 시점 도출</p>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-head">
+          <h3>카테고리별 시청 피크 시간대</h3>
+          <span class="tag">최근 9개월</span>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="peakChart"></canvas>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head">
+          <h3>구매 발생 시간대</h3>
+          <span class="tag">결제 187회</span>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="payChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== 채널 라이프사이클 =================== -->
+  <section class="section">
+    <div class="section-title">PART 04 · CHANNEL LIFECYCLE</div>
+    <h2 class="section-head">콘텐츠 소비의 진화</h2>
+    <p class="section-sub">최근 60일 신규발견 / 급상승 / 안정 단골 채널 자동 분류</p>
+    <div class="grid-3">
+      <div class="lifecycle new">
+        <div class="head">
+          <div class="icon">🚀</div>
+          <div>
+            <h4>신규 발견</h4>
+            <div class="count">최근 60일 NEW</div>
+          </div>
+        </div>
+        <div class="ch-row"><span class="name">Taylor Swift</span><span class="val">30회</span></div>
+        <div class="ch-row"><span class="name">타니타임</span><span class="val">25회</span></div>
+        <div class="ch-row"><span class="name">Brilliant</span><span class="val">22회</span></div>
+        <div class="ch-row"><span class="name">한방언니</span><span class="val">18회</span></div>
+        <div class="ch-row"><span class="name">theultimatedodo</span><span class="val">16회</span></div>
+      </div>
+      <div class="lifecycle up">
+        <div class="head">
+          <div class="icon">📈</div>
+          <div>
+            <h4>급상승 (2배+)</h4>
+            <div class="count">이전 60일 대비</div>
+          </div>
+        </div>
+        <div class="ch-row"><span class="name">팝픽</span><span class="val">11 → 34</span></div>
+        <div class="ch-row"><span class="name">네루짱NERU</span><span class="val">13 → 31</span></div>
+        <div class="ch-row"><span class="name">장사의 신</span><span class="val">11 → 25</span></div>
+        <div class="ch-row"><span class="name">스튜디오 모닥</span><span class="val">8 → 19</span></div>
+        <div class="ch-row"><span class="name">해달특파원</span><span class="val">8 → 16</span></div>
+      </div>
+      <div class="lifecycle stable">
+        <div class="head">
+          <div class="icon">✅</div>
+          <div>
+            <h4>안정 단골</h4>
+            <div class="count">꾸준한 시청</div>
+          </div>
+        </div>
+        <div class="ch-row"><span class="name">엠뚜루마뚜루 MBC</span><span class="val">42회</span></div>
+        <div class="ch-row"><span class="name">KBS Kpop</span><span class="val">31회</span></div>
+        <div class="ch-row"><span class="name">tzuyang 쯔양</span><span class="val">20회</span></div>
+        <div class="ch-row"><span class="name">우정잉</span><span class="val">18회</span></div>
+        <div class="ch-row"><span class="name">디글 클래식</span><span class="val">16회</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== 여행 =================== -->
+  <section class="section">
+    <div class="section-title">PART 05 · TRAVEL DATA</div>
+    <h2 class="section-head">꿈 vs 실현</h2>
+    <p class="section-sub">위시리스트(저장 의도)와 실제 저장 장소(실현)의 비교</p>
+    <div class="travel-grid">
+      <div class="card">
+        <div class="card-head">
+          <h3>여행 위시리스트 TOP</h3>
+          <span class="tag">Save 컬렉션</span>
+        </div>
+        <div class="bar-row"><span class="name">🇯🇵 후쿠오카찜</span><div class="bar"><div class="fill" style="width:100%"></div></div><span class="val">63</span></div>
+        <div class="bar-row"><span class="name">🇯🇵 박오빠와 일본</span><div class="bar"><div class="fill" style="width:79%"></div></div><span class="val">50</span></div>
+        <div class="bar-row"><span class="name">🇯🇵 일본</span><div class="bar"><div class="fill" style="width:57%"></div></div><span class="val">36</span></div>
+        <div class="bar-row"><span class="name">🇸🇬 싱가포르</span><div class="bar"><div class="fill" style="width:54%"></div></div><span class="val">34</span></div>
+        <div class="bar-row"><span class="name">🇯🇵 보리랑일본</span><div class="bar"><div class="fill" style="width:17%"></div></div><span class="val">11</span></div>
+        <div class="bar-row"><span class="name">🇪🇺 유럽</span><div class="bar"><div class="fill" style="width:14%"></div></div><span class="val">9</span></div>
+      </div>
+      <div class="card">
+        <div class="card-head">
+          <h3>실제 저장 장소 (국가별)</h3>
+          <span class="tag">Maps 234건</span>
+        </div>
+        <div class="bar-row"><span class="name">🇯🇵 일본</span><div class="bar"><div class="fill" style="width:100%"></div></div><span class="val">94</span></div>
+        <div class="bar-row"><span class="name">🇹🇭 태국</span><div class="bar"><div class="fill" style="width:24%"></div></div><span class="val">23</span></div>
+        <div class="bar-row"><span class="name">🇲🇴 마카오</span><div class="bar"><div class="fill" style="width:21%"></div></div><span class="val">20</span></div>
+        <div class="bar-row"><span class="name">🇵🇭 필리핀</span><div class="bar"><div class="fill" style="width:17%"></div></div><span class="val">16</span></div>
+        <div class="bar-row"><span class="name">🇰🇷 한국</span><div class="bar"><div class="fill" style="width:11%"></div></div><span class="val">10</span></div>
+        <div class="bar-row"><span class="name">🇻🇳 베트남</span><div class="bar"><div class="fill" style="width:10%"></div></div><span class="val">9</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== 마케팅 액션 =================== -->
+  <section class="section">
+    <div class="section-title">PART 06 · MARKETING ACTION PLAN</div>
+    <h2 class="section-head">맞춤형 마케팅 액션 매트릭스</h2>
+    <p class="section-sub">위 데이터로 도출한 — 언제, 무엇을, 어떻게 노출하면 효과가 최대화되는가</p>
+    <div class="card" style="padding:24px">
+      <table class="mk-table">
+        <thead>
+          <tr>
+            <th>카테고리</th>
+            <th>골든타임</th>
+            <th>채널 (대표 콘텐츠)</th>
+            <th>추천 액션</th>
+            <th>전환 가능성</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="mk-cat"><span class="dot" style="background:var(--ai)"></span>🤖 AI · 학습</span></td>
+            <td class="mk-time">22:00 / 19:00</td>
+            <td>퇴근 후 학습형 영상 시청</td>
+            <td class="mk-action">유료 강의, AI 툴 트라이얼, 개발자 컨퍼런스</td>
+            <td><strong style="color:var(--ai)">매우 높음</strong></td>
+          </tr>
+          <tr>
+            <td><span class="mk-cat"><span class="dot" style="background:var(--music)"></span>🎵 음악 · 감성</span></td>
+            <td class="mk-time">00:00 / 23:00</td>
+            <td>K-pop, J-pop, 글로벌 팝</td>
+            <td class="mk-action">콘서트 티켓, MD, 음원/플레이리스트 추천</td>
+            <td><strong style="color:var(--music)">높음</strong></td>
+          </tr>
+          <tr>
+            <td><span class="mk-cat"><span class="dot" style="background:var(--travel)"></span>✈️ 여행</span></td>
+            <td class="mk-time">22:00 / 21:00</td>
+            <td>일본·동남아 여행 콘텐츠</td>
+            <td class="mk-action">호텔·항공 프로모션 (후쿠오카·싱가포르 ★★★)</td>
+            <td><strong style="color:var(--travel)">매우 높음</strong></td>
+          </tr>
+          <tr>
+            <td><span class="mk-cat"><span class="dot" style="background:var(--ent)"></span>📺 예능 · 클립</span></td>
+            <td class="mk-time">19:00 / 23:00</td>
+            <td>저녁 식사·취침 전</td>
+            <td class="mk-action">OTT 무료체험, 예능 신작 알림</td>
+            <td><strong>중간</strong></td>
+          </tr>
+          <tr>
+            <td><span class="mk-cat"><span class="dot" style="background:var(--food)"></span>🍴 푸드 · 사업</span></td>
+            <td class="mk-time">22:00 / 21:00</td>
+            <td>먹방, 사업 노하우</td>
+            <td class="mk-action">밀키트 (검색→구매 10분), 자영업 솔루션</td>
+            <td><strong style="color:var(--food)">매우 높음</strong></td>
+          </tr>
+          <tr>
+            <td><span class="mk-cat"><span class="dot" style="background:var(--gold)"></span>🌙 새벽 감성</span></td>
+            <td class="mk-time">00:00 ~ 05:00</td>
+            <td>음악 · 일본 콘텐츠</td>
+            <td class="mk-action">감성 디자인 광고, 한정판/타임세일 (즉흥구매 19회 패턴)</td>
+            <td><strong style="color:var(--gold)">높음</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- =================== 페르소나 =================== -->
+  <section class="section">
+    <div class="persona">
+      <div class="tag-row">
+        <span class="pill">22시 골든타임</span>
+        <span class="pill">글로벌 콘텐츠</span>
+        <span class="pill">AI 얼리어답터</span>
+        <span class="pill">학습 의지</span>
+        <span class="pill">일본 여행 지향</span>
+        <span class="pill">즉흥 구매</span>
+      </div>
+      <h2>늦은 밤 학습하는 글로벌 콘텐츠 탐험가</h2>
+      <p>
+        하루를 22시부터 시작하는 사람.<br>
+        AI 영상 시청량을 1분기만에 30배 늘릴 만큼 새로운 토픽에 빠르게 몰입하며,
+        음악·여행·사업 콘텐츠를 균형있게 소비한다.<br>
+        후쿠오카 위시리스트 63개를 모을 정도로 일본에 진심이고,
+        시청→검색→구매를 30분 안에 끝내는 결단력을 가진 행동가형.
+      </p>
+    </div>
+  </section>
+
+  <div class="foot">
+    Generated from Google Takeout · BigQuery <code>upbeat-nova-496406-s3.my_life</code> · 발표용 분석 리포트 · 민감 데이터 제외 처리
+  </div>
+</div>
+
+<script>
+Chart.defaults.font.family = "'Pretendard',sans-serif";
+Chart.defaults.color = '#a0a8c4';
+Chart.defaults.borderColor = 'rgba(255,255,255,0.05)';
+
+// =================== TREND ===================
+new Chart(document.getElementById('trendChart'),{
+  type:'line',
+  data:{
+    labels:['2025 Q1','2025 Q2','2025 Q3','2025 Q4','2026 Q1','2026 Q2'],
+    datasets:[
+      {label:'🎵 음악', data:[206,517,531,645,780,571], borderColor:'#ec4899', backgroundColor:'rgba(236,72,153,0.1)', tension:0.4, fill:true, borderWidth:2.5, pointRadius:4, pointHoverRadius:6, pointBackgroundColor:'#ec4899'},
+      {label:'🤖 AI/기술', data:[5,35,17,8,236,86], borderColor:'#a855f7', backgroundColor:'rgba(168,85,247,0.1)', tension:0.4, fill:true, borderWidth:2.5, pointRadius:4, pointHoverRadius:6, pointBackgroundColor:'#a855f7'},
+      {label:'✈️ 여행', data:[147,275,215,343,234,185], borderColor:'#06b6d4', backgroundColor:'rgba(6,182,212,0.05)', tension:0.4, fill:false, borderWidth:2, pointRadius:3, pointBackgroundColor:'#06b6d4'},
+      {label:'📺 예능', data:[40,84,116,186,181,129], borderColor:'#fbbf24', backgroundColor:'rgba(251,191,36,0.05)', tension:0.4, fill:false, borderWidth:2, pointRadius:3, pointBackgroundColor:'#fbbf24'},
+      {label:'🍴 푸드/사업', data:[18,60,57,89,69,49], borderColor:'#10b981', backgroundColor:'rgba(16,185,129,0.05)', tension:0.4, fill:false, borderWidth:2, pointRadius:3, pointBackgroundColor:'#10b981'},
+    ]
+  },
+  options:{
+    responsive:true, maintainAspectRatio:false,
+    interaction:{mode:'index', intersect:false},
+    plugins:{
+      legend:{position:'top', labels:{usePointStyle:true, padding:16, font:{size:13}}},
+      tooltip:{
+        backgroundColor:'rgba(20,25,50,0.95)',
+        borderColor:'rgba(168,85,247,0.4)',
+        borderWidth:1,
+        padding:12,
+        titleFont:{size:13, weight:'700'},
+        bodyFont:{size:12}
+      }
+    },
+    scales:{
+      y:{grid:{color:'rgba(255,255,255,0.04)'}, ticks:{font:{size:11}}},
+      x:{grid:{display:false}, ticks:{font:{size:12, weight:'600'}}}
+    }
+  }
+});
+
+// =================== PEAK ===================
+new Chart(document.getElementById('peakChart'),{
+  type:'bar',
+  data:{
+    labels:['00시','19시','20시','21시','22시','23시'],
+    datasets:[
+      {label:'🤖 AI/기술', data:[18,30,12,15,42,10], backgroundColor:'#a855f7', borderRadius:6, barPercentage:0.85},
+      {label:'🎵 음악', data:[78,15,22,30,45,62], backgroundColor:'#ec4899', borderRadius:6, barPercentage:0.85},
+      {label:'✈️ 여행', data:[12,18,22,30,40,15], backgroundColor:'#06b6d4', borderRadius:6, barPercentage:0.85},
+      {label:'📺 예능', data:[8,42,20,28,32,38], backgroundColor:'#fbbf24', borderRadius:6, barPercentage:0.85},
+      {label:'🍴 푸드', data:[5,12,18,22,28,15], backgroundColor:'#10b981', borderRadius:6, barPercentage:0.85},
+    ]
+  },
+  options:{
+    responsive:true, maintainAspectRatio:false,
+    plugins:{
+      legend:{position:'top', labels:{usePointStyle:true, padding:12, font:{size:12}}},
+      tooltip:{
+        backgroundColor:'rgba(20,25,50,0.95)',
+        borderColor:'rgba(168,85,247,0.4)',
+        borderWidth:1
+      }
+    },
+    scales:{
+      y:{grid:{color:'rgba(255,255,255,0.04)'}, ticks:{font:{size:11}}},
+      x:{grid:{display:false}, ticks:{font:{size:12, weight:'600'}}}
+    }
+  }
+});
+
+// =================== PAY DONUT ===================
+new Chart(document.getElementById('payChart'),{
+  type:'doughnut',
+  data:{
+    labels:['저녁 (18-22시)','오후 (12-17시)','오전 (6-11시)','새벽 (0-5시)','심야 (23시)'],
+    datasets:[{
+      data:[42.7, 25.4, 21.1, 10.3, 0.5],
+      backgroundColor:['#a855f7','#ec4899','#06b6d4','#fbbf24','#6b7393'],
+      borderColor:'#161b2e',
+      borderWidth:3
+    }]
+  },
+  options:{
+    responsive:true, maintainAspectRatio:false,
+    cutout:'62%',
+    plugins:{
+      legend:{position:'right', labels:{usePointStyle:true, padding:14, font:{size:12}}},
+      tooltip:{
+        backgroundColor:'rgba(20,25,50,0.95)',
+        borderColor:'rgba(168,85,247,0.4)',
+        borderWidth:1,
+        callbacks:{
+          label:function(ctx){ return ctx.label + ': ' + ctx.parsed + '%' }
+        }
+      }
+    }
+  }
+});
+</script>
+</body>
+</html>

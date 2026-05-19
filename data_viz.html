@@ -128,13 +128,16 @@ body {
   left: 50%;
   transform: translateX(-50%);
   display: flex;
-  gap: 16px;
+  flex-wrap: nowrap;
+  gap: 20px;
   background: rgba(255,255,255,0.9);
   border: 1px solid var(--border);
   border-radius: 10px;
-  padding: 8px 16px;
+  padding: 8px 18px;
   box-shadow: 0 1px 4px rgba(0,0,0,0.06);
   pointer-events: none;
+  white-space: nowrap;
+  max-width: calc(100vw - 48px);
 }
 .legend-item {
   display: flex;
@@ -142,6 +145,8 @@ body {
   gap: 6px;
   font-size: 11px;
   color: var(--muted);
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 .legend-dot {
   width: 10px; height: 10px;
@@ -244,27 +249,60 @@ body {
 #cards-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  gap: 24px;
   max-width: 1200px;
   margin: 0 auto;
 }
 
+/* card accent colors */
+:root {
+  --c-q1: #EF4444;
+  --c-q2: #F59E0B;
+  --c-q3: #10B981;
+  --c-q4: #8B5CF6;
+  --c-q5: #3B82F6;
+  --c-q6: #EC4899;
+  --c-q7: #DC2626;
+}
+
 .insight-card {
-  background: rgba(255,255,255,0.95);
-  border: 1px solid var(--border);
+  background: #FFFFFF;
+  border: 1px solid #F1F5F9;
   border-radius: 16px;
-  padding: 20px;
+  padding: 24px;
   display: flex;
   flex-direction: column;
   gap: 12px;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
   cursor: default;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 2px 8px rgba(0,0,0,0.04);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.06);
+  position: relative;
+  overflow: hidden;
 }
+
+/* top color accent strip via pseudo-element */
+.insight-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  border-radius: 16px 16px 0 0;
+}
+
 .insight-card:hover {
-  border-color: rgba(59,130,246,0.45);
-  box-shadow: 0 2px 12px rgba(59,130,246,0.08);
+  transform: translateY(-2px);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06), 0 16px 40px rgba(0,0,0,0.08);
 }
+
+/* Per-card accent colors */
+.card-q1::before { background: #EF4444; }
+.card-q2::before { background: #F59E0B; }
+.card-q3::before { background: #10B981; }
+.card-q4::before { background: #8B5CF6; }
+.card-q5::before { background: #3B82F6; }
+.card-q6::before { background: #EC4899; }
+.card-q7::before { background: #DC2626; }
+.card-q8::before { background: #EC4899; }
 
 .card-header {
   display: flex;
@@ -273,18 +311,20 @@ body {
   gap: 8px;
 }
 .card-label {
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 700;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--muted);
 }
-.card-title {
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--text);
-  margin-top: 2px;
-}
+/* Per-card label colors */
+.card-q1 .card-label { color: #EF4444; }
+.card-q2 .card-label { color: #F59E0B; }
+.card-q3 .card-label { color: #10B981; }
+.card-q4 .card-label { color: #8B5CF6; }
+.card-q5 .card-label { color: #3B82F6; }
+.card-q6 .card-label { color: #EC4899; }
+.card-q7 .card-label { color: #DC2626; }
+.card-q8 .card-label { color: #EC4899; }
 
 .card-metric {
   display: flex;
@@ -292,15 +332,26 @@ body {
   gap: 10px;
 }
 .card-big-num {
-  font-size: 28px;
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  line-height: 1;
+  font-size: 60px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  line-height: 1.0;
+  margin: 8px 0 12px;
 }
+/* Per-card big-num colors */
+.card-q1 .card-big-num { color: #EF4444; }
+.card-q2 .card-big-num { color: #F59E0B; }
+.card-q3 .card-big-num { color: #10B981; }
+.card-q4 .card-big-num { color: #8B5CF6; }
+.card-q5 .card-big-num { color: #3B82F6; }
+.card-q6 .card-big-num { color: #EC4899; }
+.card-q7 .card-big-num { color: #DC2626; }
+.card-q8 .card-big-num { color: #EC4899; }
+
 .card-insight-text {
-  font-size: 12px;
-  color: var(--muted);
-  line-height: 1.5;
+  font-size: 15px;
+  color: #334155;
+  line-height: 1.55;
 }
 
 .card-chart-wrap {
@@ -320,30 +371,40 @@ body {
   gap: 5px;
   flex-wrap: wrap;
 }
+
+/* Per-card badge styles via card class cascade */
 .table-badge {
-  padding: 3px 8px;
-  border-radius: 5px;
-  font-size: 10px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
   font-weight: 600;
-  background: rgba(226,232,240,0.8);
-  border: 1px solid rgba(203,213,225,0.8);
-  color: var(--muted);
   cursor: pointer;
   transition: all 0.15s;
+  border: none;
 }
-.table-badge:hover {
-  background: rgba(59,130,246,0.12);
-  border-color: rgba(59,130,246,0.45);
-  color: var(--accent);
-}
+.card-q1 .table-badge { background: rgba(239,68,68,0.1); color: #B91C1C; }
+.card-q1 .table-badge:hover { background: rgba(239,68,68,0.18); }
+.card-q2 .table-badge { background: rgba(245,158,11,0.1); color: #92400E; }
+.card-q2 .table-badge:hover { background: rgba(245,158,11,0.18); }
+.card-q3 .table-badge { background: rgba(16,185,129,0.1); color: #065F46; }
+.card-q3 .table-badge:hover { background: rgba(16,185,129,0.18); }
+.card-q4 .table-badge { background: rgba(139,92,246,0.1); color: #5B21B6; }
+.card-q4 .table-badge:hover { background: rgba(139,92,246,0.18); }
+.card-q5 .table-badge { background: rgba(59,130,246,0.1); color: #1D4ED8; }
+.card-q5 .table-badge:hover { background: rgba(59,130,246,0.18); }
+.card-q6 .table-badge { background: rgba(236,72,153,0.1); color: #9D174D; }
+.card-q6 .table-badge:hover { background: rgba(236,72,153,0.18); }
+.card-q7 .table-badge { background: rgba(220,38,38,0.1); color: #991B1B; }
+.card-q7 .table-badge:hover { background: rgba(220,38,38,0.18); }
+.card-q8 .table-badge { background: rgba(236,72,153,0.1); color: #9D174D; }
+.card-q8 .table-badge:hover { background: rgba(236,72,153,0.18); }
 
+/* SQL toggle button — per card color */
 .sql-toggle-btn {
-  padding: 4px 10px;
-  border-radius: 6px;
-  border: 1px solid rgba(203,213,225,0.8);
-  background: transparent;
-  color: var(--muted);
-  font-size: 11px;
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: none;
+  font-size: 12px;
   font-weight: 600;
   cursor: pointer;
   font-family: inherit;
@@ -351,50 +412,48 @@ body {
   white-space: nowrap;
   flex-shrink: 0;
 }
-.sql-toggle-btn:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-}
-.sql-toggle-btn.active {
-  border-color: var(--accent);
-  color: var(--accent);
-  background: rgba(59,130,246,0.06);
-}
+.card-q1 .sql-toggle-btn { background: rgba(239,68,68,0.08); color: #B91C1C; }
+.card-q1 .sql-toggle-btn:hover, .card-q1 .sql-toggle-btn.active { background: rgba(239,68,68,0.15); }
+.card-q2 .sql-toggle-btn { background: rgba(245,158,11,0.08); color: #92400E; }
+.card-q2 .sql-toggle-btn:hover, .card-q2 .sql-toggle-btn.active { background: rgba(245,158,11,0.15); }
+.card-q3 .sql-toggle-btn { background: rgba(16,185,129,0.08); color: #065F46; }
+.card-q3 .sql-toggle-btn:hover, .card-q3 .sql-toggle-btn.active { background: rgba(16,185,129,0.15); }
+.card-q4 .sql-toggle-btn { background: rgba(139,92,246,0.08); color: #5B21B6; }
+.card-q4 .sql-toggle-btn:hover, .card-q4 .sql-toggle-btn.active { background: rgba(139,92,246,0.15); }
+.card-q5 .sql-toggle-btn { background: rgba(59,130,246,0.08); color: #1D4ED8; }
+.card-q5 .sql-toggle-btn:hover, .card-q5 .sql-toggle-btn.active { background: rgba(59,130,246,0.15); }
+.card-q6 .sql-toggle-btn { background: rgba(236,72,153,0.08); color: #9D174D; }
+.card-q6 .sql-toggle-btn:hover, .card-q6 .sql-toggle-btn.active { background: rgba(236,72,153,0.15); }
+.card-q7 .sql-toggle-btn { background: rgba(220,38,38,0.08); color: #991B1B; }
+.card-q7 .sql-toggle-btn:hover, .card-q7 .sql-toggle-btn.active { background: rgba(220,38,38,0.15); }
+.card-q8 .sql-toggle-btn { background: rgba(236,72,153,0.08); color: #9D174D; }
+.card-q8 .sql-toggle-btn:hover, .card-q8 .sql-toggle-btn.active { background: rgba(236,72,153,0.15); }
 
+/* SQL code box — dark theme */
 .sql-box {
   display: none;
-  background: #F1F5F9;
-  border: 1px solid rgba(203,213,225,0.9);
-  border-radius: 8px;
-  padding: 14px;
+  background: #0F172A;
+  border-radius: 10px;
+  padding: 18px;
   overflow-x: auto;
 }
 .sql-box.open { display: block; }
 .sql-box pre {
-  font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
-  font-size: 11px;
-  line-height: 1.6;
-  color: #334155;
+  font-family: 'JetBrains Mono', 'Menlo', 'Monaco', 'Courier New', monospace;
+  font-size: 12.5px;
+  line-height: 1.7;
+  color: #CBD5E1;
   white-space: pre;
 }
-.sql-kw { color: #1D4ED8; font-weight: 700; }
-.sql-fn { color: #059669; }
-.sql-str { color: #B45309; }
-.sql-cmt { color: #94A3B8; font-style: italic; }
+.sql-kw { color: #93C5FD; font-weight: 700; }
+.sql-fn { color: #86EFAC; }
+.sql-str { color: #FCD34D; }
+.sql-cmt { color: #64748B; font-style: italic; }
 
 /* Summary card (full-width) */
 .insight-card.full-width {
   grid-column: 1 / -1;
 }
-
-/* color accents per card */
-.card-q1 .card-big-num { color: var(--coral); }
-.card-q2 .card-big-num { color: var(--amber); }
-.card-q3 .card-big-num { color: var(--green); }
-.card-q4 .card-big-num { color: var(--purple); }
-.card-q5 .card-big-num { color: var(--blue); }
-.card-q6 .card-big-num { color: var(--coral); }
-.card-q7 .card-big-num { color: #DC2626; }
 
 /* ─────────────────────────────────────────
    SCROLLBAR (pipeline area)
@@ -424,7 +483,7 @@ svg text { user-select: none; }
   </div>
   <div id="tab-group">
     <button class="tab-btn active" data-tab="pipeline">🏗️ 데이터 구조</button>
-    <button class="tab-btn" data-tab="insights">📊 인사이트 7개</button>
+    <button class="tab-btn" data-tab="insights">📊 인사이트 8개</button>
   </div>
 </div>
 
@@ -720,8 +779,8 @@ const CARDS = [
     chartData: {
       labels: ['심야(23~5)', '저녁(18~22)', '낮(12~17)', '오전(6~11)'],
       datasets: [
-        { label: '평일', data: [39.5, 37.8, 15.0, 7.7], backgroundColor: 'rgba(248,113,113,0.85)', borderRadius: 4 },
-        { label: '주말', data: [26.8, 32.6, 28.9, 11.7], backgroundColor: 'rgba(96,165,250,0.85)', borderRadius: 4 }
+        { label: '평일', data: [39.5, 37.8, 15.0, 7.7], backgroundColor: 'rgba(239,68,68,0.95)', borderColor: 'rgba(239,68,68,1)', borderRadius: 6, barPercentage: 0.7, categoryPercentage: 0.7 },
+        { label: '주말', data: [26.8, 32.6, 28.9, 11.7], backgroundColor: 'rgba(59,130,246,0.95)', borderColor: 'rgba(59,130,246,1)', borderRadius: 6, barPercentage: 0.7, categoryPercentage: 0.7 }
       ]
     },
     chartOpts: { indexAxis: 'y', scales: { x: { stacked: false, max: 45 } } },
@@ -755,8 +814,8 @@ const CARDS = [
     chartData: {
       labels: ['뉴스', '엔터', '브이로그', '음악', '교육/AI', '코미디'],
       datasets: [
-        { label: '초반(2025 H1)', data: [36.9, 20.4, 19.7, 11.1, 2.2, 1.1], backgroundColor: 'rgba(245,158,11,0.45)', borderRadius: 3 },
-        { label: '최근(2025 H2~)', data: [26.3, 22.6, 24.2, 11.8, 13.1, 2.2], backgroundColor: 'rgba(245,158,11,0.9)', borderRadius: 3 }
+        { label: '초반(2025 H1)', data: [36.9, 20.4, 19.7, 11.1, 2.2, 1.1], backgroundColor: 'rgba(252,211,77,0.85)', borderColor: 'rgba(252,211,77,1)', borderRadius: 5 },
+        { label: '최근(2025 H2~)', data: [26.3, 22.6, 24.2, 11.8, 13.1, 2.2], backgroundColor: 'rgba(217,119,6,0.95)', borderColor: 'rgba(217,119,6,1)', borderRadius: 5 }
       ]
     },
     chartOpts: { scales: { y: { max: 45 } } },
@@ -786,8 +845,8 @@ const CARDS = [
     chartData: {
       labels: ['유튜브 검색', '크롬 검색'],
       datasets: [
-        { label: '검색 건수', data: [4443, 1129], backgroundColor: 'rgba(52,211,153,0.45)', borderRadius: 4 },
-        { label: '전환 건수', data: [2095, 0], backgroundColor: 'rgba(52,211,153,0.9)', borderRadius: 4 }
+        { label: '검색 건수', data: [4443, 1129], backgroundColor: 'rgba(167,243,208,0.85)', borderColor: 'rgba(167,243,208,1)', borderRadius: 6 },
+        { label: '전환 건수', data: [2095, 0], backgroundColor: 'rgba(5,150,105,0.95)', borderColor: 'rgba(5,150,105,1)', borderRadius: 6 }
       ]
     },
     chartOpts: { scales: { y: { max: 5000 } } },
@@ -827,12 +886,12 @@ watches <span class="sql-kw">AS</span> (
       labels: ['한국어', '영어', '일본어', '기타'],
       datasets: [{
         data: [788, 759, 445, 42],
-        backgroundColor: ['rgba(167,139,250,0.9)', 'rgba(96,165,250,0.9)', 'rgba(245,158,11,0.9)', 'rgba(148,163,184,0.8)'],
-        borderWidth: 2,
+        backgroundColor: ['#8B5CF6', '#3B82F6', '#F59E0B', '#94A3B8'],
+        borderWidth: 3,
         borderColor: '#FFFFFF'
       }]
     },
-    chartOpts: { cutout: '62%' },
+    chartOpts: { cutout: '60%' },
     sql: `<span class="sql-kw">SELECT</span>
   m.language,
   <span class="sql-fn">COUNT</span>(*) AS track_count,
@@ -855,8 +914,8 @@ watches <span class="sql-kw">AS</span> (
     chartData: {
       labels: ['주제 집중도', '채널 집중도', '카테고리 수', '시간대 분산', '시청 밀도'],
       datasets: [
-        { label: 'Heavy day', data: [42, 35, 80, 70, 90], backgroundColor: 'rgba(96,165,250,0.2)', borderColor: 'rgba(96,165,250,0.9)', pointBackgroundColor: 'rgba(96,165,250,1)' },
-        { label: 'Light day', data: [55, 65, 30, 40, 20], backgroundColor: 'rgba(52,211,153,0.2)', borderColor: 'rgba(52,211,153,0.9)', pointBackgroundColor: 'rgba(52,211,153,1)' }
+        { label: 'Heavy day', data: [42, 35, 80, 70, 90], backgroundColor: 'rgba(59,130,246,0.25)', borderColor: 'rgba(37,99,235,1)', pointBackgroundColor: 'rgba(37,99,235,1)', borderWidth: 2, pointRadius: 4 },
+        { label: 'Light day', data: [55, 65, 30, 40, 20], backgroundColor: 'rgba(16,185,129,0.25)', borderColor: 'rgba(5,150,105,1)', pointBackgroundColor: 'rgba(5,150,105,1)', borderWidth: 2, pointRadius: 4 }
       ]
     },
     chartOpts: { scales: { r: { min: 0, max: 100, ticks: { display: false }, pointLabels: { font: { size: 10 } } } } },
@@ -893,16 +952,18 @@ watches <span class="sql-kw">AS</span> (
       datasets: [{
         label: '메이의 수치',
         data: [34.2, 41.9, 26.3, 2.7, 4.8, 2.9],
-        backgroundColor: 'rgba(248,113,113,0.2)',
-        borderColor: 'rgba(248,113,113,0.9)',
-        pointBackgroundColor: 'rgba(248,113,113,1)'
+        backgroundColor: 'rgba(236,72,153,0.25)',
+        borderColor: 'rgba(219,39,119,1)',
+        pointBackgroundColor: 'rgba(219,39,119,1)',
+        borderWidth: 2.5,
+        pointRadius: 4
       }, {
         label: '기준값',
         data: [10, 35, 25, 1, 5, 5],
-        backgroundColor: 'rgba(148,163,184,0.15)',
-        borderColor: 'rgba(148,163,184,0.6)',
-        borderDash: [4,4],
-        pointRadius: 2,
+        backgroundColor: 'rgba(148,163,184,0.1)',
+        borderColor: 'rgba(148,163,184,0.7)',
+        borderDash: [5,5],
+        pointRadius: 0,
         pointBackgroundColor: 'rgba(148,163,184,0.7)'
       }]
     },
@@ -942,26 +1003,32 @@ watches <span class="sql-kw">AS</span> (
           label: '주간 시청수',
           data: [720, 580, 690, 540, 880, 620, 710, 590, 820, 860, 404, 582, 324, 149],
           borderColor: '#3B82F6',
-          backgroundColor: 'rgba(59,130,246,0.10)',
+          backgroundColor: 'rgba(59,130,246,0.12)',
           fill: true,
-          tension: 0.3,
-          pointRadius: (ctx) => {
-            const idx = ctx.dataIndex;
-            return idx >= 12 ? 6 : 3;
-          },
-          pointBackgroundColor: (ctx) => {
-            const idx = ctx.dataIndex;
-            return idx >= 12 ? '#DC2626' : '#3B82F6';
-          }
+          tension: 0.35,
+          borderWidth: 3,
+          pointRadius: [3,3,3,3,3,3,3,3,3,3,3,3,7,7],
+          pointBackgroundColor: [
+            '#3B82F6','#3B82F6','#3B82F6','#3B82F6','#3B82F6','#3B82F6',
+            '#3B82F6','#3B82F6','#3B82F6','#3B82F6','#3B82F6','#3B82F6',
+            '#DC2626','#DC2626'
+          ],
+          pointBorderColor: [
+            '#3B82F6','#3B82F6','#3B82F6','#3B82F6','#3B82F6','#3B82F6',
+            '#3B82F6','#3B82F6','#3B82F6','#3B82F6','#3B82F6','#3B82F6',
+            '#fff','#fff'
+          ],
+          pointBorderWidth: [0,0,0,0,0,0,0,0,0,0,0,0,2,2]
         },
         {
           label: '7주 이동평균',
           data: [null, null, null, null, null, null, 650, 660, 665, 640, 660, 670, 660, 680, 700, 660, 691, 686, 679, 615].slice(0, 14),
-          borderColor: 'rgba(245,158,11,0.8)',
+          borderColor: '#F59E0B',
           borderDash: [6, 4],
           borderWidth: 2,
           pointRadius: 0,
-          tension: 0.3
+          tension: 0,
+          fill: false
         }
       ]
     },
@@ -987,6 +1054,50 @@ watches <span class="sql-kw">AS</span> (
   ) <span class="sql-kw">AS</span> moving_avg_7w
 <span class="sql-kw">FROM</span> weekly
 <span class="sql-kw">ORDER BY</span> week_start`
+  },
+  {
+    id: 'q8', cls: 'card-q8',
+    label: 'Q8 · 웹서핑이 본 일상',
+    bigNum: '19,062',
+    bigNumSub: '네이버 방문 (전체 29,234건 중 65%) — 압도적 1위',
+    insight: '메이의 일상은 네이버에서 시작해요. 뉴스·카페·블로그·지도·쇼핑 — 다 네이버 안에서 끝.\n그 외 일본 공연 티켓(sakuticket.jp 111회)·로컬 개발·노션 업무까지 다 잡혔어요.',
+    chartNote: '▼ 네이버 제외 상위 5개 도메인 (네이버 포함 시 차트가 안 보여 분리 표기)',
+    tables: ['fact_chrome_visit', 'dim_chrome_domains', 'fact_chrome_search'],
+    tableNodeIds: ['ft_cv', 'dm_dom', 'ft_cs'],
+    chartType: 'bar',
+    chartData: {
+      labels: ['Google 작업', 'localhost', 'Notion', 'Toss', 'sakuticket.jp'],
+      datasets: [{
+        label: '방문 수',
+        data: [633, 214, 185, 176, 111],
+        backgroundColor: 'rgba(236,72,153,0.85)',
+        borderColor: 'rgba(236,72,153,1)',
+        borderRadius: 6,
+        barPercentage: 0.7,
+        categoryPercentage: 0.75
+      }]
+    },
+    chartHeight: 160,
+    chartOpts: {
+      indexAxis: 'y',
+      scales: { x: { max: 750 } },
+      plugins: { legend: { display: false } }
+    },
+    sql: `<span class="sql-cmt">-- 도메인 카테고리 그룹화 (네이버 19,062건 압도적 1위 — 별도 표기)</span>
+<span class="sql-kw">SELECT</span>
+  <span class="sql-kw">CASE</span>
+    <span class="sql-kw">WHEN</span> domain <span class="sql-kw">LIKE</span> <span class="sql-str">'%naver.com'</span> <span class="sql-kw">THEN</span> <span class="sql-str">'네이버 계열'</span>
+    <span class="sql-kw">WHEN</span> domain <span class="sql-kw">LIKE</span> <span class="sql-str">'%google%'</span> <span class="sql-kw">OR</span> domain <span class="sql-kw">LIKE</span> <span class="sql-str">'%youtube%'</span> <span class="sql-kw">THEN</span> <span class="sql-str">'Google 작업'</span>
+    <span class="sql-kw">WHEN</span> domain <span class="sql-kw">LIKE</span> <span class="sql-str">'localhost%'</span> <span class="sql-kw">THEN</span> <span class="sql-str">'로컬 개발'</span>
+    <span class="sql-kw">WHEN</span> domain <span class="sql-kw">LIKE</span> <span class="sql-str">'%notion%'</span> <span class="sql-kw">THEN</span> <span class="sql-str">'Notion'</span>
+    <span class="sql-kw">WHEN</span> domain <span class="sql-kw">LIKE</span> <span class="sql-str">'%toss%'</span> <span class="sql-kw">THEN</span> <span class="sql-str">'Toss'</span>
+    <span class="sql-kw">WHEN</span> domain <span class="sql-kw">LIKE</span> <span class="sql-str">'%sakuticket%'</span> <span class="sql-kw">THEN</span> <span class="sql-str">'일본 공연 티켓'</span>
+    <span class="sql-kw">ELSE</span> <span class="sql-str">'기타'</span>
+  <span class="sql-kw">END AS</span> category,
+  <span class="sql-fn">COUNT</span>(*) <span class="sql-kw">AS</span> visits
+<span class="sql-kw">FROM</span> <span class="sql-str">\`keuk-2026.my_life.fact_chrome_visit\`</span>
+<span class="sql-kw">GROUP BY</span> category
+<span class="sql-kw">ORDER BY</span> visits <span class="sql-kw">DESC</span>`
   }
 ];
 </script>
@@ -1327,28 +1438,29 @@ const CHART_DEFAULTS = {
       position: 'bottom',
       labels: {
         color: '#475569',
-        font: { size: 10 },
-        boxWidth: 10,
-        padding: 8
+        font: { size: 12, weight: 500 },
+        boxWidth: 8,
+        padding: 12
       }
     },
     tooltip: {
-      backgroundColor: 'rgba(255,255,255,0.96)',
-      borderColor: '#E2E8F0',
-      borderWidth: 1,
-      titleColor: '#1E293B',
-      bodyColor: '#475569',
-      cornerRadius: 8
+      backgroundColor: 'rgba(15,23,42,0.95)',
+      titleColor: '#F1F5F9',
+      bodyColor: '#CBD5E1',
+      padding: 12,
+      cornerRadius: 8,
+      titleFont: { size: 13, weight: 600 },
+      bodyFont: { size: 12 }
     }
   },
   scales: {
     x: {
-      grid: { color: 'rgba(0,0,0,0.06)' },
-      ticks: { color: '#64748B', font: { size: 10 } }
+      grid: { color: 'rgba(15,23,42,0.05)', drawBorder: false },
+      ticks: { color: '#64748B', font: { size: 11, weight: 500 } }
     },
     y: {
-      grid: { color: 'rgba(0,0,0,0.06)' },
-      ticks: { color: '#64748B', font: { size: 10 } }
+      grid: { color: 'rgba(15,23,42,0.05)', drawBorder: false },
+      ticks: { color: '#64748B', font: { size: 11, weight: 500 } }
     }
   }
 };
@@ -1360,10 +1472,10 @@ function mergeOpts(type, extra) {
     base.plugins.legend.position = 'right';
     if (type === 'radar') {
       base.scales = { r: {
-        grid: { color: 'rgba(0,0,0,0.06)' },
-        angleLines: { color: 'rgba(0,0,0,0.06)' },
-        ticks: { color: '#64748B', font: { size: 9 }, backdropColor: 'transparent' },
-        pointLabels: { color: '#475569', font: { size: 10 } }
+        grid: { color: 'rgba(15,23,42,0.08)' },
+        angleLines: { color: 'rgba(15,23,42,0.08)' },
+        ticks: { display: false, backdropColor: 'transparent' },
+        pointLabels: { color: '#334155', font: { size: 11, weight: 600 } }
       }};
     }
   }
@@ -1390,10 +1502,14 @@ CARDS.forEach(card => {
   el.className = `insight-card ${card.cls}`;
   el.id = `card-${card.id}`;
 
-  const badgesHTML = card.tables.map((t, i) =>
-    `<span class="table-badge" onclick="window.highlightPipelineNode('${card.tableNodeIds[i] || ''}')" title="파이프라인에서 보기">${t}</span>`
-  ).join('');
+  const badgesHTML = card.tables.map((t, i) => {
+    const nodeId = card.tableNodeIds[i] || '';
+    const icon = nodeId.startsWith('ft_') ? '📔' : nodeId.startsWith('vw_') ? '🪟' : nodeId.startsWith('dm_') ? '📖' : '📔';
+    return `<span class="table-badge" onclick="window.highlightPipelineNode('${nodeId}')" title="파이프라인에서 보기">${icon} ${t}</span>`;
+  }).join('');
 
+  const bigNumSubHTML = card.bigNumSub ? `<div style="font-size:13px;color:#64748B;margin-top:-6px;margin-bottom:4px;">${card.bigNumSub}</div>` : '';
+  const chartNoteHTML = card.chartNote ? `<div style="font-size:12px;color:#64748B;margin-bottom:6px;">${card.chartNote}</div>` : '';
   el.innerHTML = `
     <div class="card-header">
       <div>
@@ -1403,8 +1519,10 @@ CARDS.forEach(card => {
     <div class="card-metric">
       <div class="card-big-num">${card.bigNum}</div>
     </div>
+    ${bigNumSubHTML}
     <div class="card-insight-text">${card.insight.replace(/\n/g, '<br>')}</div>
-    <div class="card-chart-wrap">
+    ${chartNoteHTML}
+    <div class="card-chart-wrap" ${card.chartHeight ? `style="height:${card.chartHeight}px"` : ''}>
       <canvas id="chart-${card.id}"></canvas>
     </div>
     <div class="card-footer">
@@ -1419,9 +1537,11 @@ CARDS.forEach(card => {
   grid.appendChild(el);
 });
 
-// Make Q7 full width
+// Make Q7 and Q8 full width
 const q7card = document.getElementById('card-q7');
 if (q7card) q7card.classList.add('full-width');
+const q8card = document.getElementById('card-q8');
+if (q8card) q8card.classList.add('full-width');
 
 // Render charts
 CARDS.forEach(card => {
@@ -1480,6 +1600,12 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     // Re-render pipeline when switching to it (size may have changed)
     if (tab === 'pipeline') {
       setTimeout(() => window.dispatchEvent(new Event('resize')), 50);
+    }
+    // Re-render Chart.js charts when switching to insights tab (canvases were 0-sized while hidden)
+    if (tab === 'insights' && window.Chart && Chart.instances) {
+      setTimeout(() => {
+        Object.values(Chart.instances).forEach(c => { try { c.resize(); c.update('none'); } catch(e){} });
+      }, 80);
     }
   });
 });

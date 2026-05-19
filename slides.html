@@ -352,7 +352,7 @@ body.dark .progress-track{background:rgba(255,255,255,.1);}
       <div class="dist-bar"><div class="dist-bar-track"><div class="dist-bar-fill" style="width:8%;background:#94a3b8;">맛집 8%</div></div></div>
     </div>
   </div>
-  <div class="insight" style="margin-top:36px;">저도 모르는 사이에 제가 바뀌었어요. <span class="accent">AI는 알고 있었어요.</span></div>
+  <div class="insight" style="margin-top:36px;">저도 모르는 사이에 제가 바뀌었어요. <span class="accent">데이터는 알고 있었어요.</span></div>
 </section>
 
 <!-- S11 Part 1 → Part 2 연결 -->
@@ -416,9 +416,9 @@ body.dark .progress-track{background:rgba(255,255,255,.1);}
 </section>
 
 <!-- S17 결과 — BigQuery 콘솔 -->
-<section class="slide" data-notes="AI랑 5분 정도 대화하면 이게 나와요. 진짜로요. (콘솔 캡처)">
-  <div class="t-h1" style="margin-bottom:24px;">AI랑 5분 대화 → 이게 나와요</div>
-  <div class="card" style="background:#0f172a;color:#e2e8f0;font-family:monospace;font-size:1.2vw;padding:30px;">
+<section class="slide" data-notes="AI랑 5분 대화한 결과예요. 진짜로요. 근데 솔직히… 처음 보면 무슨 소리인지 모르겠죠?">
+  <div class="t-h1" style="margin-bottom:16px;">AI랑 5분 대화 → 이게 나와요</div>
+  <div class="card" style="background:#0f172a;color:#e2e8f0;font-family:monospace;font-size:1.15vw;padding:24px 30px;">
     📁 my_life<br>
     &nbsp;&nbsp;├── fact_youtube_watch · 2,547건<br>
     &nbsp;&nbsp;├── fact_music_play · 2,034건<br>
@@ -429,6 +429,59 @@ body.dark .progress-track{background:rgba(255,255,255,.1);}
     &nbsp;&nbsp;├── dim_videos · 영상 사전<br>
     &nbsp;&nbsp;├── dim_artists · 아티스트 사전<br>
     &nbsp;&nbsp;└── dim_time · 시간 사전
+  </div>
+  <div class="insight" style="margin-top:18px;font-size:1.4vw;">
+    와, 근데 <span class="accent">이게 무슨 소리죠??</span> @@
+  </div>
+</section>
+
+<!-- S17-b NEW: data_viz 임베드 — AI의 언어 -->
+<section class="slide" data-notes="이 화면을 보고 우리가 알아야 하나요? 아니에요. 이건 AI의 언어예요. 우리는 우리 언어로 물어보면 돼요. AI가 이 복잡한 걸 알아서 분석해줘요.">
+  <div class="t-h2" style="margin-bottom:6px;">AI의 언어, 이 복잡한 걸 어떻게 분석해요?</div>
+  <div class="t-small" style="margin-bottom:10px;">→ 우린 우리 언어로 물어보면 돼요. AI가 알아서 해석합니다.</div>
+  <div class="iframe-wrap" style="height:80vh;border-radius:14px;overflow:hidden;border:1px solid var(--line);"><iframe src="../data_viz.html" loading="lazy" style="width:100%;height:100%;border:none;"></iframe></div>
+</section>
+
+<!-- S18-b NEW: 엑셀 vs 빅쿼리 -->
+<section class="slide" data-notes="AI랑 말로 소통하면 이렇게 분석이 돼요. 근데 왜 빅쿼리여야 하죠? 엑셀로 안 되나요? 답: 안 돼요. 데이터 3만 2천 건이에요. 엑셀이 멈춰요.">
+  <div class="t-small" style="text-align:center;margin-bottom:10px;">AI랑 말로 이렇게 소통할 수 있어요. 그런데…</div>
+  <div class="t-h2" style="text-align:center;margin-bottom:30px;">왜 빅쿼리여야 하죠?</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;">
+    <div class="card" style="background:#f8fafc;border:1.5px solid #cbd5e1;padding:22px 20px;">
+      <div style="font-size:2.2vw;margin-bottom:8px;">📊</div>
+      <div style="font-weight:800;font-size:1.3vw;margin-bottom:10px;color:#64748b;">엑셀이라면</div>
+      <ul style="list-style:none;font-size:.95vw;line-height:1.9;color:#475569;">
+        <li>· 표 하나에 다 욱여넣기</li>
+        <li>· 행 100만 넘으면 멈춤</li>
+        <li>· 다른 각도 보고 싶어요 → 표 다시 만들어야</li>
+        <li>· 음악·영상·지도 합쳐서 → 거의 불가능</li>
+        <li>· 파일 열 때마다 기도 필요</li>
+      </ul>
+    </div>
+    <div class="card" style="background:linear-gradient(135deg,#eff6ff,#fff);border:1.5px solid var(--blue);padding:22px 20px;">
+      <div style="font-size:2.2vw;margin-bottom:8px;">🗄️</div>
+      <div style="font-weight:800;font-size:1.3vw;margin-bottom:10px;color:var(--blue);">빅쿼리는</div>
+      <ul style="list-style:none;font-size:.95vw;line-height:1.9;color:var(--ink);">
+        <li>· 표를 여러 개로 나눠서 보관</li>
+        <li>· 행 무한대 (제 데이터 3만+건)</li>
+        <li>· 다른 각도 → 뷰만 새로 짜면 됨</li>
+        <li>· 합치기 → 클릭 한 번</li>
+        <li>· 파일 열 필요도 없음 (클라우드)</li>
+      </ul>
+    </div>
+    <div class="card" style="background:linear-gradient(135deg,#fff5f0,#fff);border:1.5px solid var(--coral);padding:22px 20px;">
+      <div style="font-size:2.2vw;margin-bottom:8px;">✨</div>
+      <div style="font-weight:800;font-size:1.3vw;margin-bottom:10px;color:var(--coral);">그래서 좋은 게요</div>
+      <ul style="list-style:none;font-size:.95vw;line-height:1.9;color:var(--ink);">
+        <li>· 같은 데이터를 여러 각도로</li>
+        <li>· 새 질문마다 처음부터 안 해도</li>
+        <li>· AI한테 자연어로 → SQL 자동</li>
+        <li>· 한 번 잘 쌓아두면 영원히 활용</li>
+      </ul>
+    </div>
+  </div>
+  <div class="insight" style="margin-top:22px;text-align:center;">
+    빅쿼리가 어려운 게 아니에요. <span class="accent">엑셀 한 장에 안 들어가는 데이터를 정리할 곳</span>이 필요했을 뿐.
   </div>
 </section>
 
@@ -461,16 +514,21 @@ body.dark .progress-track{background:rgba(255,255,255,.1);}
 ═════════════════════════════════════════ -->
 
 <!-- S21 Part 3 인트로 (overview) -->
-<section class="slide" data-notes="여기까지 우리 데이터를 한곳에 모았어요. 이제 데이터한테 질문을 던질 차례예요. 빅쿼리에 모아둔 데이터한테는 어떻게 말 거냐고요? SQL이라는 말로요. 근데 우리 이거 안 외울 거예요. AI한테 부탁할 거니까요.">
-  <div class="t-h1" style="margin-bottom:30px;">데이터한테 던진 7개 질문</div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;font-size:1.3vw;">
-    <div class="card" style="padding:16px 22px;">🌙 Q1. 알림 보내면 언제 잘 볼까?</div>
-    <div class="card" style="padding:16px 22px;">📈 Q2. 요즘 뭐에 빠져 있나?</div>
-    <div class="card" style="padding:16px 22px;">🔍 Q3. 검색하면 진짜 보러 가나?</div>
-    <div class="card" style="padding:16px 22px;">🎵 Q4. 음악 취향은 어때?</div>
-    <div class="card" style="padding:16px 22px;">⭐ Q5. 어떤 채널·아티스트를 충성스럽게?</div>
-    <div class="card" style="padding:16px 22px;">🪞 Q6. 저는 어떤 사람으로 분류되나?</div>
-    <div class="card" style="padding:16px 22px;grid-column:1/3;">💤 Q7. 휴면 가능성이 있나?</div>
+<section class="slide" data-notes="이제 AI한테 자연어로 물어볼 차례예요. 데이터 구조 몰라도, 컬럼명 몰라도, SQL 한 줄 못 짜도 — 그냥 궁금한 거 물어보면 돼요. AI가 알아서 데이터 보고 답해줘요.">
+  <div class="t-h1" style="margin-bottom:8px;">AI에게 자연어로 던진 질문들</div>
+  <div class="t-small" style="margin-bottom:24px;">데이터 구조도, 용어도, SQL도 몰라도 OK — 그냥 궁금한 거 묻기</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:1.2vw;">
+    <div class="card" style="padding:14px 20px;">🌙 Q1. <strong>알림 보내면 언제 잘 볼까?</strong></div>
+    <div class="card" style="padding:14px 20px;">📈 Q2. <strong>요즘 뭐에 빠져 있나?</strong></div>
+    <div class="card" style="padding:14px 20px;">🔍 Q3. <strong>검색하면 진짜 보러 가?</strong></div>
+    <div class="card" style="padding:14px 20px;">🎵 Q4. <strong>음악 취향은 어때?</strong></div>
+    <div class="card" style="padding:14px 20px;">⭐ Q5. <strong>어떤 채널을 충성스럽게 봐?</strong></div>
+    <div class="card" style="padding:14px 20px;">🪞 Q6. <strong>나는 어떤 사람으로 분류돼?</strong></div>
+    <div class="card" style="padding:14px 20px;">💤 Q7. <strong>휴면할 가능성 있어?</strong></div>
+    <div class="card" style="padding:14px 20px;background:linear-gradient(135deg,#fff5f0,#fff);border:1.5px solid var(--coral);">🚀 Q8. <strong>데이터로 어디까지 알 수 있어?</strong></div>
+  </div>
+  <div class="insight" style="margin-top:22px;">
+    SQL? 컬럼명? 그런 거 몰라도 돼요. <span class="accent">우리는 그냥 묻기만 하면 돼요.</span>
   </div>
 </section>
 
@@ -667,6 +725,47 @@ body.dark .progress-track{background:rgba(255,255,255,.1);}
   <div class="insight" style="margin-top:24px;">단순 방문 기록도 <span class="accent">한 사람을 그려내요.</span></div>
 </section>
 
+<!-- S28-c NEW Q8: 데이터로 어디까지 알 수 있나 -->
+<section class="slide" data-notes="여기까지가 데이터로 알 수 있는 것의 정점이에요. 영상 본 사람이 → 22분 뒤에 검색 → 며칠 뒤에 결제. 이런 행동 흐름이 한 줄 한 줄 다 찍혀요. 마케터 시점에서 보면, '이 사람한테 뭘 보여주면 살까' 가 데이터로 직접 보여요.">
+  <div class="t-small">Q8 · 더 깊이</div>
+  <div class="t-h1" style="margin-bottom:10px;">데이터로 어디까지 알 수 있어?</div>
+  <div class="t-small" style="margin-bottom:20px;">한 사람의 행동을 <strong>시청 → 검색 → 구매</strong> 흐름으로 따라가 봤어요</div>
+  <div style="display:grid;grid-template-columns:1fr 0.15fr 1fr 0.15fr 1fr;gap:10px;align-items:stretch;">
+    <div class="card" style="background:linear-gradient(135deg,#fef3c7,#fff);border:1.5px solid #f59e0b;padding:18px;">
+      <div style="font-size:.78vw;color:#92400e;font-weight:700;margin-bottom:6px;">STEP 01 · TRIGGER</div>
+      <div style="font-weight:800;font-size:1.1vw;margin-bottom:10px;">🎬 콘텐츠로 시작</div>
+      <div style="font-size:.95vw;line-height:1.8;color:var(--ink);">
+        <strong>HYBE LABELS</strong><br><span style="color:var(--muted);font-size:.85vw;">BTS 'SWIM' MV</span><br>
+        <strong>맛있겠다 Yummy</strong><br><span style="color:var(--muted);font-size:.85vw;">이모카세</span><br>
+        <strong>전매특허정우</strong><br><span style="color:var(--muted);font-size:.85vw;">BTS 얼굴 분석</span>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:center;color:var(--coral);font-size:2.2vw;font-weight:900;">→</div>
+    <div class="card" style="background:linear-gradient(135deg,#e0f2fe,#fff);border:1.5px solid var(--blue);padding:18px;">
+      <div style="font-size:.78vw;color:var(--blue);font-weight:700;margin-bottom:6px;">STEP 02 · INTENT</div>
+      <div style="font-weight:800;font-size:1.1vw;margin-bottom:10px;">🔎 관심이 의도로</div>
+      <div style="font-size:.95vw;line-height:1.8;color:var(--ink);">
+        <strong>"bts"</strong><br><span style="color:var(--muted);font-size:.85vw;">시청 후 22분 뒤</span><br>
+        <strong>"물회육수"</strong><br><span style="color:var(--muted);font-size:.85vw;">음식 영상 직후</span><br>
+        <strong>"푸룬주스"</strong><br><span style="color:var(--muted);font-size:.85vw;">건강 콘텐츠 직후</span>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:center;color:var(--coral);font-size:2.2vw;font-weight:900;">→</div>
+    <div class="card" style="background:linear-gradient(135deg,#fff5f0,#fff);border:1.5px solid var(--coral);padding:18px;">
+      <div style="font-size:.78vw;color:var(--coral);font-weight:700;margin-bottom:6px;">STEP 03 · CONVERSION</div>
+      <div style="font-weight:800;font-size:1.1vw;margin-bottom:10px;">🛒 의도가 구매로</div>
+      <div style="font-size:.95vw;line-height:1.8;color:var(--ink);">
+        <strong>BTS 굿즈</strong><br><span style="color:var(--muted);font-size:.85vw;">며칠 뒤 결제</span><br>
+        <strong>해산물 밀키트</strong><br><span style="color:var(--muted);font-size:.85vw;">검색 다음 날</span><br>
+        <strong>건강식품</strong><br><span style="color:var(--muted);font-size:.85vw;">2주 내 구매</span>
+      </div>
+    </div>
+  </div>
+  <div class="insight" style="margin-top:24px;">
+    <strong>시청 → 검색 → 구매</strong>까지 한 줄로 이어져요. <span class="accent">마케터가 가장 알고 싶어하는 흐름.</span>
+  </div>
+</section>
+
 <!-- ═════════════════════════════════════════
      Part 4 S29~S33
 ═════════════════════════════════════════ -->
@@ -834,10 +933,10 @@ let cur = 0;
 const CHAPTERS = [
   {start:0, end:5, name:'도입'},
   {start:6, end:10, name:'Part 1 · 일상이 데이터로'},
-  {start:11, end:19, name:'Part 2 · AI랑 데이터 짜기'},
-  {start:20, end:27, name:'Part 3 · 데이터 질문 7개'},
-  {start:28, end:32, name:'Part 4 · 사내 적용'},
-  {start:33, end:36, name:'클로징'},
+  {start:11, end:21, name:'Part 2 · AI랑 데이터 짜기 (왜 빅쿼리?)'},
+  {start:22, end:30, name:'Part 3 · AI에게 던진 질문들'},
+  {start:31, end:35, name:'Part 4 · 사내 적용'},
+  {start:36, end:40, name:'클로징'},
 ];
 
 function go(n){
