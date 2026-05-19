@@ -1436,15 +1436,22 @@ Install to Workspace 눌렀는데 문제가 생겼어요. 어떻게 해야 하�
     </div>
 
     <p style="font-size:.84rem;font-weight:600;margin:16px 0 8px;">④ 토큰 &amp; 채널 입력하면 코드가 바로 완성돼요</p>
-    <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;">
-      <div style="flex:1;min-width:180px;">
-        <div style="font-size:.75rem;color:var(--muted);margin-bottom:3px;">3단계에서 복사한 봇 토큰</div>
-        <input type="text" id="s7-token" placeholder="xoxb-0123456789-..." style="width:100%;box-sizing:border-box;padding:8px 10px;border:1.5px solid #ddd;border-radius:6px;font-size:.83rem;font-family:monospace;" oninput="genCode()">
+    <div style="display:flex;gap:10px;margin-bottom:6px;flex-wrap:wrap;">
+      <div style="flex:1;min-width:200px;">
+        <div style="font-size:.78rem;font-weight:700;color:var(--ink);margin-bottom:4px;">🔑 봇 토큰 (TOKEN)</div>
+        <div style="font-size:.7rem;color:var(--muted);margin-bottom:4px;">반드시 <code style="color:#1e57ff;">xoxb-</code>로 시작 · 3단계에서 복사한 그것</div>
+        <input type="text" id="s7-token" placeholder="xoxb-1234567890-..." style="width:100%;box-sizing:border-box;padding:9px 11px;border:1.5px solid #ddd;border-radius:6px;font-size:.83rem;font-family:monospace;" oninput="validateS7();genCode()">
+        <div id="s7-token-warn" style="display:none;color:#dc2626;font-size:.7rem;margin-top:4px;">⚠️ xoxb- 로 시작하는 봇 토큰이 아닌 것 같아요!</div>
       </div>
-      <div style="flex:1;min-width:140px;">
-        <div style="font-size:.75rem;color:var(--muted);margin-bottom:3px;">리포트 받을 채널 ID <span style="color:#888;">(C로 시작하는 11자)</span></div>
-        <input type="text" id="s7-channel" placeholder="C0123ABCDEF" style="width:100%;box-sizing:border-box;padding:8px 10px;border:1.5px solid #ddd;border-radius:6px;font-size:.83rem;font-family:monospace;" oninput="genCode()">
+      <div style="flex:1;min-width:160px;">
+        <div style="font-size:.78rem;font-weight:700;color:var(--ink);margin-bottom:4px;">📢 채널 ID (CHANNEL)</div>
+        <div style="font-size:.7rem;color:var(--muted);margin-bottom:4px;"><code style="color:#1e57ff;">C</code>로 시작하는 11자 · 채널 이름 X</div>
+        <input type="text" id="s7-channel" placeholder="C0123ABCDEF" style="width:100%;box-sizing:border-box;padding:9px 11px;border:1.5px solid #ddd;border-radius:6px;font-size:.83rem;font-family:monospace;" oninput="validateS7();genCode()">
+        <div id="s7-channel-warn" style="display:none;color:#dc2626;font-size:.7rem;margin-top:4px;">⚠️ C 로 시작하는 채널 ID 형태가 아닌 것 같아요!</div>
       </div>
+    </div>
+    <div id="s7-pid-info" style="background:#f0f9ff;border:1px solid #bcd4ff;border-radius:8px;padding:8px 12px;margin-bottom:10px;font-size:.78rem;color:#1e3a8a;display:none;">
+      <strong>💡 자동 입력:</strong> GCP 프로젝트 ID = <code id="s7-pid-display">미입력</code> (2단계에서 가져옴)
     </div>
 
     <div class="code-tabs-bar">
@@ -1825,6 +1832,7 @@ function gst(n){
   if(S.session==='bq' && n>1){const el=document.getElementById('spc-s'+n);if(el&&!el.classList.contains('earned'))el.classList.add('current');}
   if(S.session==='bq' && (n===3 || n===5 || n===6))fillPid();
   if(S.session==='bq' && n===6 && typeof onEnterS6==='function') setTimeout(onEnterS6, 100);
+  if(S.session==='slack' && n===6 && typeof validateS7==='function') setTimeout(validateS7, 100);
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
@@ -2924,6 +2932,33 @@ function updPreview() {
 }
 
 // ── Apps Script 코드 생성 ─────────────────
+function validateS7(){
+  const tk = (document.getElementById('s7-token')?.value || '').trim();
+  const ch = (document.getElementById('s7-channel')?.value || '').trim();
+  const tw = document.getElementById('s7-token-warn');
+  const cw = document.getElementById('s7-channel-warn');
+  if (tw) tw.style.display = (tk && !tk.startsWith('xoxb-')) ? 'block' : 'none';
+  if (cw) cw.style.display = (ch && !ch.startsWith('C')) ? 'block' : 'none';
+  // PID 표시 동기화
+  const pidInfo = document.getElementById('s7-pid-info');
+  const pidDisp = document.getElementById('s7-pid-display');
+  if (pidInfo && pidDisp) {
+    if (S.projectId) {
+      pidInfo.style.display = 'block';
+      pidDisp.textContent = S.projectId;
+      pidInfo.style.background = '#f0fdf4';
+      pidInfo.style.borderColor = '#86efac';
+      pidInfo.style.color = '#166534';
+    } else {
+      pidInfo.style.display = 'block';
+      pidDisp.textContent = '⚠️ 미입력! 2단계에서 프로젝트 ID 먼저 저장해주세요';
+      pidInfo.style.background = '#fef2f2';
+      pidInfo.style.borderColor = '#fca5a5';
+      pidInfo.style.color = '#991b1b';
+    }
+  }
+}
+
 function genCode() {
   const pid     = S.projectId || 'YOUR_PROJECT_ID';
   const token   = (document.getElementById('s7-token')?.value || 'YOUR_BOT_TOKEN').trim();
@@ -3204,7 +3239,13 @@ function slackPost_(msg) {
 `;
 
   const el = document.getElementById('s7-code');
-  if (el) el.textContent = code;
+  if (el) {
+    if (pid === 'YOUR_PROJECT_ID' || !pid) {
+      el.textContent = '// ⚠️ 2단계에서 GCP 프로젝트 ID를 먼저 입력해주세요!\n// 그래야 PID 가 자동으로 채워져서 BigQuery 호출이 됩니다.\n//\n// 또는 토큰/채널을 입력하면 코드가 완성됩니다.\n\n' + code;
+    } else {
+      el.textContent = code;
+    }
+  }
 
   // ── AI 프롬프트 생성 ──
   const optLabels = {
