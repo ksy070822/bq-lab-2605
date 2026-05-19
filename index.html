@@ -2842,61 +2842,45 @@ function genCode() {
   let queryLines = [];
   let fieldLines = [];
 
+  // ── SQL 생성: 큰따옴표 + 직접 PID 임베드 (백틱 이스케이프 문제 회피) ──
+  const tblYt = "\\`" + pid + ".my_life.youtube_history\\`";
+  const tblMu = "\\`" + pid + ".my_life.music_history\\`";
+
   if (opts.views) {
     queryLines.push(
-`  const ytTotal = q1(\`SELECT COUNT(*) FROM \\\`\${PID}.my_life.youtube_history\\\`
-    WHERE DATE(watched_at) BETWEEN '\${s}' AND '\${e}'\`);`,
-`  const topCats = qN(\`SELECT category, COUNT(*) c
-    FROM \\\`\${PID}.my_life.youtube_history\\\`
-    WHERE DATE(watched_at) BETWEEN '\${s}' AND '\${e}'
-    GROUP BY category ORDER BY c DESC LIMIT 3\`);`
+'  const ytTotal = q1("SELECT COUNT(*) FROM ' + tblYt + ' WHERE DATE(watched_at) BETWEEN \'" + s + "\' AND \'" + e + "\'");',
+'  const topCats = qN("SELECT category, COUNT(*) c FROM ' + tblYt + ' WHERE DATE(watched_at) BETWEEN \'" + s + "\' AND \'" + e + "\' GROUP BY category ORDER BY c DESC LIMIT 3");'
     );
     fieldLines.push(
-`      { type:'mrkdwn', text:'*📊 유튜브 시청*\\n' + ytTotal + '건\\n' + topCats.map(r=>r[0]).join(' · ') },`
+'      { type:\'mrkdwn\', text:\'*📊 유튜브 시청*\\n\' + ytTotal + \'건\\n\' + topCats.map(r=>r[0]).join(\' · \') },'
     );
   }
   if (opts.peak) {
     queryLines.push(
-`  const peakHr = q1(\`SELECT EXTRACT(HOUR FROM watched_at) h
-    FROM \\\`\${PID}.my_life.youtube_history\\\`
-    WHERE DATE(watched_at) BETWEEN '\${s}' AND '\${e}'
-    GROUP BY h ORDER BY COUNT(*) DESC LIMIT 1\`);`
+'  const peakHr = q1("SELECT EXTRACT(HOUR FROM watched_at) h FROM ' + tblYt + ' WHERE DATE(watched_at) BETWEEN \'" + s + "\' AND \'" + e + "\' GROUP BY h ORDER BY COUNT(*) DESC LIMIT 1");'
     );
-    fieldLines.push(`      { type:'mrkdwn', text:'*🕐 피크 타임*\\n' + peakHr + '시' },`);
+    fieldLines.push('      { type:\'mrkdwn\', text:\'*🕐 피크 타임*\\n\' + peakHr + \'시\' },');
   }
   if (opts.music) {
     queryLines.push(
-`  const topArt = qN(\`SELECT artist, COUNT(*) c
-    FROM \\\`\${PID}.my_life.music_history\\\`
-    WHERE DATE(played_at) BETWEEN '\${s}' AND '\${e}'
-    GROUP BY artist ORDER BY c DESC LIMIT 3\`);`
+'  const topArt = qN("SELECT artist, COUNT(*) c FROM ' + tblMu + ' WHERE DATE(played_at) BETWEEN \'" + s + "\' AND \'" + e + "\' GROUP BY artist ORDER BY c DESC LIMIT 3");'
     );
-    fieldLines.push(`      { type:'mrkdwn', text:'*🎵 최애 아티스트*\\n' + topArt.map((r,i)=>(i+1)+'. '+r[0]).join('  ') },`);
+    fieldLines.push('      { type:\'mrkdwn\', text:\'*🎵 최애 아티스트*\\n\' + topArt.map((r,i)=>(i+1)+\'. \'+r[0]).join(\'  \') },');
   }
   if (opts.diff) {
     queryLines.push(
-`  const diffCats = qN(\`
-    WITH cur AS (SELECT category, COUNT(*) c FROM \\\`\${PID}.my_life.youtube_history\\\`
-      WHERE DATE(watched_at) BETWEEN '\${s}' AND '\${e}' GROUP BY category),
-    prv AS (SELECT category, COUNT(*) c FROM \\\`\${PID}.my_life.youtube_history\\\`
-      WHERE DATE(watched_at) BETWEEN FORMAT_DATE('%Y-%m-%d', DATE_SUB(PARSE_DATE('%Y-%m-%d','\${s}'),INTERVAL 7 DAY))
-                                  AND '\${s}' GROUP BY category)
-    SELECT cur.category, ROUND((cur.c-IFNULL(prv.c,0))*100.0/GREATEST(IFNULL(prv.c,1),1),0) pct
-    FROM cur LEFT JOIN prv USING(category) ORDER BY ABS(pct) DESC LIMIT 3\`);`
+'  const diffCats = qN("WITH cur AS (SELECT category, COUNT(*) c FROM ' + tblYt + ' WHERE DATE(watched_at) BETWEEN \'" + s + "\' AND \'" + e + "\' GROUP BY category), prv AS (SELECT category, COUNT(*) c FROM ' + tblYt + ' WHERE DATE(watched_at) BETWEEN FORMAT_DATE(\'%Y-%m-%d\', DATE_SUB(PARSE_DATE(\'%Y-%m-%d\',\'" + s + "\'),INTERVAL 7 DAY)) AND \'" + s + "\' GROUP BY category) SELECT cur.category, ROUND((cur.c-IFNULL(prv.c,0))*100.0/GREATEST(IFNULL(prv.c,1),1),0) pct FROM cur LEFT JOIN prv USING(category) ORDER BY ABS(pct) DESC LIMIT 3");'
     );
-    fieldLines.push(`      { type:'mrkdwn', text:'*📈 지난 주 대비*\\n' + diffCats.map(r=>(parseFloat(r[1])>0?'↑':'↓')+' '+r[0]+' '+Math.abs(r[1])+'%').join('\\n') },`);
+    fieldLines.push('      { type:\'mrkdwn\', text:\'*📈 지난 주 대비*\\n\' + diffCats.map(r=>(parseFloat(r[1])>0?\'↑\':\'↓\')+\' \'+r[0]+\' \'+Math.abs(r[1])+\'%\').join(\'\\n\') },');
   }
   if (opts.ch) {
     queryLines.push(
-`  const topCh = qN(\`SELECT channel_name, COUNT(*) c
-    FROM \\\`\${PID}.my_life.youtube_history\\\`
-    WHERE DATE(watched_at) BETWEEN '\${s}' AND '\${e}'
-    GROUP BY channel_name ORDER BY c DESC LIMIT 3\`);`
+'  const topCh = qN("SELECT channel_name, COUNT(*) c FROM ' + tblYt + ' WHERE DATE(watched_at) BETWEEN \'" + s + "\' AND \'" + e + "\' GROUP BY channel_name ORDER BY c DESC LIMIT 3");'
     );
-    fieldLines.push(`      { type:'mrkdwn', text:'*📺 충성 채널*\\n' + topCh.map((r,i)=>(i+1)+'. '+r[0]).join('\\n') },`);
+    fieldLines.push('      { type:\'mrkdwn\', text:\'*📺 충성 채널*\\n\' + topCh.map((r,i)=>(i+1)+\'. \'+r[0]).join(\'\\n\') },');
   }
   if (opts.persona) {
-    fieldLines.push(`      { type:'mrkdwn', text:'*🪞 이번 주 페르소나*\\nBigQuery 결과를 Claude/Gemini에 던져보세요!' },`);
+    fieldLines.push('      { type:\'mrkdwn\', text:\'*🪞 이번 주 페르소나*\\nBigQuery 결과를 Claude/Gemini에 던져보세요!\' },');
   }
 
   const code = `// ═══════════════════════════════════════════
