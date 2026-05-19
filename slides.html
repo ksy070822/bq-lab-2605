@@ -226,7 +226,7 @@ body.dark .progress-track{background:rgba(255,255,255,.1);}
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;">
     <div>
       <div class="t-tiny" style="margin-bottom:6px;color:var(--coral);font-weight:700;">📅 첫 시도 · 2024.04</div>
-      <div class="chat-box ai"><div class="who">🤖 AI</div><div class="msg">테이블명 알려주시면 코드 짜드릴게요</div></div>
+      <div class="chat-box ai"><div class="who">🤖 AI</div><div class="msg">테이블이 뭐야? 어디서 봐?</div></div>
       <div class="chat-box user"><div class="who">🙋 메이</div><div class="msg">아마 dw_payment 쪽에 있을 거 같아…</div></div>
     </div>
     <div>
@@ -253,12 +253,11 @@ body.dark .progress-track{background:rgba(255,255,255,.1);}
     <div>
       <div class="t-small" style="margin-bottom:14px;">지난 1년 반 동안 만든 것들</div>
       <ul style="list-style:none;font-size:1.3vw;line-height:2;color:var(--muted);">
-        <li>· AI 상담품질 평가 시스템</li>
         <li>· 위험상담사 주간 예측</li>
-        <li>· 민원 통합 시스템</li>
-        <li>· 영장 자동화</li>
         <li>· 슬랙↔아지트 연동</li>
-        <li>· 교육 봇</li>
+        <li>· 민원 통합 자동화 프로세스</li>
+        <li>· 고객센터 직무테스트 앱</li>
+        <li>· 고객센터 통합 운영 시스템</li>
       </ul>
     </div>
     <div>
@@ -475,31 +474,34 @@ body.dark .progress-track{background:rgba(255,255,255,.1);}
   </div>
 </section>
 
-<!-- S22 Q1 푸시 골든타임 -->
-<section class="slide" data-notes="전체로 보면 낮이 압도적이에요. 근데 평일 저녁을 따로 보면 루틴이 보여요. 18시엔 음악 먼저. 19~20시엔 저녁 뉴스. 21시 넘으면 브이로그. 데이터가 제 하루 일과를 알고 있어요.">
+<!-- S22 Q1 푸시 골든타임 (KST 정정) -->
+<section class="slide" data-notes="평일은 퇴근 후 시간대에 거의 다 몰려 있어요. 심야 39.5%, 저녁 37.8% — 합치면 77%가 18시 이후. 주말은 분산형이에요. 마케터라면 평일 22시-새벽 1시가 골든타임이에요.">
   <div class="t-small">Q1</div>
   <div class="t-h1" style="margin-bottom:24px;">알림 보내면 언제 잘 볼까?</div>
   <div style="display:grid;grid-template-columns:1fr 1.2fr;gap:40px;">
     <div>
+      <div class="t-small" style="margin-bottom:10px;font-weight:600;">평일 시간대 (KST)</div>
       <table class="data-table">
-        <tr><th>요일</th><th>비중</th><th></th></tr>
-        <tr><td>토요일</td><td class="pct">21.4%</td><td class="up">▲</td></tr>
-        <tr><td>일요일</td><td class="pct">19.5%</td><td class="up">▲</td></tr>
-        <tr><td>금요일</td><td>15.4%</td><td></td></tr>
-        <tr><td>월요일</td><td>12.8%</td><td></td></tr>
-        <tr><td>목요일</td><td>10.7%</td><td></td></tr>
+        <tr><th>시간대</th><th>비중</th><th></th></tr>
+        <tr><td>심야 23~5시</td><td class="pct">39.5%</td><td class="up">▲</td></tr>
+        <tr><td>저녁 18~22시</td><td class="pct">37.8%</td><td class="up">▲</td></tr>
+        <tr><td>낮 12~17시</td><td>15.0%</td><td></td></tr>
+        <tr><td>오전 6~11시</td><td>7.7%</td><td></td></tr>
       </table>
     </div>
     <div>
-      <div class="t-small" style="margin-bottom:10px;font-weight:600;">평일 저녁 루틴 (17~23시)</div>
-      <div class="card" style="background:#f9fafb;line-height:2;font-size:1.3vw;">
-        <strong>18시</strong> &nbsp;&nbsp; 음악 29% &nbsp;<span style="color:var(--muted)">퇴근하면서 음악부터</span><br>
-        <strong>19~20시</strong> 뉴스 31% &nbsp;<span style="color:var(--muted)">저녁 뉴스로 하루 정리</span><br>
-        <strong>21~23시</strong> 브이로그 30~32% &nbsp;<span style="color:var(--muted)">뉴스 끄고 브이로그로</span>
-      </div>
+      <div class="t-small" style="margin-bottom:10px;font-weight:600;">주말 시간대 (KST)</div>
+      <table class="data-table">
+        <tr><th>시간대</th><th>비중</th></tr>
+        <tr><td>저녁 18~22시</td><td class="pct">32.6%</td></tr>
+        <tr><td>낮 12~17시</td><td>28.9%</td></tr>
+        <tr><td>심야 23~5시</td><td>26.8%</td></tr>
+        <tr><td>오전 6~11시</td><td>11.7%</td></tr>
+      </table>
+      <div class="t-small" style="margin-top:14px;color:var(--coral);font-weight:600;">평일 = 퇴근 후 몰빵형 (18시 이후 77%)<br>주말 = 분산형 (오후 시간대 골고루)</div>
     </div>
   </div>
-  <div class="insight" style="margin-top:24px;">데이터가 제 하루 일과를 알고 있어요.</div>
+  <div class="insight" style="margin-top:24px;">데이터가 제 <span class="accent">퇴근 후 루틴</span>을 정확히 알고 있어요.</div>
 </section>
 
 <!-- S23 Q2 관심사 변화 -->
@@ -631,6 +633,40 @@ body.dark .progress-track{background:rgba(255,255,255,.1);}
   <div class="insight" style="margin-top:24px;">회사라면 <span class="accent">이탈 전에</span> 알아챌 수 있어요.</div>
 </section>
 
+<!-- S28-b Q8 웹서핑이 본 일상 -->
+<section class="slide" data-notes="검색·시청 말고 단순 웹 방문 기록도 한 사람을 보여줘요. 메이는 네이버 안에서 거의 다 끝나는 사람이에요. 19,062번 — 압도적이에요. 그 와중에 일본 공연 티켓 사이트 sakuticket.jp 111회, 로컬 개발 localhost 214회 — 이런 게 다 페르소나를 정밀하게 만들어줘요.">
+  <div class="t-small">Q8</div>
+  <div class="t-h1" style="margin-bottom:24px;">웹서핑이 보여주는 일상은?</div>
+  <div style="display:grid;grid-template-columns:1.1fr 1fr;gap:40px;align-items:flex-start;">
+    <div>
+      <div class="t-small" style="margin-bottom:8px;font-weight:600;">도메인 카테고리 (29,234건)</div>
+      <div class="card" style="background:#fdf4f8;border-left:6px solid #EC4899;padding:22px 24px;">
+        <div class="t-large" style="color:#EC4899;font-weight:800;line-height:1;">19,062</div>
+        <div class="t-small" style="margin-top:4px;">네이버 계열 — <strong>65%</strong> (압도적 1위)</div>
+        <div style="margin-top:14px;font-size:1.1vw;line-height:1.8;color:var(--ink);">
+          뉴스·카페·블로그·지도·쇼핑 — <strong>다 네이버 안에서 끝</strong>.
+        </div>
+      </div>
+      <div class="t-small" style="margin-top:14px;line-height:1.8;font-size:1.1vw;">
+        Google 작업 633 · localhost 214 · Notion 185<br>
+        Toss 176 · <span style="color:var(--coral);font-weight:600;">sakuticket.jp 111</span>
+      </div>
+    </div>
+    <div>
+      <div class="t-small" style="margin-bottom:8px;font-weight:600;">검색어가 본 메이</div>
+      <div class="card" style="font-size:1.15vw;line-height:1.9;">
+        🎵 <strong>테일러 스위프트 광팬</strong> — 147회<br>
+        ✈️ 여행 유튜버 — 곽튜브·빠니보틀·기안84<br>
+        🇯🇵 일본 쇼와팝 — 마츠다·나카모리·아즈마<br>
+        🧑‍💻 직접 개발도 — GCP·localhost 233회<br>
+        🐱 아픈 고양이 — 동물병원 26회<br>
+        🏖️ <strong>양양 369회</strong> 검색 (1위!)
+      </div>
+    </div>
+  </div>
+  <div class="insight" style="margin-top:24px;">단순 방문 기록도 <span class="accent">한 사람을 그려내요.</span></div>
+</section>
+
 <!-- ═════════════════════════════════════════
      Part 4 S29~S33
 ═════════════════════════════════════════ -->
@@ -652,7 +688,7 @@ body.dark .progress-track{background:rgba(255,255,255,.1);}
 <!-- S31 RAG 그래프 ★ -->
 <section class="slide" data-notes="제 6개 일상 데이터가 어떻게 연결되는지 보여드려요. 클릭하면 바뀌어요. (인터랙티브 그래프)">
   <div class="t-h2" style="margin-bottom:16px;">제 데이터가 연결되는 방식</div>
-  <div class="iframe-wrap"><iframe src="rag_graph.html" loading="lazy"></iframe></div>
+  <div class="iframe-wrap"><iframe src="../rag_graph.html" loading="lazy"></iframe></div>
 </section>
 
 <!-- S32 메이의 사내 시스템들 -->
@@ -660,28 +696,24 @@ body.dark .progress-track{background:rgba(255,255,255,.1);}
   <div class="t-h1" style="margin-bottom:30px;">지난 1년 반 동안 만든 것들</div>
   <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px;">
     <div class="card" style="text-align:center;padding:24px 18px;">
-      <div style="font-size:2.5vw;margin-bottom:8px;">🤖</div>
-      <div style="font-size:1.2vw;font-weight:700;">AI 상담품질 평가</div>
-    </div>
-    <div class="card" style="text-align:center;padding:24px 18px;">
       <div style="font-size:2.5vw;margin-bottom:8px;">⚠️</div>
       <div style="font-size:1.2vw;font-weight:700;">위험상담사 주간 예측</div>
-    </div>
-    <div class="card" style="text-align:center;padding:24px 18px;">
-      <div style="font-size:2.5vw;margin-bottom:8px;">📋</div>
-      <div style="font-size:1.2vw;font-weight:700;">민원 통합 시스템</div>
-    </div>
-    <div class="card" style="text-align:center;padding:24px 18px;">
-      <div style="font-size:2.5vw;margin-bottom:8px;">⚖️</div>
-      <div style="font-size:1.2vw;font-weight:700;">영장 자동화</div>
     </div>
     <div class="card" style="text-align:center;padding:24px 18px;">
       <div style="font-size:2.5vw;margin-bottom:8px;">💬</div>
       <div style="font-size:1.2vw;font-weight:700;">슬랙↔아지트 연동</div>
     </div>
     <div class="card" style="text-align:center;padding:24px 18px;">
-      <div style="font-size:2.5vw;margin-bottom:8px;">📚</div>
-      <div style="font-size:1.2vw;font-weight:700;">교육 봇</div>
+      <div style="font-size:2.5vw;margin-bottom:8px;">📋</div>
+      <div style="font-size:1.2vw;font-weight:700;">민원 통합 자동화 프로세스</div>
+    </div>
+    <div class="card" style="text-align:center;padding:24px 18px;">
+      <div style="font-size:2.5vw;margin-bottom:8px;">📝</div>
+      <div style="font-size:1.2vw;font-weight:700;">고객센터 직무테스트 앱</div>
+    </div>
+    <div class="card" style="text-align:center;padding:24px 18px;">
+      <div style="font-size:2.5vw;margin-bottom:8px;">🏢</div>
+      <div style="font-size:1.2vw;font-weight:700;">고객센터 통합 운영 시스템</div>
     </div>
   </div>
   <div class="insight" style="margin-top:24px;">다 같은 패턴이에요. <span class="accent">흩어진 거 모으고, AI랑 같이 만들고.</span></div>
