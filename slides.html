@@ -785,49 +785,75 @@ body.dark .progress-track{background:rgba(255,255,255,.1);}
   <div class="t-large accent">데이터한테 질문할 수 있어요.</div>
 </section>
 
-<!-- NEW: CSOPP 사내 빅쿼리 구조 — 회사에선 어떻게 -->
-<section class="slide" data-notes="제 일상이 14개 데이터셋 226 테이블이었다면, 우리 회사 빅쿼리는 훨씬 더 풍부해요. 상담 품질, VOC, 채널/생산성, SLA, HR — 모두 한곳에 모여있고 같은 패턴으로 자연어로 분석 가능해요.">
-  <div class="t-small">CSOPP 파트 · csopp-25f2 프로젝트</div>
-  <div class="t-h1" style="margin-bottom:6px;">우리 회사 빅쿼리는 이미 이렇게 있어요</div>
-  <div class="t-small" style="margin-bottom:24px;">제 일상 6개 영역 → 회사는 <strong>14개 데이터셋 / 226개 테이블</strong>로 운영 중</div>
+<!-- NEW: CSOPP 사내 빅쿼리 유기적 연결 — 회사에선 어떻게 -->
+<section class="slide" data-notes="이게 진짜 핵심이에요. 한 번 잘 쌓아둔 데이터는 다른 시스템의 부품으로 들어가요. 퀴즈가 만든 벡터를 VOC가 쓰고, 퀴즈 점수가 QC 대시보드 직무테스트 탭에 뜨고, 근태 한 테이블이 양쪽에 다 들어가요. 한 번 만들면 끝없이 우려먹기 가능합니다." style="padding:4vh 4vw;">
+  <div class="t-small">CSOPP 파트 · csopp-25f2 프로젝트 · 14 데이터셋 / 226 테이블</div>
+  <div class="t-h2" style="margin-bottom:6px;">한 번 잘 쌓으면 — <span class="accent">서로 다른 시스템의 부품</span>이 돼요</div>
+  <div class="t-small" style="margin-bottom:18px;">실제 활용 중인 4가지 유기적 데이터 흐름</div>
 
-  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;font-size:.92vw;">
-    <div class="card" style="padding:14px 16px;background:linear-gradient(135deg,#e0f2fe,#fff);border-left:4px solid #0284c7;">
-      <div style="font-weight:800;color:#0369a1;font-size:1.05vw;margin-bottom:4px;">📞 상담 품질</div>
-      <div style="color:var(--muted);font-size:.78vw;line-height:1.5;">KMCC_QC · 106 테이블<br>action_plans, agents,<br>monthly_summary, ai_analysis…</div>
-    </div>
-    <div class="card" style="padding:14px 16px;background:linear-gradient(135deg,#fef3c7,#fff);border-left:4px solid #d97706;">
-      <div style="font-weight:800;color:#b45309;font-size:1.05vw;margin-bottom:4px;">📊 채널·생산성</div>
-      <div style="color:var(--muted);font-size:.78vw;line-height:1.5;">KMCC_CPD · 19 테이블<br>채널별 콜·채팅·이메일,<br>상담사 생산성 지표</div>
-    </div>
-    <div class="card" style="padding:14px 16px;background:linear-gradient(135deg,#fce7f3,#fff);border-left:4px solid #db2777;">
-      <div style="font-weight:800;color:#be185d;font-size:1.05vw;margin-bottom:4px;">📋 VOC·민원</div>
-      <div style="color:var(--muted);font-size:.78vw;line-height:1.5;">voc · 16 테이블 +<br>complaint_data · 6<br>+ voc_analysis · voc_intelligence</div>
-    </div>
-    <div class="card" style="padding:14px 16px;background:linear-gradient(135deg,#dcfce7,#fff);border-left:4px solid #16a34a;">
-      <div style="font-weight:800;color:#15803d;font-size:1.05vw;margin-bottom:4px;">⏱ SLA·응대</div>
-      <div style="color:var(--muted);font-size:.78vw;line-height:1.5;">KMCC_SLA · 8 테이블<br>응대율·연결률,<br>이탈·재전화 추적</div>
-    </div>
-    <div class="card" style="padding:14px 16px;background:linear-gradient(135deg,#ede9fe,#fff);border-left:4px solid #7c3aed;">
-      <div style="font-weight:800;color:#6d28d9;font-size:1.05vw;margin-bottom:4px;">👥 HR · 인사</div>
-      <div style="color:var(--muted);font-size:.78vw;line-height:1.5;">kMCC_HR · 8 테이블<br>상담사 입퇴사,<br>역량·교육 이력</div>
-    </div>
-    <div class="card" style="padding:14px 16px;background:linear-gradient(135deg,#fef2f2,#fff);border-left:4px solid #dc2626;">
-      <div style="font-weight:800;color:#b91c1c;font-size:1.05vw;margin-bottom:4px;">🎯 QA·심사</div>
-      <div style="color:var(--muted);font-size:.78vw;line-height:1.5;">QA_data · 4 테이블<br>샘플링 심사,<br>품질 평가 결과</div>
-    </div>
-    <div class="card" style="padding:14px 16px;background:linear-gradient(135deg,#f0f9ff,#fff);border-left:4px solid #0284c7;">
-      <div style="font-weight:800;color:#0369a1;font-size:1.05vw;margin-bottom:4px;">💬 아지트 분석</div>
-      <div style="color:var(--muted);font-size:.78vw;line-height:1.5;">agit_analytics · 3 테이블<br>사내 커뮤니티,<br>피드백·반응</div>
-    </div>
+  <!-- 4 flows grid -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:.86vw;">
+
+    <!-- Flow 1: 퀴즈 정책 벡터 → VOC -->
     <div class="card" style="padding:14px 16px;background:linear-gradient(135deg,#fef9c3,#fff);border-left:4px solid #ca8a04;">
-      <div style="font-weight:800;color:#a16207;font-size:1.05vw;margin-bottom:4px;">🧠 지식·임베딩</div>
-      <div style="color:var(--muted);font-size:.78vw;line-height:1.5;">KMS · kmcc_vector ·<br>wiki_search · quiz_results<br>(RAG·교육·검색)</div>
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+        <span style="background:#ca8a04;color:#fff;font-size:.7vw;font-weight:800;padding:2px 7px;border-radius:10px;">FLOW 1</span>
+        <span style="font-weight:800;color:#a16207;font-size:1.02vw;">📚 정책 벡터 → 민원 자동분류</span>
+      </div>
+      <div style="line-height:1.7;color:var(--ink);">
+        <code style="background:#fef3c7;color:#a16207;padding:1px 5px;border-radius:3px;">kmcc-quiz</code> 앱이 만든 <strong>정책 텍스트 임베딩</strong><br>
+        → <code style="background:#fef3c7;color:#a16207;padding:1px 5px;border-radius:3px;">kmcc_vector</code> 테이블에 저장<br>
+        → <strong>VOC 분석 시스템</strong>이 민원 들어올 때 의미 검색에 활용 (RAG)
+      </div>
+    </div>
+
+    <!-- Flow 2: 퀴즈 점수 → 대시보드 직무테스트 -->
+    <div class="card" style="padding:14px 16px;background:linear-gradient(135deg,#e0f2fe,#fff);border-left:4px solid #0284c7;">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+        <span style="background:#0284c7;color:#fff;font-size:.7vw;font-weight:800;padding:2px 7px;border-radius:10px;">FLOW 2</span>
+        <span style="font-weight:800;color:#0369a1;font-size:1.02vw;">📝 퀴즈 점수 → 직무테스트 탭</span>
+      </div>
+      <div style="line-height:1.7;color:var(--ink);">
+        <code style="background:#dbeafe;color:#0369a1;padding:1px 5px;border-radius:3px;">quiz_results</code>의 <strong>점수·오답 항목</strong><br>
+        → <code style="background:#dbeafe;color:#0369a1;padding:1px 5px;border-radius:3px;">kmcc-qc-dashbord</code> 의 <strong>직무테스트 탭</strong>에서 그대로 표시<br>
+        → 상담사·매니저가 어떤 단원에서 자주 틀리는지 한눈에
+      </div>
+    </div>
+
+    <!-- Flow 3: 퀴즈 연습 → 대시보드 활동기록 -->
+    <div class="card" style="padding:14px 16px;background:linear-gradient(135deg,#fce7f3,#fff);border-left:4px solid #db2777;">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+        <span style="background:#db2777;color:#fff;font-size:.7vw;font-weight:800;padding:2px 7px;border-radius:10px;">FLOW 3</span>
+        <span style="font-weight:800;color:#be185d;font-size:1.02vw;">🔁 퀴즈 연습량 → 활동기록</span>
+      </div>
+      <div style="line-height:1.7;color:var(--ink);">
+        <code style="background:#fbcfe8;color:#be185d;padding:1px 5px;border-radius:3px;">quiz_results</code> 의 <strong>연습 빈도·시간대</strong><br>
+        → <code style="background:#fbcfe8;color:#be185d;padding:1px 5px;border-radius:3px;">kmcc-qc-dashbord</code> 활동기록으로 재활용<br>
+        → "이 상담사는 스스로 학습하는 사람" 같은 인사이트
+      </div>
+    </div>
+
+    <!-- Flow 4: 근태 → 양쪽 -->
+    <div class="card" style="padding:14px 16px;background:linear-gradient(135deg,#ede9fe,#fff);border-left:4px solid #7c3aed;">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+        <span style="background:#7c3aed;color:#fff;font-size:.7vw;font-weight:800;padding:2px 7px;border-radius:10px;">FLOW 4</span>
+        <span style="font-weight:800;color:#6d28d9;font-size:1.02vw;">⏰ 근태 한 테이블 → 양쪽 활용</span>
+      </div>
+      <div style="line-height:1.7;color:var(--ink);">
+        <code style="background:#ddd6fe;color:#6d28d9;padding:1px 5px;border-radius:3px;">kMCC_HR · attendance</code> 출근·휴가·근무시간<br>
+        → <strong>퀴즈 앱</strong>이 "근무 중 학습 시간" 분석에 사용<br>
+        → <strong>QC 대시보드</strong>가 "월간 가용 시간 대비 생산성" 계산에 사용
+      </div>
     </div>
   </div>
 
-  <div class="insight" style="margin-top:22px;text-align:center;">
-    제 일상 페르소나처럼, 회사 데이터에도 <span class="accent">자연어로 묻기만 하면</span> 무궁무진한 분석이 나와요.
+  <!-- 결론 -->
+  <div style="margin-top:18px;background:linear-gradient(135deg,#fff5f0,#fff);border:1.5px solid var(--coral);border-radius:12px;padding:14px 18px;">
+    <div style="font-weight:800;color:var(--coral);font-size:1.02vw;margin-bottom:6px;">✨ 그래서 좋은 점</div>
+    <div style="font-size:.92vw;line-height:1.6;color:var(--ink);">
+      <strong>같은 테이블이 여러 시스템에 부품으로</strong> — 한 번 잘 쌓아두면 시스템·분석·인사이트가 끝없이 나옵니다.<br>
+      <span style="font-size:.78vw;color:var(--muted);">📂 실제 코드: <code>~/Desktop/ai-automation/</code> 의 <strong>kmcc-qc-dashbord · kmcc-quiz · voc · 민원자동화</strong> 폴더에서 직접 확인 가능</span>
+    </div>
   </div>
 </section>
 
