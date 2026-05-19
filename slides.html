@@ -435,13 +435,6 @@ body.dark .progress-track{background:rgba(255,255,255,.1);}
   </div>
 </section>
 
-<!-- S17-b NEW: data_viz 임베드 — AI의 언어 -->
-<section class="slide" data-notes="이 화면을 보고 우리가 알아야 하나요? 아니에요. 이건 AI의 언어예요. 우리는 우리 언어로 물어보면 돼요. AI가 이 복잡한 걸 알아서 분석해줘요.">
-  <div class="t-h2" style="margin-bottom:6px;">AI의 언어, 이 복잡한 걸 어떻게 분석해요?</div>
-  <div class="t-small" style="margin-bottom:10px;">→ 우린 우리 언어로 물어보면 돼요. AI가 알아서 해석합니다.</div>
-  <div class="iframe-wrap" style="height:80vh;border-radius:14px;overflow:hidden;border:1px solid var(--line);"><iframe src="../data_viz.html" loading="lazy" style="width:100%;height:100%;border:none;"></iframe></div>
-</section>
-
 <!-- S18-b NEW: 엑셀 vs 빅쿼리 -->
 <section class="slide" data-notes="AI랑 말로 소통하면 이렇게 분석이 돼요. 근데 왜 빅쿼리여야 하죠? 엑셀로 안 되나요? 답: 안 돼요. 데이터 3만 2천 건이에요. 엑셀이 멈춰요.">
   <div class="t-small" style="text-align:center;margin-bottom:10px;">AI랑 말로 이렇게 소통할 수 있어요. 그런데…</div>
@@ -497,16 +490,17 @@ body.dark .progress-track{background:rgba(255,255,255,.1);}
   </div>
 </section>
 
-<!-- S19 (여유 슬라이드) -->
-<section class="slide center" data-notes="(시연 길어졌을 때 흡수용 여유 슬라이드)">
-  <div class="t-h2" style="color:var(--muted);">잠시…</div>
+<!-- S19 reflection -->
+<section class="slide center" data-notes="이걸 다 만들어놨는데... 이걸로 뭘 할 수 있을까요? 잠깐 같이 생각해봐요.">
+  <div class="t-h1" style="color:#374151;font-weight:600;line-height:1.5;">근데… 그래서<br>이걸로 어떻게 뭘 하지<span class="accent">..?</span></div>
+  <div class="t-small" style="margin-top:30px;color:var(--muted);">데이터는 쌓였는데, 그래서 뭐?</div>
 </section>
 
-<!-- S20 (여유 슬라이드) -->
+<!-- S20 Part 3 챕터 -->
 <section class="slide chapter bg-blue">
   <div class="chapter-num">Part 3</div>
-  <div class="chapter-name">소통되니까 보이는 것들</div>
-  <div class="chapter-sub">데이터한테 질문 7개 던졌어요</div>
+  <div class="chapter-name">AI랑 친구처럼 대화하는 분석</div>
+  <div class="chapter-sub">자연어로 묻기만 했을 뿐인데 — 분석이 끝없이 나와요</div>
 </section>
 
 <!-- ═════════════════════════════════════════
@@ -574,7 +568,7 @@ body.dark .progress-track{background:rgba(255,255,255,.1);}
     <tr><td><strong>AI·교육+과기</strong></td><td>2.8%</td><td><strong>13.1%</strong></td><td class="up">🔥 +10%p</td></tr>
     <tr><td>여행</td><td>2.9%</td><td>4.3%</td><td class="up">📈 소폭 증가</td></tr>
   </table>
-  <div class="insight" style="margin-top:20px;">데이터가 <span class="accent">저보다 저를 더 잘 알아요.</span></div>
+  <div class="insight" style="margin-top:20px;"><span class="accent">"요즘 뭐에 빠져 있어?"</span> AI는 1년치 데이터에서 트렌드를 5초 만에 찾아요.</div>
 </section>
 
 <!-- S24 Q3 검색 → 시청 -->
@@ -597,7 +591,7 @@ body.dark .progress-track{background:rgba(255,255,255,.1);}
       <div class="bar-row"><div class="bar-label">자동재생</div><div class="bar-fill coral" style="width:5%;"></div><div class="bar-pct" style="color:var(--coral)">5%</div></div>
     </div>
   </div>
-  <div class="insight" style="margin-top:24px;">알고리즘이 저를 끌고 다니는 것 같아도, 데이터 보면 <span class="accent">제가 능동적으로 골라요.</span></div>
+  <div class="insight" style="margin-top:24px;"><span class="accent">"검색하면 진짜 보러 가?"</span> 자연어로 묻기만 했는데 행동 패턴까지 분해해줘요.</div>
 </section>
 
 <!-- S25 Q4 음악 취향 -->
@@ -621,7 +615,7 @@ body.dark .progress-track{background:rgba(255,255,255,.1);}
       </div>
     </div>
   </div>
-  <div class="insight" style="margin-top:24px;">일본 좋아하는 게 <span class="accent">음악에서 제일 먼저</span> 나타나요.</div>
+  <div class="insight" style="margin-top:24px;">언어별 비율부터 상황별 플레이리스트까지 — <span class="accent">친구한테 묻듯이</span> 물었을 뿐.</div>
 </section>
 
 <!-- S26 Q5 충성 채널 -->
@@ -649,7 +643,7 @@ body.dark .progress-track{background:rgba(255,255,255,.1);}
       </div>
     </div>
   </div>
-  <div class="insight" style="margin-top:24px;">광고·협찬 효율은 <span class="accent">충성도에서</span> 결정돼요.</div>
+  <div class="insight" style="margin-top:24px;">충성도 가중치(횟수×완료율) — <span class="accent">계산식 직접 안 짜도</span> AI가 알아서 깊이까지 분석.</div>
 </section>
 
 <!-- S27 Q6 페르소나 -->
@@ -664,7 +658,7 @@ body.dark .progress-track{background:rgba(255,255,255,.1);}
       충성 채널 5곳·아티스트 3명을 반복 소비.
     </div>
   </div>
-  <div class="insight" style="margin-top:24px;">한 줄 자기소개를 <span class="accent">데이터가 써줘요.</span></div>
+  <div class="insight" style="margin-top:24px;"><span class="accent">"나는 어떤 사람으로 분류돼?"</span> 5개 데이터를 종합해서 인물 카드 한 장으로 만들어줘요.</div>
 </section>
 
 <!-- S28 Q7 휴면 -->
@@ -688,7 +682,7 @@ body.dark .progress-track{background:rgba(255,255,255,.1);}
       <div class="t-body" style="margin-top:14px;">평균 30곡 → 5곡<br>곧 휴면 가능성</div>
     </div>
   </div>
-  <div class="insight" style="margin-top:24px;">회사라면 <span class="accent">이탈 전에</span> 알아챌 수 있어요.</div>
+  <div class="insight" style="margin-top:24px;"><span class="accent">"휴면할 가능성 있어?"</span> 시계열 이상치까지 — 자연어 한 문장으로 다 됩니다.</div>
 </section>
 
 <!-- S28-b Q8 웹서핑이 본 일상 -->
@@ -766,6 +760,13 @@ body.dark .progress-track{background:rgba(255,255,255,.1);}
   </div>
 </section>
 
+<!-- NEW: data_viz 임베드 (Q들 모두 끝나고 풍부함 결론) -->
+<section class="slide" data-notes="이 모든 분석을 뽑아내는 데이터 구조예요. 복잡해 보이죠? 우리가 직접 이해할 필요 없어요. AI가 알아서 다 합니다. 우리는 자연어로 물어보면 돼요.">
+  <div class="t-h2" style="margin-bottom:6px;">분석은 무궁무진해요. 그런데 이 복잡한 걸 어떻게…?</div>
+  <div class="t-small" style="margin-bottom:10px;">→ 우린 우리 언어로 물어보기만. AI가 알아서 해석합니다.</div>
+  <div class="iframe-wrap" style="height:78vh;border-radius:14px;overflow:hidden;border:1px solid var(--line);"><iframe src="../data_viz.html" loading="lazy" style="width:100%;height:100%;border:none;"></iframe></div>
+</section>
+
 <!-- ═════════════════════════════════════════
      Part 4 S29~S33
 ═════════════════════════════════════════ -->
@@ -784,10 +785,50 @@ body.dark .progress-track{background:rgba(255,255,255,.1);}
   <div class="t-large accent">데이터한테 질문할 수 있어요.</div>
 </section>
 
-<!-- S31 RAG 그래프 ★ -->
-<section class="slide" data-notes="제 6개 일상 데이터가 어떻게 연결되는지 보여드려요. 노드에 마우스 올리면 설명 떠요." style="padding:3vh 3vw;">
-  <div class="t-h2" style="margin-bottom:8px;">제 데이터가 연결되는 방식</div>
-  <div class="iframe-wrap" style="height:84vh;border-radius:14px;overflow:hidden;border:1px solid var(--line);"><iframe src="../rag_graph.html" loading="lazy" style="width:100%;height:100%;border:none;"></iframe></div>
+<!-- NEW: CSOPP 사내 빅쿼리 구조 — 회사에선 어떻게 -->
+<section class="slide" data-notes="제 일상이 14개 데이터셋 226 테이블이었다면, 우리 회사 빅쿼리는 훨씬 더 풍부해요. 상담 품질, VOC, 채널/생산성, SLA, HR — 모두 한곳에 모여있고 같은 패턴으로 자연어로 분석 가능해요.">
+  <div class="t-small">CSOPP 파트 · csopp-25f2 프로젝트</div>
+  <div class="t-h1" style="margin-bottom:6px;">우리 회사 빅쿼리는 이미 이렇게 있어요</div>
+  <div class="t-small" style="margin-bottom:24px;">제 일상 6개 영역 → 회사는 <strong>14개 데이터셋 / 226개 테이블</strong>로 운영 중</div>
+
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;font-size:.92vw;">
+    <div class="card" style="padding:14px 16px;background:linear-gradient(135deg,#e0f2fe,#fff);border-left:4px solid #0284c7;">
+      <div style="font-weight:800;color:#0369a1;font-size:1.05vw;margin-bottom:4px;">📞 상담 품질</div>
+      <div style="color:var(--muted);font-size:.78vw;line-height:1.5;">KMCC_QC · 106 테이블<br>action_plans, agents,<br>monthly_summary, ai_analysis…</div>
+    </div>
+    <div class="card" style="padding:14px 16px;background:linear-gradient(135deg,#fef3c7,#fff);border-left:4px solid #d97706;">
+      <div style="font-weight:800;color:#b45309;font-size:1.05vw;margin-bottom:4px;">📊 채널·생산성</div>
+      <div style="color:var(--muted);font-size:.78vw;line-height:1.5;">KMCC_CPD · 19 테이블<br>채널별 콜·채팅·이메일,<br>상담사 생산성 지표</div>
+    </div>
+    <div class="card" style="padding:14px 16px;background:linear-gradient(135deg,#fce7f3,#fff);border-left:4px solid #db2777;">
+      <div style="font-weight:800;color:#be185d;font-size:1.05vw;margin-bottom:4px;">📋 VOC·민원</div>
+      <div style="color:var(--muted);font-size:.78vw;line-height:1.5;">voc · 16 테이블 +<br>complaint_data · 6<br>+ voc_analysis · voc_intelligence</div>
+    </div>
+    <div class="card" style="padding:14px 16px;background:linear-gradient(135deg,#dcfce7,#fff);border-left:4px solid #16a34a;">
+      <div style="font-weight:800;color:#15803d;font-size:1.05vw;margin-bottom:4px;">⏱ SLA·응대</div>
+      <div style="color:var(--muted);font-size:.78vw;line-height:1.5;">KMCC_SLA · 8 테이블<br>응대율·연결률,<br>이탈·재전화 추적</div>
+    </div>
+    <div class="card" style="padding:14px 16px;background:linear-gradient(135deg,#ede9fe,#fff);border-left:4px solid #7c3aed;">
+      <div style="font-weight:800;color:#6d28d9;font-size:1.05vw;margin-bottom:4px;">👥 HR · 인사</div>
+      <div style="color:var(--muted);font-size:.78vw;line-height:1.5;">kMCC_HR · 8 테이블<br>상담사 입퇴사,<br>역량·교육 이력</div>
+    </div>
+    <div class="card" style="padding:14px 16px;background:linear-gradient(135deg,#fef2f2,#fff);border-left:4px solid #dc2626;">
+      <div style="font-weight:800;color:#b91c1c;font-size:1.05vw;margin-bottom:4px;">🎯 QA·심사</div>
+      <div style="color:var(--muted);font-size:.78vw;line-height:1.5;">QA_data · 4 테이블<br>샘플링 심사,<br>품질 평가 결과</div>
+    </div>
+    <div class="card" style="padding:14px 16px;background:linear-gradient(135deg,#f0f9ff,#fff);border-left:4px solid #0284c7;">
+      <div style="font-weight:800;color:#0369a1;font-size:1.05vw;margin-bottom:4px;">💬 아지트 분석</div>
+      <div style="color:var(--muted);font-size:.78vw;line-height:1.5;">agit_analytics · 3 테이블<br>사내 커뮤니티,<br>피드백·반응</div>
+    </div>
+    <div class="card" style="padding:14px 16px;background:linear-gradient(135deg,#fef9c3,#fff);border-left:4px solid #ca8a04;">
+      <div style="font-weight:800;color:#a16207;font-size:1.05vw;margin-bottom:4px;">🧠 지식·임베딩</div>
+      <div style="color:var(--muted);font-size:.78vw;line-height:1.5;">KMS · kmcc_vector ·<br>wiki_search · quiz_results<br>(RAG·교육·검색)</div>
+    </div>
+  </div>
+
+  <div class="insight" style="margin-top:22px;text-align:center;">
+    제 일상 페르소나처럼, 회사 데이터에도 <span class="accent">자연어로 묻기만 하면</span> 무궁무진한 분석이 나와요.
+  </div>
 </section>
 
 <!-- S32 메이의 사내 시스템들 -->
@@ -933,10 +974,10 @@ let cur = 0;
 const CHAPTERS = [
   {start:0, end:5, name:'도입'},
   {start:6, end:10, name:'Part 1 · 일상이 데이터로'},
-  {start:11, end:21, name:'Part 2 · AI랑 데이터 짜기 (왜 빅쿼리?)'},
-  {start:22, end:30, name:'Part 3 · AI에게 던진 질문들'},
-  {start:31, end:35, name:'Part 4 · 사내 적용'},
-  {start:36, end:40, name:'클로징'},
+  {start:11, end:20, name:'Part 2 · 왜 빅쿼리?'},
+  {start:21, end:31, name:'Part 3 · AI랑 자연어로 분석'},
+  {start:32, end:36, name:'Part 4 · 사내 적용'},
+  {start:37, end:40, name:'클로징'},
 ];
 
 function go(n){
