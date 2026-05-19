@@ -80,15 +80,16 @@
     background: rgba(15,15,30,0.96);
     border: 1px solid #444466;
     border-radius: 10px;
-    padding: 10px 14px;
-    font-size: 13px;
+    padding: 9px 13px;
+    font-size: 12px;
     color: #EEEEEE;
     pointer-events: none;
     opacity: 0;
     transition: opacity 0.15s;
-    z-index: 999;
-    max-width: 220px;
-    line-height: 1.6;
+    z-index: 9999;
+    max-width: 200px;
+    line-height: 1.5;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.4);
   }
   #tooltip.visible { opacity: 1; }
 
@@ -278,8 +279,12 @@ function showTip(html, x, y) {
   tooltip.innerHTML = html;
   tooltip.classList.add('visible');
   const tw = tooltip.offsetWidth, th = tooltip.offsetHeight;
-  const px = Math.min(x + 14, window.innerWidth - tw - 10);
-  const py = Math.max(y - th / 2, 10);
+  // 화면 가장자리 16px 여유 + 노드와 겹치지 않게 x+18 오프셋
+  let px = x + 18;
+  if (px + tw > window.innerWidth - 16) px = Math.max(16, x - tw - 18);
+  let py = y - th / 2;
+  if (py < 16) py = 16;
+  if (py + th > window.innerHeight - 16) py = window.innerHeight - th - 16;
   tooltip.style.left = px + 'px';
   tooltip.style.top  = py + 'px';
 }
