@@ -1783,29 +1783,26 @@ function vrS7(){
 }
 
 function slNext(nextStep){
-  // 슬랙 세션 단계 진행 시 s7 점수 분할 적립
+  // 슬랙 세션 단계 진행 시 s7 점수 분할 적립 (시각적 진행 표시만, earnScore는 모두 완료에서)
   if(!S.earned.s7){
     if(!S.s7Partial) S.s7Partial = 0;
     // sl1→sl2(20), sl2→sl3(20), sl3→sl4(20), sl4→sl5(20), sl5→sl6(20) → 총 100
     const earned = Math.min(20, 100 - S.s7Partial);
     if(earned > 0){
       S.s7Partial += earned;
-      // 헤더 점수 갱신 (부분 점수는 별도 표시)
+      // 헤더 점수 갱신 (BQ + slack partial 합산 표시)
       const bqTotal = Object.entries(S.earned).filter(([k])=>['s2','s3','s4','s5','s6'].includes(k)).reduce((a,[k,v])=>a+(v?SCORE_MAP[k]:0),0);
       const hdr = document.getElementById('hdr-score-num');
       if(hdr){
-        const total = bqTotal + S.s7Partial;
-        hdr.textContent = total;
+        hdr.textContent = bqTotal + S.s7Partial;
       }
       // slack 배지
       const sg = document.getElementById('bdg-slack');
       if(sg) sg.textContent = S.s7Partial + '/100';
     }
-    // 마지막 단계 도달 시 자동으로 earnScore('s7') 실행해 검문 박스도 체크
-    if(S.s7Partial >= 100){
-      earnScore('s7');
-    }
+    // ❌ 100 도달해도 earnScore 자동 호출 안 함 — 최종 "🎉 모두 완료!" 버튼이 처리
   }
+  // 항상 다음 단계로 네비게이션
   gst(nextStep);
 }
 
@@ -1896,6 +1893,17 @@ function gst(n){
   if(S.session==='bq' && (n===3 || n===5 || n===6))fillPid();
   if(S.session==='bq' && n===6 && typeof onEnterS6==='function') setTimeout(onEnterS6, 100);
   if(S.session==='slack' && n===6 && typeof validateS7==='function') setTimeout(validateS7, 100);
+  if(S.session==='slack' && n===6 && !S.earned.s7){
+    // sl6 진입 시 부분 점수 100점 보장 (모두 완료 버튼이 잘 작동하도록)
+    if((S.s7Partial||0) < 100){
+      S.s7Partial = 100;
+      const bqTotal = Object.entries(S.earned).filter(([k])=>['s2','s3','s4','s5','s6'].includes(k)).reduce((a,[k,v])=>a+(v?SCORE_MAP[k]:0),0);
+      const hdr = document.getElementById('hdr-score-num');
+      if(hdr) hdr.textContent = bqTotal + 100;
+      const sg = document.getElementById('bdg-slack');
+      if(sg) sg.textContent = '100/100';
+    }
+  }
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
