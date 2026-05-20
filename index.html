@@ -3129,8 +3129,9 @@ function genCode() {
 //   2) 슬랙 봇이 채널에 초대됐나요? (/invite @봇이름)
 //   3) 아래 TOKEN/CHANNEL/PID/DATASET 이 본인 값으로 채워졌나요?
 //
-//  ▶ 실행 함수 3개:
-//   - sendNow()              → 지금 즉시 1회 발송 (테스트용, 추천!)
+//  ▶ 실행 함수 4개:
+//   - testBQ()               → 🔬 오류 진단 (먼저 이거 실행해서 어디서 막히는지 확인!)
+//   - sendNow()              → 지금 즉시 1회 발송 (진단 통과 후 추천!)
 //   - sendWeeklyReport()     → 메인 발송 함수
 //   - createWeeklyTrigger()  → 자동 발송 트리거 등록
 // ═══════════════════════════════════════════
@@ -3186,6 +3187,60 @@ ${fieldLines.join('\n')}
   };
 
   slackPost_(msg);
+}
+
+// ═══════════════════════════════════════════
+// 🔬 진단용 — 데이터셋 / 테이블 존재 확인 (오류 디버깅)
+// ═══════════════════════════════════════════
+function testBQ() {
+  Logger.log('🔬 BigQuery 진단 시작...');
+  Logger.log('  PID = ' + PID);
+  Logger.log('  DATASET = ' + DATASET);
+
+  // 1단계: 기본 쿼리 (API 자체 연결 테스트)
+  try {
+    const r1 = BigQuery.Jobs.query(PID, {query:'SELECT 1 as ok', useLegacySql:false, timeoutMs:30000});
+    Logger.log('✅ 1단계 - BigQuery API 연결 OK');
+  } catch(e){
+    Logger.log('❌ 1단계 실패 - BigQuery API 연결 X: ' + e.message);
+    Logger.log('   → Apps Script "서비스 +" 에서 BigQuery API 추가했는지 확인');
+    return;
+  }
+
+  // 2단계: 데이터셋 존재 확인
+  try {
+    const r2 = BigQuery.Datasets.get(PID, DATASET);
+    Logger.log('✅ 2단계 - 데이터셋 ' + DATASET + ' 존재 OK (위치: ' + r2.location + ')');
+  } catch(e){
+    Logger.log('❌ 2단계 실패 - 데이터셋 ' + DATASET + ' 없음: ' + e.message);
+    Logger.log('   → 빅쿼리 콘솔에서 데이터셋 이름 정확히 확인 (대소문자 주의!)');
+    Logger.log('   → 또는 코드 상단의 const DATASET 값을 실제 데이터셋 이름으로 변경');
+    return;
+  }
+
+  // 3단계: 테이블 존재 확인
+  const tables = ['youtube_history', 'music_history'];
+  for (var i = 0; i < tables.length; i++) {
+    try {
+      const r3 = BigQuery.Tables.get(PID, DATASET, tables[i]);
+      Logger.log('✅ 3단계 - 테이블 ' + tables[i] + ' 존재 OK (행수: ' + r3.numRows + ')');
+    } catch(e){
+      Logger.log('⚠️ 3단계 - 테이블 ' + tables[i] + ' 없음: ' + e.message);
+    }
+  }
+
+  // 4단계: 실제 SQL 실행 테스트
+  try {
+    const sql = "SELECT COUNT(*) c FROM " + BT + PID + "." + DATASET + ".youtube_history" + BT;
+    Logger.log('🧪 4단계 SQL: ' + sql);
+    const r4 = BigQuery.Jobs.query(PID, {query:sql, useLegacySql:false, timeoutMs:30000});
+    const cnt = r4.rows && r4.rows[0] ? r4.rows[0].f[0].v : '?';
+    Logger.log('✅ 4단계 - SQL 실행 성공! youtube_history 행수: ' + cnt);
+  } catch(e){
+    Logger.log('❌ 4단계 실패: ' + e.message);
+  }
+
+  Logger.log('🔬 진단 완료. 위 로그를 보고 어느 단계에서 실패했는지 확인하세요.');
 }
 
 // ═══════════════════════════════════════════
