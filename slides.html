@@ -469,6 +469,89 @@ body.dark .progress-track{background:rgba(255,255,255,.1);}
   </div>
 </section>
 
+<!-- NEW S20: 실제 데이터 구조 (data_viz 데이터 구조 톤 직접 삽입) -->
+<section class="slide" data-notes="실제 my_life 데이터셋의 구조예요. Fact 테이블(사건 기록) 7개, Dim 테이블(사전) 4개, 그리고 이들을 합친 핵심 View 1개. Fact는 일어난 일을 그대로 쌓고, Dim은 각 기록의 의미를 풀어주는 사전이에요." style="padding:3.5vh 4vw;">
+  <div class="t-small" style="margin-bottom:4px;">데이터 구조</div>
+  <div class="t-h1" style="margin-bottom:18px;">실제 빅쿼리에 쌓인 테이블들</div>
+
+  <div style="display:grid;grid-template-columns:1.2fr 1fr 0.9fr;gap:18px;font-size:.95vw;">
+
+    <!-- Fact 테이블 -->
+    <div>
+      <div style="font-size:1vw;color:var(--muted);font-weight:800;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.05em;">📚 Fact · 사건 기록 (7)</div>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <div class="card" style="padding:9px 14px;border-left:4px solid var(--orange);">
+          <strong>fact_youtube_watch</strong> <span style="color:var(--muted);font-size:.88vw;">· 32,548행</span>
+        </div>
+        <div class="card" style="padding:9px 14px;border-left:4px solid var(--orange);">
+          <strong>fact_chrome_visit</strong> <span style="color:var(--muted);font-size:.88vw;">· 29,234행</span>
+        </div>
+        <div class="card" style="padding:9px 14px;border-left:4px solid var(--orange);">
+          <strong>fact_music_play</strong> <span style="color:var(--muted);font-size:.88vw;">· 2,034행</span>
+        </div>
+        <div class="card" style="padding:9px 14px;border-left:4px solid var(--orange);">
+          <strong>fact_chrome_search</strong> <span style="color:var(--muted);font-size:.88vw;">· 1,129행</span>
+        </div>
+        <div class="card" style="padding:9px 14px;border-left:4px solid var(--orange);">
+          <strong>fact_notebooklm_workspaces</strong> <span style="color:var(--muted);font-size:.88vw;">· 10행</span>
+        </div>
+        <div class="card" style="padding:9px 14px;border-left:4px solid var(--orange);">
+          <strong>fact_maps_saved</strong> <span style="color:var(--muted);font-size:.88vw;">· 18행</span>
+        </div>
+        <div class="card" style="padding:9px 14px;border-left:4px solid var(--orange);">
+          <strong>fact_maps_mymap</strong> <span style="color:var(--muted);font-size:.88vw;">· 6행</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dim 테이블 -->
+    <div>
+      <div style="font-size:1vw;color:var(--muted);font-weight:800;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.05em;">📖 Dim · 사전 (4)</div>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <div class="card" style="padding:9px 14px;border-left:4px solid var(--ink);">
+          <strong>dim_videos</strong> <span style="color:var(--muted);font-size:.88vw;">· 28,523행</span>
+        </div>
+        <div class="card" style="padding:9px 14px;border-left:4px solid var(--ink);">
+          <strong>dim_channels</strong> <span style="color:var(--muted);font-size:.88vw;">· 3,421행</span>
+        </div>
+        <div class="card" style="padding:9px 14px;border-left:4px solid var(--ink);">
+          <strong>dim_music_metadata</strong> <span style="color:var(--muted);font-size:.88vw;">· 1,876행</span>
+        </div>
+        <div class="card" style="padding:9px 14px;border-left:4px solid var(--ink);">
+          <strong>dim_chrome_domains</strong> <span style="color:var(--muted);font-size:.88vw;">· 892행</span>
+        </div>
+      </div>
+
+      <div style="font-size:1vw;color:var(--muted);font-weight:800;margin:14px 0 8px;text-transform:uppercase;letter-spacing:0.05em;">🔗 View · 합쳐서 보는 뷰</div>
+      <div class="card" style="padding:11px 14px;background:var(--ink);color:#fff;border:none;">
+        <strong>view_watch_enriched</strong>
+        <div style="font-size:.85vw;color:rgba(255,255,255,0.65);margin-top:3px;">시청 + 영상사전 + 채널사전 JOIN</div>
+      </div>
+    </div>
+
+    <!-- 설명 -->
+    <div>
+      <div style="font-size:1vw;color:var(--muted);font-weight:800;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.05em;">🤔 이게 뭐예요?</div>
+      <div class="card" style="padding:14px 16px;background:#fafafa;">
+        <div style="font-weight:900;color:var(--ink);font-size:1.05vw;margin-bottom:6px;">📚 Fact</div>
+        <div style="font-size:.92vw;color:var(--ink);line-height:1.55;">일어난 일을<br><strong>한 줄 한 줄</strong> 쌓는<br>사건 장부</div>
+      </div>
+      <div class="card" style="padding:14px 16px;background:#fafafa;margin-top:8px;">
+        <div style="font-weight:900;color:var(--ink);font-size:1.05vw;margin-bottom:6px;">📖 Dim</div>
+        <div style="font-size:.92vw;color:var(--ink);line-height:1.55;">각 기록의 <strong>의미</strong>를<br>풀어주는 사전</div>
+      </div>
+      <div class="card" style="padding:14px 16px;background:var(--orange);color:#fff;margin-top:8px;border:none;">
+        <div style="font-weight:900;font-size:1.05vw;margin-bottom:6px;">🔗 View</div>
+        <div style="font-size:.92vw;line-height:1.55;color:#fff;">둘을 <strong>합쳐서</strong><br>이미 만들어둔 묶음</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="insight" style="margin-top:18px;">
+    총 <strong style="color:var(--orange);">12개 테이블 + 1개 뷰</strong>. — 이게 AI랑 5분 대화한 결과예요.
+  </div>
+</section>
+
 <!-- NEW: 데이터 흐름 (data_viz 톤 직접 삽입) -->
 <section class="slide" data-notes="구조가 만들어지면 데이터들은 이렇게 흘러요. 시청 기록이 → 시간 사전과 만나고 → 영상 사전과 만나고 → 인사이트가 됩니다. 복잡해 보이지만 AI가 다 알아서 해줘요.">
   <div class="t-small" style="margin-bottom:4px;">데이터 흐름</div>
@@ -1135,10 +1218,10 @@ let cur = 0;
 const CHAPTERS = [
   {start:0, end:7, name:'도입'},
   {start:8, end:12, name:'Part 1 · 일상이 데이터로'},
-  {start:13, end:23, name:'Part 2 · 왜 빅쿼리?'},
-  {start:24, end:33, name:'Part 3 · AI랑 자연어로 분석'},
-  {start:34, end:39, name:'Part 4 · 사내 적용'},
-  {start:40, end:45, name:'클로징'},
+  {start:13, end:24, name:'Part 2 · 왜 빅쿼리?'},
+  {start:25, end:34, name:'Part 3 · AI랑 자연어로 분석'},
+  {start:35, end:40, name:'Part 4 · 사내 적용'},
+  {start:41, end:46, name:'클로징'},
 ];
 
 function go(n){
