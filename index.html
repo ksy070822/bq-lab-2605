@@ -1242,7 +1242,7 @@ window.CHAT_PROXY_URL = 'https://bq-lab-chat-290375504169.asia-northeast3.run.ap
     <div class="slack-flow">봇 만들기 → 토큰 → 승인 → 채널 초대 → 코드 실행 🚀</div>
     <div style="display:flex;justify-content:space-between;margin-top:18px;">
       <button class="btn btn-secondary" onclick="swSession('bq');gst(6)">← 세션 1로</button>
-      <button class="btn btn-primary" onclick="gst(2)">다음: 봇 만들기 →</button>
+      <button class="btn btn-primary" onclick="slNext(2)">다음: 봇 만들기 → <span style="font-size:.74rem;opacity:.8;">+20점</span></button>
     </div>
   </div>
 </div>
@@ -1273,7 +1273,7 @@ api.slack.com/apps 에서 "Create New App" 누르고 진행 중인데
     </details>
     <div style="display:flex;justify-content:space-between;margin-top:18px;">
       <button class="btn btn-secondary" onclick="gst(1)">← 이전</button>
-      <button class="btn btn-primary" onclick="gst(3)">다음: 토큰 발급 →</button>
+      <button class="btn btn-primary" onclick="slNext(3)">다음: 토큰 발급 → <span style="font-size:.74rem;opacity:.8;">+20점</span></button>
     </div>
   </div>
 </div>
@@ -1303,7 +1303,7 @@ Install to Workspace 눌렀는데 문제가 생겼어요. 어떻게 해야 하�
     </details>
     <div style="display:flex;justify-content:space-between;margin-top:18px;">
       <button class="btn btn-secondary" onclick="gst(2)">← 이전</button>
-      <button class="btn btn-primary" onclick="gst(4)">다음: 사내 승인 →</button>
+      <button class="btn btn-primary" onclick="slNext(4)">다음: 사내 승인 → <span style="font-size:.74rem;opacity:.8;">+20점</span></button>
     </div>
   </div>
 </div>
@@ -1324,7 +1324,7 @@ Install to Workspace 눌렀는데 문제가 생겼어요. 어떻게 해야 하�
     <a href="https://kakaomobility.agit.in/g/300015446/wall/new/template/47275" target="_blank" class="agit-btn">📋 아지트 신청 게시판 열기 →</a>
     <div style="display:flex;justify-content:space-between;margin-top:18px;">
       <button class="btn btn-secondary" onclick="gst(3)">← 이전</button>
-      <button class="btn btn-primary" onclick="gst(5)">다음: 채널 초대 →</button>
+      <button class="btn btn-primary" onclick="slNext(5)">다음: 채널 초대 → <span style="font-size:.74rem;opacity:.8;">+20점</span></button>
     </div>
   </div>
 </div>
@@ -1344,7 +1344,7 @@ Install to Workspace 눌렀는데 문제가 생겼어요. 어떻게 해야 하�
     <div class="step-row"><div class="step-num">3</div><div><h4>채널 ID 확인하기 (다음 단계에서 입력!)</h4><p>채널 이름 우클릭 → "링크 복사" → URL 끝 부분 11자 (예: <code>C0123ABCDEF</code>)<br>또는 데스크톱 슬랙에서 채널 정보 → 맨 아래 <strong>채널 ID</strong> 복사</p></div></div>
     <div style="display:flex;justify-content:space-between;margin-top:18px;">
       <button class="btn btn-secondary" onclick="gst(4)">← 이전</button>
-      <button class="btn btn-primary" onclick="gst(6)">다음: 코드 실행 →</button>
+      <button class="btn btn-primary" onclick="slNext(6)">다음: 코드 실행 → <span style="font-size:.74rem;opacity:.8;">+20점</span></button>
     </div>
   </div>
 </div>
@@ -1564,7 +1564,7 @@ Install to Workspace 눌렀는데 문제가 생겼어요. 어떻게 해야 하�
 
     <div style="display:flex;justify-content:space-between;margin-top:16px;">
       <button class="btn btn-secondary" onclick="gst(5)">← 이전</button>
-      <button class="btn btn-primary" id="btn-7-done" onclick="(S.earned.s7?shCelebrateAll():alert('먼저 위에서 +100점 획득하세요!'))">🎉 모두 완료!</button>
+      <button class="btn btn-primary" id="btn-7-done" onclick="if(!S.earned.s7){S.s7Partial=100;earnScore('s7');}shCelebrateAll();">🎉 모두 완료!</button>
     </div>
   </div>
 </div>
@@ -1742,16 +1742,37 @@ function showPopup(txt){
 }
 
 function vrS7(){
-  const a = document.getElementById('chk-s7-run').checked;
-  const b = document.getElementById('chk-s7-trigger').checked;
-  if(!a || !b){
-    alert('두 가지 모두 체크해야 점수를 받을 수 있어요!');
-    return;
-  }
-  // 점수 획득
+  // 슬랙 세션은 외부 의존성 있어서 체크 없어도 점수 부여 OK
+  S.s7Partial = 100;
   earnScore('s7');
-  // 축하 화면 표시
   shCelebrateAll();
+}
+
+function slNext(nextStep){
+  // 슬랙 세션 단계 진행 시 s7 점수 분할 적립
+  if(!S.earned.s7){
+    if(!S.s7Partial) S.s7Partial = 0;
+    // sl1→sl2(20), sl2→sl3(20), sl3→sl4(20), sl4→sl5(20), sl5→sl6(20) → 총 100
+    const earned = Math.min(20, 100 - S.s7Partial);
+    if(earned > 0){
+      S.s7Partial += earned;
+      // 헤더 점수 갱신 (부분 점수는 별도 표시)
+      const bqTotal = Object.entries(S.earned).filter(([k])=>['s2','s3','s4','s5','s6'].includes(k)).reduce((a,[k,v])=>a+(v?SCORE_MAP[k]:0),0);
+      const hdr = document.getElementById('hdr-score-num');
+      if(hdr){
+        const total = bqTotal + S.s7Partial;
+        hdr.textContent = total;
+      }
+      // slack 배지
+      const sg = document.getElementById('bdg-slack');
+      if(sg) sg.textContent = S.s7Partial + '/100';
+    }
+    // 마지막 단계 도달 시 자동으로 earnScore('s7') 실행해 검문 박스도 체크
+    if(S.s7Partial >= 100){
+      earnScore('s7');
+    }
+  }
+  gst(nextStep);
 }
 
 function shCelebrateAll(){
