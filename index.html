@@ -451,6 +451,23 @@ details[open]>summary::before{content:"▾ ";}
 }
 .cel-all-cta-tip code{background:rgba(216,90,48,0.2);color:#D85A30;padding:2px 6px;border-radius:4px;}
 
+
+/* sl6 UI 폭 일관성 보정 */
+#sl6 .sc-body{max-width:100%;overflow-x:hidden;}
+#sl6 .code-tab-panel{width:100%;max-width:100%;box-sizing:border-box;}
+#sl6 .code-box-wrap{width:100%;max-width:100%;box-sizing:border-box;}
+#sl6 .code-box, #sl6 .prompt-box{
+  width:100%;
+  max-width:100%;
+  box-sizing:border-box;
+  overflow-x:auto;
+  word-break:break-word;
+  white-space:pre-wrap;
+}
+#sl6 .slack-section{width:100%;max-width:100%;box-sizing:border-box;}
+#sl6 input, #sl6 textarea{max-width:100%;box-sizing:border-box;}
+#sl6 .ai-open-row{flex-wrap:wrap;}
+
 /* AI 채팅 (Step 6) */
 .expire-banner{background:linear-gradient(135deg,#fff7ed,#fef3c7);border:1.5px solid #f59e0b;border-radius:10px;padding:10px 14px;font-size:.8rem;color:#92400e;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
 .expire-banner.expired{background:#fee2e2;border-color:#ef4444;color:#991b1b;}
@@ -1486,37 +1503,34 @@ Install to Workspace 눌렀는데 문제가 생겼어요. 어떻게 해야 하�
         <button class="open-ai-btn" onclick="openAIWithPrompt('claude','s7-prompt')">Claude로 보내기</button>
       </div>
 
-      <!-- ② 오류 났을 때 AI에게 수정 코드 요청 -->
+      <!-- ② Vertex AI 채팅 — 오류 분석 & 코드 수정 -->
       <div style="margin-top:24px;padding:16px;background:linear-gradient(135deg,#fef2f2,#fff);border:1.5px solid #fca5a5;border-radius:10px;">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
           <div style="font-size:1.2rem;">🆘</div>
-          <div style="font-weight:800;font-size:.95rem;color:#991b1b;">Apps Script 실행했더니 오류 났어요?</div>
+          <div style="font-weight:800;font-size:.95rem;color:#991b1b;">Apps Script 실행 오류 — AI랑 바로 채팅</div>
         </div>
         <p style="font-size:.78rem;color:#7f1d1d;margin-bottom:10px;line-height:1.55;">
-          오류 메시지를 아래에 붙여넣으면 → 옆 탭의 <strong>현재 코드</strong> + 오류를 AI한테 통째로 전달해서 <strong>수정된 코드를 받아올 수 있어요</strong>.
+          오류 메시지 붙여넣으면 AI가 현재 코드를 분석해서 <strong>수정 코드</strong>를 바로 여기서 답변해줘요. (Vertex AI Gemini)
         </p>
-        <textarea id="s7-error-input" placeholder="Apps Script 실행 로그에서 빨간 오류 메시지를 통째로 복사해서 붙여넣으세요...&#10;예) GoogleJsonResponseException: API call to bigquery.jobs.query failed with error: Unexpected token..." style="width:100%;min-height:90px;padding:10px;border:1.5px solid #ddd;border-radius:8px;font-family:'SF Mono',Consolas,monospace;font-size:.78rem;line-height:1.5;resize:vertical;box-sizing:border-box;"></textarea>
-        <div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;">
-          <button class="open-ai-btn" onclick="askFixWithError('gemini')">✨ Gemini에 수정 요청</button>
-          <button class="open-ai-btn" onclick="askFixWithError('claude')">🤖 Claude에 수정 요청</button>
-          <button onclick="copyFixPrompt()" style="background:#f3f4f6;border:1.5px solid #ddd;color:#374151;border-radius:8px;padding:6px 14px;font-size:.82rem;font-weight:600;cursor:pointer;">📋 프롬프트만 복사</button>
-        </div>
-        <p style="font-size:.7rem;color:var(--muted);margin-top:8px;line-height:1.5;">
-          💡 AI한테서 받은 수정 코드는 → 옆 탭의 코드 박스에 직접 붙여넣어 사용하시거나, 아래에 붙여넣어 보관하세요.
-        </p>
-      </div>
 
-      <!-- ③ AI가 준 수정 코드 붙여넣기 (선택) -->
-      <details style="margin-top:14px;">
-        <summary style="cursor:pointer;padding:10px 14px;background:#f0f9ff;border:1px solid #bfdbfe;border-radius:8px;font-size:.85rem;font-weight:600;color:#1e3a8a;">📥 AI가 준 수정 코드 여기에 붙여놔두기 (선택)</summary>
-        <div style="margin-top:8px;">
-          <textarea id="s7-fixed-code" placeholder="AI한테서 받은 수정 코드를 여기에 붙여넣어 보관하세요...&#10;그대로 Apps Script에 다시 붙여넣고 실행해보세요!" style="width:100%;min-height:140px;padding:10px;border:1.5px solid #ddd;border-radius:8px;font-family:'SF Mono',Consolas,monospace;font-size:.78rem;line-height:1.5;resize:vertical;box-sizing:border-box;background:#0f172a;color:#e2e8f0;"></textarea>
-          <div style="display:flex;gap:6px;margin-top:6px;">
-            <button onclick="navigator.clipboard.writeText(document.getElementById('s7-fixed-code').value);this.textContent='✓ 복사됨';setTimeout(()=>this.textContent='📋 수정 코드 복사',1500)" style="background:var(--blue);color:#fff;border:none;border-radius:6px;padding:6px 14px;font-size:.78rem;font-weight:600;cursor:pointer;">📋 수정 코드 복사</button>
-            <button onclick="applyFixedCodeToBox()" style="background:#f3f4f6;border:1px solid #ddd;color:#374151;border-radius:6px;padding:6px 14px;font-size:.78rem;cursor:pointer;">⤴ 옆 탭 코드 박스에 적용</button>
+        <!-- 채팅 히스토리 -->
+        <div id="s7-chat-history" class="chat-box-wrap" style="margin-bottom:8px;">
+          <div class="chat-history" id="s7-chat-msgs" style="max-height:380px;">
+            <div class="chat-msg ai">
+              <div class="avatar">🤖</div>
+              <div class="body">안녕! Apps Script 오류 메시지를 아래에 붙여넣어주면 코드 분석해서 수정 방법 알려줄게.</div>
+            </div>
+          </div>
+          <div class="chat-input-bar" style="border-top:1px solid var(--line);">
+            <textarea id="s7-chat-input" placeholder="오류 메시지 붙여넣거나 자유롭게 질문하세요...&#10;예) GoogleJsonResponseException: ..." style="flex:1;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-family:'SF Mono',Consolas,monospace;font-size:.82rem;background:#fff;resize:vertical;min-height:46px;max-height:120px;"></textarea>
+            <button class="chat-send-btn" onclick="sendS7Chat()" style="white-space:nowrap;">전송</button>
           </div>
         </div>
-      </details>
+        <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap;">
+          <button onclick="clearS7Chat()" style="background:#f3f4f6;border:1px solid #ddd;color:#374151;border-radius:6px;padding:6px 12px;font-size:.74rem;cursor:pointer;">🗑 채팅 리셋</button>
+          <button onclick="applyLastFixedCode()" style="background:var(--blue);color:#fff;border:none;border-radius:6px;padding:6px 12px;font-size:.74rem;font-weight:600;cursor:pointer;">⤴ 마지막 답변의 코드 → 옆 탭 코드 박스에 적용</button>
+        </div>
+      </div>
     </div>
 
     <div class="slack-section" style="margin-top:14px;background:#f8f9ff;">
@@ -3134,9 +3148,10 @@ function genCode() {
 // ═══════════════════════════════════════════
 //
 //  📌 실행 전 체크:
-//   1) 좌측 "서비스 +" 에서 BigQuery API 추가했나요?
-//   2) 슬랙 봇이 채널에 초대됐나요? (/invite @봇이름)
-//   3) 아래 TOKEN/CHANNEL/PID/DATASET 이 본인 값으로 채워졌나요?
+//   1) 좌측 "서비스 +" 에서 BigQuery API 추가했나요? (권한 부여 위해 필수)
+//   2) ⚙ 프로젝트 설정 → GCP 프로젝트 본인 것으로 연결했나요?
+//   3) 슬랙 봇이 채널에 초대됐나요? (/invite @봇이름)
+//   4) 아래 TOKEN/CHANNEL/PID/DATASET 이 본인 값으로 채워졌나요?
 //
 //  ▶ 실행 함수 4개:
 //   - testBQ()               → 🔬 오류 진단 (먼저 이거 실행해서 어디서 막히는지 확인!)
@@ -3214,8 +3229,8 @@ function testBQ() {
 
   // 1단계: 기본 쿼리 (API 자체 연결 테스트)
   try {
-    const r1 = BigQuery.Jobs.query(PID, {query:'SELECT 1 as ok', useLegacySql:false, timeoutMs:30000});
-    Logger.log('✅ 1단계 - BigQuery API 연결 OK');
+    bqQuery_('SELECT 1 as ok');
+    Logger.log('✅ 1단계 - BigQuery API 연결 OK (REST)');
   } catch(e){
     Logger.log('❌ 1단계 실패 - BigQuery API 연결 X: ' + e.message);
     Logger.log('   → Apps Script "서비스 +" 에서 BigQuery API 추가했는지 확인');
@@ -3248,8 +3263,7 @@ function testBQ() {
   try {
     const sql = "SELECT COUNT(*) c FROM " + BT + PID + "." + DATASET + ".youtube_history" + BT;
     Logger.log('🧪 4단계 SQL: ' + sql);
-    const r4 = BigQuery.Jobs.query(PID, {query:sql, useLegacySql:false, timeoutMs:30000});
-    const cnt = r4.rows && r4.rows[0] ? r4.rows[0].f[0].v : '?';
+    const cnt = q1(sql);
     Logger.log('✅ 4단계 - SQL 실행 성공! youtube_history 행수: ' + cnt);
   } catch(e){
     Logger.log('❌ 4단계 실패: ' + e.message);
@@ -3326,36 +3340,45 @@ function fmt_(d) {
 // 헬퍼: BigQuery 쿼리 (단일 셀)
 // ═══════════════════════════════════════════
 function q1(sql) {
-  try {
-    if (typeof BigQuery === 'undefined') {
-      throw new Error('BigQuery 서비스가 추가되지 않았어요. 좌측 "서비스 +" → BigQuery API 추가 필요.');
-    }
-    const r = BigQuery.Jobs.query(PID, {query:sql, useLegacySql:false, timeoutMs:30000});
-    if (!r.jobComplete) throw new Error('쿼리 시간 초과 (30초)');
-    return r.rows && r.rows[0] && r.rows[0].f && r.rows[0].f[0] ? r.rows[0].f[0].v : '0';
-  } catch (e) {
-    Logger.log('❌ q1 실패: ' + e.message);
-    Logger.log('   실행 SQL: ' + sql);
-    throw e;
-  }
+  const body = bqQuery_(sql);
+  return body.rows && body.rows[0] && body.rows[0].f && body.rows[0].f[0] ? body.rows[0].f[0].v : '0';
 }
 
 // ═══════════════════════════════════════════
 // 헬퍼: BigQuery 쿼리 (여러 행)
 // ═══════════════════════════════════════════
 function qN(sql) {
-  try {
-    if (typeof BigQuery === 'undefined') {
-      throw new Error('BigQuery 서비스가 추가되지 않았어요. 좌측 "서비스 +" → BigQuery API 추가 필요.');
+  const body = bqQuery_(sql);
+  return (body.rows || []).map(function(row){ return row.f.map(function(f){ return f.v; }); });
+}
+
+// 🔥 REST API 직접 호출 (Advanced Service 우회 — 더 안정적)
+function bqQuery_(sql) {
+  const finalSql = '#standardSQL\n' + sql;
+  Logger.log('[SQL] ' + finalSql);
+  const token = ScriptApp.getOAuthToken();
+  const res = UrlFetchApp.fetch(
+    'https://bigquery.googleapis.com/bigquery/v2/projects/' + PID + '/queries',
+    {
+      method: 'post',
+      contentType: 'application/json',
+      headers: { Authorization: 'Bearer ' + token },
+      payload: JSON.stringify({ query: finalSql, useLegacySql: false, timeoutMs: 30000 }),
+      muteHttpExceptions: true
     }
-    const r = BigQuery.Jobs.query(PID, {query:sql, useLegacySql:false, timeoutMs:30000});
-    if (!r.jobComplete) throw new Error('쿼리 시간 초과 (30초)');
-    return (r.rows || []).map(row => row.f.map(f => f.v));
-  } catch (e) {
-    Logger.log('❌ qN 실패: ' + e.message);
-    Logger.log('   실행 SQL: ' + sql);
-    throw e;
+  );
+  const body = JSON.parse(res.getContentText());
+  if (body.error) {
+    Logger.log('❌ BigQuery 오류: ' + body.error.message);
+    throw new Error('BigQuery: ' + body.error.message);
   }
+  if (!body.jobComplete) throw new Error('쿼리 시간 초과 (30초)');
+  return body;
+}
+
+// Scope 힌트 (Apps Script가 BigQuery 권한 자동 감지하도록)
+function _scopeHint_() {
+  if (false) BigQuery.Datasets.get(PID, DATASET);
 }
 
 // ═══════════════════════════════════════════
@@ -3458,6 +3481,90 @@ ${checkedOpts}
 
   const pmtEl = document.getElementById('s7-prompt');
   if (pmtEl) pmtEl.textContent = prompt;
+}
+
+let s7ChatHistory = [];
+let s7LastFixedCode = '';
+
+function sendS7Chat(){
+  const input = document.getElementById('s7-chat-input');
+  const msg = input.value.trim();
+  if(!msg) return;
+  input.value = '';
+  appendS7Msg('user', md2html(msg));
+  s7ChatHistory.push({role:'user', text: msg});
+
+  const histBox = document.getElementById('s7-chat-msgs');
+  const typing = document.createElement('div');
+  typing.className = 'chat-msg ai';
+  typing.id = 's7-typing';
+  typing.innerHTML = '<div class="avatar">🤖</div><div class="body"><div class="chat-typing"><span></span><span></span><span></span></div></div>';
+  histBox.appendChild(typing);
+  histBox.scrollTop = histBox.scrollHeight;
+
+  const proxyUrl = window.CHAT_PROXY_URL || '';
+  if(!proxyUrl || proxyUrl.includes('__EMBED_')){
+    typing.remove();
+    appendS7Msg('ai', '⚠️ AI 채팅 기간이 만료됐어요. 옆 탭의 코드를 복사해서 본인 Gemini/Claude에서 직접 분석해주세요.');
+    return;
+  }
+
+  const currentCode = document.getElementById('s7-code')?.textContent || '';
+  const systemPrompt = '너는 Google Apps Script + BigQuery 디버깅 전문가야. 사용자가 슬랙 자동 리포트 코드를 실행 중인데 오류가 났어. 아래는 현재 코드 전체야:\n\n```javascript\n' + currentCode + '\n```\n\n사용자가 오류 메시지나 질문을 보내면:\n1. 원인을 짧게 (1~2줄)\n2. **수정된 전체 코드**를 ```javascript ... ``` 코드블록에 담아서 줘 (사용자가 복사해서 그대로 붙여넣게)\n3. 다음 실행 시 체크할 점 1~2개\n\n친근한 반말로, 핵심만 명확하게.';
+
+  fetch(proxyUrl.replace(/\/$/,'') + '/chat', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      messages: s7ChatHistory.map(m=>({role: m.role==='model'?'model':'user', text: m.text})),
+      system: systemPrompt,
+      max_tokens: 3000,
+      temperature: 0.3
+    })
+  })
+  .then(r => r.json())
+  .then(j => {
+    typing.remove();
+    const reply = j.text || j.error || '응답이 비었네요.';
+    // 코드블록 추출 → s7LastFixedCode 저장
+    const codeMatch = reply.match(/```(?:javascript|js)?\n([\s\S]*?)```/);
+    if(codeMatch) s7LastFixedCode = codeMatch[1].trim();
+    appendS7Msg('ai', md2html(reply));
+    s7ChatHistory.push({role:'model', text: reply});
+  })
+  .catch(err => {
+    typing.remove();
+    appendS7Msg('ai', '⚠️ AI 호출 실패: ' + err.message);
+  });
+}
+
+function appendS7Msg(role, html){
+  const histBox = document.getElementById('s7-chat-msgs');
+  const div = document.createElement('div');
+  div.className = 'chat-msg ' + role;
+  const av = role==='ai' ? '🤖' : '🙋';
+  div.innerHTML = '<div class="avatar">' + av + '</div><div class="body">' + html + '</div>';
+  histBox.appendChild(div);
+  histBox.scrollTop = histBox.scrollHeight;
+}
+
+function clearS7Chat(){
+  s7ChatHistory = [];
+  s7LastFixedCode = '';
+  document.getElementById('s7-chat-msgs').innerHTML = '<div class="chat-msg ai"><div class="avatar">🤖</div><div class="body">안녕! Apps Script 오류 메시지를 붙여넣어주면 코드 분석해서 수정 방법 알려줄게.</div></div>';
+}
+
+function applyLastFixedCode(){
+  if(!s7LastFixedCode){
+    alert('AI 답변에서 수정 코드를 못 찾았어요. 채팅에서 "전체 코드 다시 보여줘" 같이 요청해보세요.');
+    return;
+  }
+  const codeEl = document.getElementById('s7-code');
+  if(codeEl){
+    codeEl.textContent = s7LastFixedCode;
+    swCodeTab('code');
+    alert('✅ 옆 탭 코드 박스에 적용했어요. Apps Script에 복사·붙여넣기 하세요!');
+  }
 }
 
 function askAIForError(){
