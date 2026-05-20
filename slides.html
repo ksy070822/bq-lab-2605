@@ -200,6 +200,12 @@ body.dark .progress-track{background:rgba(255,255,255,.1);}
 .dist-bar{margin:10px 0;}
 .dist-bar-track{height:42px;background:#f0f0f0;border-radius:6px;overflow:hidden;}
 .dist-bar-fill{height:100%;display:flex;align-items:center;padding:0 14px;color:#fff;font-weight:800;font-size:1.2vw;}
+.s10-row{display:grid;grid-template-columns:90px 1fr 70px;gap:14px;align-items:center;margin:10px 0;}
+.s10-label{font-size:1.3vw;font-weight:700;color:var(--ink);white-space:nowrap;}
+.s10-bar{height:34px;background:#f0f0f0;border-radius:6px;overflow:hidden;}
+.s10-fill{height:100%;}
+.s10-pct{font-size:1.4vw;font-weight:900;color:var(--ink);text-align:right;font-variant-numeric:tabular-nums;}
+
 
 @media (max-width:768px){
   .slide{padding:24px;}
@@ -234,9 +240,9 @@ body.dark .progress-track{background:rgba(255,255,255,.1);}
   <div class="t-body" style="color:var(--muted)">저랑 AI가 어떻게 소통하게 됐는지</div>
 </section>
 
-<!-- S03 1년 반 대화 4컷 ★★★ -->
-<section class="slide" data-notes="1년 반 전엔 이런 식이었어요. AI가 뭐 던지면 다 받았어요. '잘 모르겠어, 알아서 해줘'였어요. 그러다 몇 달 전부터 좀 달라졌어요. 'BigQuery 데이터셋 어떻게 만들어?' 단어를 알게 됐어요. 그리고 지금은 'AI가 제안하면 아니, 그거 말고' 라고 말해요.">
-  <div class="t-small" style="margin-bottom:24px;">1년 반 동안 제가 AI랑 어떻게 소통했냐면…</div>
+<!-- S03 1년 대화 4컷 ★★★ -->
+<section class="slide" data-notes="1년 전엔 이런 식이었어요. AI가 뭐 던지면 다 받았어요. '잘 모르겠어, 알아서 해줘'였어요. 그러다 몇 달 전부터 좀 달라졌어요. 'BigQuery 데이터셋 어떻게 만들어?' 단어를 알게 됐어요. 그리고 지금은 'AI가 제안하면 아니, 그거 말고' 라고 말해요.">
+  <div class="t-small" style="margin-bottom:24px;">1년 동안 제가 AI랑 어떻게 소통했냐면…</div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;">
     <div>
       <div class="t-tiny" style="margin-bottom:6px;color:var(--coral);font-weight:700;">📅 첫 시도 · 2024.04</div>
@@ -256,7 +262,7 @@ body.dark .progress-track{background:rgba(255,255,255,.1);}
     <div>
       <div class="t-tiny" style="margin-bottom:6px;color:var(--coral);font-weight:700;">📅 지금 · 2025.11</div>
       <div class="chat-box ai"><div class="who">🤖 AI</div><div class="msg">이렇게 하면 어떨까요?</div></div>
-      <div class="chat-box user"><div class="who">🙋 메이</div><div class="msg">아니야 그거 말고. 이거.</div></div>
+      <div class="chat-box user"><div class="who">🙋 메이</div><div class="msg">이 부분은 이렇게 수정해보자.</div></div>
     </div>
   </div>
 </section>
@@ -265,7 +271,7 @@ body.dark .progress-track{background:rgba(255,255,255,.1);}
 <section class="slide" data-notes="저 진짜로 코드 한 줄도 못 짜요. 근데 자동화·어드민·대시보드 다 만들어요. 신기하죠?">
   <div style="display:grid;grid-template-columns:1fr 1.2fr;gap:60px;align-items:center;">
     <div>
-      <div class="t-small" style="margin-bottom:14px;">지난 1년 반 동안 만든 것들</div>
+      <div class="t-small" style="margin-bottom:14px;">지난 1년 동안 만든 것들</div>
       <ul style="list-style:none;font-size:1.3vw;line-height:2;color:var(--muted);">
         <li>· 위험상담사 주간 예측</li>
         <li>· 슬랙↔아지트 연동</li>
@@ -282,8 +288,8 @@ body.dark .progress-track{background:rgba(255,255,255,.1);}
 </section>
 
 <!-- S05 진짜 바뀐 것 ★ -->
-<section class="slide" data-notes="근데 한 가지 진짜 바뀐 게 있어요. 처음엔 AI한테 뭐라 말할지를 몰랐어요. AI 주는 거 다 받았어요. 지금은 'AI가 뭐 제안하면 아니, 그거 말고' 라고 말해요. 우리가 소통하게 된 거예요.">
-  <div class="t-h2" style="text-align:center;margin-bottom:50px;">1년 반 동안 진짜 바뀐 한 가지</div>
+<section class="slide" data-notes="처음엔 막연하게 부탁만 했어요. AI 주는 거 다 받았어요. 지금은 구체적으로 부분 부분 짚어서 수정 요청해요. 그게 소통이에요.">
+  <div class="t-h2" style="text-align:center;margin-bottom:50px;">1년 동안 진짜 바뀐 한 가지</div>
   <div class="compare">
     <div class="compare-side" style="text-align:right;">
       <h4>처음</h4>
@@ -291,7 +297,7 @@ body.dark .progress-track{background:rgba(255,255,255,.1);}
     </div>
     <div class="compare-side">
       <h4>지금</h4>
-      <div class="quote">"아니야, 그거 말고<br>이거"</div>
+      <div class="quote">"이 부분은<br>이렇게 수정해볼까?"</div>
     </div>
   </div>
   <div style="text-align:center;margin-top:48px;">
@@ -353,18 +359,18 @@ body.dark .progress-track{background:rgba(255,255,255,.1);}
   <div class="t-h1" style="margin-bottom:32px;">제 데이터가 뭘 알려줬게요?</div>
   <div class="dist-grid">
     <div>
-      <div class="t-small" style="margin-bottom:10px;">1년 전 (2024.11~2025.04)</div>
-      <div class="dist-bar"><div class="dist-bar-track"><div class="dist-bar-fill" style="width:38%;background:#6b6b6b;">음악 38%</div></div></div>
-      <div class="dist-bar"><div class="dist-bar-track"><div class="dist-bar-fill" style="width:22%;background:#6b6b6b;">맛집 22%</div></div></div>
-      <div class="dist-bar"><div class="dist-bar-track"><div class="dist-bar-fill" style="width:15%;background:#6b6b6b;">여행 15%</div></div></div>
-      <div class="dist-bar"><div class="dist-bar-track"><div class="dist-bar-fill" style="width:12%;background:#bbb;color:#444;">일상 12%</div></div></div>
+      <div class="t-small" style="margin-bottom:14px;font-weight:700;">1년 전 (2024.11~2025.04)</div>
+      <div class="s10-row"><div class="s10-label">음악</div><div class="s10-bar"><div class="s10-fill" style="width:38%;background:#6b6b6b;"></div></div><div class="s10-pct">38%</div></div>
+      <div class="s10-row"><div class="s10-label">맛집</div><div class="s10-bar"><div class="s10-fill" style="width:22%;background:#6b6b6b;"></div></div><div class="s10-pct">22%</div></div>
+      <div class="s10-row"><div class="s10-label">여행</div><div class="s10-bar"><div class="s10-fill" style="width:15%;background:#6b6b6b;"></div></div><div class="s10-pct">15%</div></div>
+      <div class="s10-row"><div class="s10-label">일상</div><div class="s10-bar"><div class="s10-fill" style="width:12%;background:#bbb;"></div></div><div class="s10-pct">12%</div></div>
     </div>
     <div>
-      <div class="t-small" style="margin-bottom:10px;">지금 (2025.05~2025.11)</div>
-      <div class="dist-bar"><div class="dist-bar-track"><div class="dist-bar-fill" style="width:45%;background:var(--orange);">AI 강의 45%</div></div></div>
-      <div class="dist-bar"><div class="dist-bar-track"><div class="dist-bar-fill" style="width:23%;background:var(--ink);">여행 23%</div></div></div>
-      <div class="dist-bar"><div class="dist-bar-track"><div class="dist-bar-fill" style="width:17%;background:var(--ink);">음악 17%</div></div></div>
-      <div class="dist-bar"><div class="dist-bar-track"><div class="dist-bar-fill" style="width:8%;background:#6b6b6b;">맛집 8%</div></div></div>
+      <div class="t-small" style="margin-bottom:14px;font-weight:700;">지금 (2025.05~2025.11)</div>
+      <div class="s10-row"><div class="s10-label">AI 강의</div><div class="s10-bar"><div class="s10-fill" style="width:45%;background:var(--orange);"></div></div><div class="s10-pct" style="color:var(--orange);">45%</div></div>
+      <div class="s10-row"><div class="s10-label">여행</div><div class="s10-bar"><div class="s10-fill" style="width:23%;background:var(--ink);"></div></div><div class="s10-pct">23%</div></div>
+      <div class="s10-row"><div class="s10-label">음악</div><div class="s10-bar"><div class="s10-fill" style="width:17%;background:var(--ink);"></div></div><div class="s10-pct">17%</div></div>
+      <div class="s10-row"><div class="s10-label">맛집</div><div class="s10-bar"><div class="s10-fill" style="width:8%;background:#6b6b6b;"></div></div><div class="s10-pct">8%</div></div>
     </div>
   </div>
   <div class="insight" style="margin-top:36px;">저도 모르는 사이에 제가 바뀌었어요. <span class="accent">데이터는 알고 있었어요.</span></div>
@@ -393,7 +399,7 @@ body.dark .progress-track{background:rgba(255,255,255,.1);}
   <div class="t-h1" style="margin-bottom:30px;">AI한테 부탁하기</div>
   <div class="chat-box user" style="max-width:80%;">
     <div class="who">🙋 메이</div>
-    <div class="msg">제 6개 일상 데이터 정리해서 빅쿼리에 올리고 싶어요. 어떻게 정리하면 좋을까요? 친구한테 설명하듯이 알려주세요.</div>
+    <div class="msg">야, 내 일상 데이터 6종류 있는데 빅쿼리에 올려서 보고 싶어. 어떻게 정리하면 좋을까? 친구한테 설명하듯이 쉽게 알려줘.</div>
   </div>
 </section>
 
@@ -403,10 +409,10 @@ body.dark .progress-track{background:rgba(255,255,255,.1);}
   <div class="t-h1" style="margin-bottom:24px;">AI 답변 보기</div>
   <div class="chat-box ai">
     <div class="who">🤖 AI</div>
-    <div class="msg">이렇게 정리하면 어떨까요?<br><br>
+    <div class="msg">이렇게 정리하면 어떨까?<br><br>
       <strong>1. 활동 한 줄씩</strong> = 사건 기록 (큰 책)<br>
       <strong>2. 채널·카테고리 정보</strong> = 사전 (작은 책)<br>
-      <strong>3. 둘을 연결</strong>해서 보면 의미가 보여요</div>
+      <strong>3. 둘을 연결</strong>해서 보면 의미가 보여</div>
   </div>
 </section>
 
@@ -416,7 +422,7 @@ body.dark .progress-track{background:rgba(255,255,255,.1);}
   <div class="t-h1" style="margin-bottom:24px;">근데 이건? 한 번 더</div>
   <div class="chat-box user">
     <div class="who">🙋 메이</div>
-    <div class="msg">근데 1년치 보려면 날짜로 묶이는 게 편하지 않아?<br>시간·요일·시간대도 같이 보고 싶은데.</div>
+    <div class="msg">근데 1년치 보려면 날짜로 묶이는 게 편할 거 같아. 시간·요일·시간대도 같이 보고 싶어.</div>
   </div>
 </section>
 
@@ -426,12 +432,13 @@ body.dark .progress-track{background:rgba(255,255,255,.1);}
   <div class="t-h1" style="margin-bottom:24px;">AI가 다시 제안</div>
   <div class="chat-box ai">
     <div class="who">🤖 AI</div>
-    <div class="msg">시간 사전을 따로 만들어요.<br>"이 시간이 평일인지/주말인지, 어느 시간대인지" 같이 보면 패턴이 잘 보여요.</div>
+    <div class="msg">시간 사전을 따로 만들자.<br>"이 시간이 평일인지/주말인지, 어느 시간대인지" 같이 보면 패턴이 잘 보일 거야.</div>
   </div>
 </section>
 
 <!-- S17 결과 — BigQuery 콘솔 -->
 <section class="slide" data-notes="AI랑 5분 대화한 결과예요. 진짜로요. 근데 솔직히… 처음 보면 무슨 소리인지 모르겠죠?">
+  <div class="t-small" style="margin-bottom:4px;">데이터 구조</div>
   <div class="t-h1" style="margin-bottom:16px;">AI랑 5분 대화 → 이게 나와요</div>
   <div class="card" style="background:var(--ink);color:#fff;font-family:monospace;font-size:1.25vw;padding:28px 32px;border:none;line-height:1.85;">
     📁 my_life<br>
@@ -445,8 +452,58 @@ body.dark .progress-track{background:rgba(255,255,255,.1);}
     &nbsp;&nbsp;├── dim_artists · 아티스트 사전<br>
     &nbsp;&nbsp;└── dim_time · 시간 사전
   </div>
-  <div class="insight" style="margin-top:18px;font-size:1.4vw;">
-    와, 근데 <span class="accent">이게 무슨 소리죠??</span> @@
+</section>
+
+<!-- NEW: 데이터 흐름 (data_viz 톤 직접 삽입) -->
+<section class="slide" data-notes="구조가 만들어지면 데이터들은 이렇게 흘러요. 시청 기록이 → 시간 사전과 만나고 → 영상 사전과 만나고 → 인사이트가 됩니다. 복잡해 보이지만 AI가 다 알아서 해줘요.">
+  <div class="t-small" style="margin-bottom:4px;">데이터 흐름</div>
+  <div class="t-h1" style="margin-bottom:30px;">데이터는 이렇게 서로 만나요</div>
+  <div style="display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:18px;align-items:center;">
+    <div>
+      <div style="font-size:1.1vw;color:var(--muted);font-weight:800;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.05em;">사건 기록 (Fact)</div>
+      <div class="card" style="background:#fff;border:1.5px solid var(--line);padding:16px;">
+        <div style="font-weight:900;color:var(--ink);font-size:1.25vw;margin-bottom:6px;">📺 시청 기록</div>
+        <div style="font-size:1vw;color:var(--muted);line-height:1.6;">언제·뭘 봤는지<br>한 줄 한 줄</div>
+      </div>
+      <div class="card" style="background:#fff;border:1.5px solid var(--line);padding:16px;margin-top:10px;">
+        <div style="font-weight:900;color:var(--ink);font-size:1.25vw;margin-bottom:6px;">🎵 재생 기록</div>
+        <div style="font-size:1vw;color:var(--muted);line-height:1.6;">언제·무슨 음악<br>틀었는지</div>
+      </div>
+    </div>
+    <div style="text-align:center;color:var(--orange);font-size:2.6vw;font-weight:900;">+</div>
+    <div>
+      <div style="font-size:1.1vw;color:var(--muted);font-weight:800;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.05em;">사전 (Dim)</div>
+      <div class="card" style="background:#fff;border:1.5px solid var(--line);padding:16px;">
+        <div style="font-weight:900;color:var(--ink);font-size:1.25vw;margin-bottom:6px;">📅 시간 사전</div>
+        <div style="font-size:1vw;color:var(--muted);line-height:1.6;">평일/주말,<br>시간대 정보</div>
+      </div>
+      <div class="card" style="background:#fff;border:1.5px solid var(--line);padding:16px;margin-top:10px;">
+        <div style="font-weight:900;color:var(--ink);font-size:1.25vw;margin-bottom:6px;">📖 영상·음악 사전</div>
+        <div style="font-size:1vw;color:var(--muted);line-height:1.6;">채널·카테고리<br>아티스트·장르</div>
+      </div>
+    </div>
+    <div style="text-align:center;color:var(--orange);font-size:2.6vw;font-weight:900;">=</div>
+    <div>
+      <div style="font-size:1.1vw;color:var(--muted);font-weight:800;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.05em;">인사이트</div>
+      <div class="card" style="background:var(--ink);border:2px solid var(--ink);padding:20px;color:#fff;">
+        <div style="font-weight:900;font-size:1.35vw;margin-bottom:10px;color:var(--orange);">🪞 데이터로 본 나</div>
+        <div style="font-size:1.05vw;line-height:1.6;color:#fff;">
+          "이 사람은 21시에 J-pop 보고,<br>주말엔 여행 검색하는<br>야행성 감성형이다"
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="insight" style="margin-top:24px;">
+    <strong style="color:var(--orange);">사건 + 사전 = 인사이트.</strong> 이게 빅쿼리에서 데이터가 만나는 기본 공식이에요.
+  </div>
+</section>
+
+<!-- NEW: 와 근데 이게 무슨 소리죠?? -->
+<section class="slide center" data-notes="구조랑 흐름 보여드렸는데, 솔직히 처음 들으면 무슨 소리인지 모르겠죠? 괜찮아요. 외울 필요 없어요. 우리는 AI랑 자연어로 대화만 하면 되니까요.">
+  <div class="t-hero" style="line-height:1.2;color:var(--ink);">와, 근데 이게<br><span style="color:var(--orange);">무슨 소리죠??</span> @@</div>
+  <div style="margin-top:36px;font-size:1.6vw;color:var(--muted);font-weight:500;line-height:1.6;">
+    괜찮아요. 외울 필요 없어요.<br>
+    우린 자연어로 묻기만 하면 되니까요.
   </div>
 </section>
 
@@ -746,7 +803,7 @@ body.dark .progress-track{background:rgba(255,255,255,.1);}
       <div style="font-size:1.1vw;line-height:1.75;color:var(--ink);">
         <strong>HYBE LABELS</strong><br><span style="color:var(--muted);font-size:.95vw;">BTS 'SWIM' MV</span><br>
         <strong>맛있겠다 Yummy</strong><br><span style="color:var(--muted);font-size:.95vw;">이모카세</span><br>
-        <strong>전매특허정우</strong><br><span style="color:var(--muted);font-size:.95vw;">BTS 얼굴 분석</span>
+        <strong>닥터쿠퍼</strong><br><span style="color:var(--muted);font-size:.95vw;">건강식품 리뷰</span>
       </div>
     </div>
     <div style="display:flex;align-items:center;justify-content:center;color:var(--orange);font-size:2.8vw;font-weight:900;">→</div>
@@ -764,7 +821,7 @@ body.dark .progress-track{background:rgba(255,255,255,.1);}
       <div style="font-size:.95vw;color:var(--orange);font-weight:800;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.05em;">STEP 03 · CONVERSION</div>
       <div style="font-weight:900;font-size:1.35vw;margin-bottom:14px;color:#fff;">🛒 의도가 구매로</div>
       <div style="font-size:1.1vw;line-height:1.75;color:#fff;">
-        <strong>BTS 굿즈</strong><br><span style="color:rgba(255,255,255,0.65);font-size:.95vw;">며칠 뒤 결제</span><br>
+        <strong>BTS 콘서트 티켓</strong><br><span style="color:rgba(255,255,255,0.65);font-size:.95vw;">며칠 뒤 예매</span><br>
         <strong>해산물 밀키트</strong><br><span style="color:rgba(255,255,255,0.65);font-size:.95vw;">검색 다음 날</span><br>
         <strong>건강식품</strong><br><span style="color:rgba(255,255,255,0.65);font-size:.95vw;">2주 내 구매</span>
       </div>
@@ -775,13 +832,142 @@ body.dark .progress-track{background:rgba(255,255,255,.1);}
   </div>
 </section>
 
-<!-- NEW: data_viz 임베드 (Q들 모두 끝나고 풍부함 결론) -->
-<section class="slide" data-notes="이 모든 분석을 뽑아내는 데이터 구조예요. 복잡해 보이죠? 우리가 직접 이해할 필요 없어요. AI가 알아서 다 합니다. 우리는 자연어로 물어보면 돼요.">
-  <div class="t-h2" style="margin-bottom:6px;">분석은 무궁무진해요. 그런데 이 복잡한 걸 어떻게…?</div>
-  <div class="t-small" style="margin-bottom:10px;">→ 우린 우리 언어로 물어보기만. AI가 알아서 해석합니다.</div>
-  <div class="iframe-wrap" style="height:78vh;border-radius:14px;overflow:hidden;border:1px solid var(--line);"><iframe src="../data_viz.html" loading="lazy" style="width:100%;height:100%;border:none;"></iframe></div>
+
+
+
+
+<!-- S32 메이의 사내 시스템들 (6개) -->
+<section class="slide" data-notes="저 코드 한 줄 못 짜는데 어떻게? 흩어진 데이터 모으고, AI랑 같이 구조화하고, 부탁해서 만들었어요. 다 같은 패턴이에요.">
+  <div class="t-h1" style="margin-bottom:8px;">지난 1년 동안 만든 것들</div>
+  <div class="t-small" style="margin-bottom:24px;">저 코드 한 줄 못 짜요. 근데 어떻게? — <strong style="color:var(--orange);">흩어진 데이터 모으고 → AI랑 구조화 → 부탁</strong></div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
+    <div class="card" style="text-align:center;padding:22px 16px;border:1.5px solid var(--ink);">
+      <div style="font-size:2.4vw;margin-bottom:8px;">⚠️</div>
+      <div style="font-size:1.2vw;font-weight:900;color:var(--ink);">위험상담사 주간 예측</div>
+    </div>
+    <div class="card" style="text-align:center;padding:22px 16px;border:1.5px solid var(--ink);">
+      <div style="font-size:2.4vw;margin-bottom:8px;">📉</div>
+      <div style="font-size:1.2vw;font-weight:900;color:var(--ink);">고객센터 수기업무 감축</div>
+    </div>
+    <div class="card" style="text-align:center;padding:22px 16px;border:1.5px solid var(--ink);">
+      <div style="font-size:2.4vw;margin-bottom:8px;">💬</div>
+      <div style="font-size:1.2vw;font-weight:900;color:var(--ink);">슬랙↔아지트 연동</div>
+    </div>
+    <div class="card" style="text-align:center;padding:22px 16px;border:1.5px solid var(--ink);">
+      <div style="font-size:2.4vw;margin-bottom:8px;">📋</div>
+      <div style="font-size:1.2vw;font-weight:900;color:var(--ink);">민원 통합 자동화 프로세스</div>
+    </div>
+    <div class="card" style="text-align:center;padding:22px 16px;border:1.5px solid var(--ink);">
+      <div style="font-size:2.4vw;margin-bottom:8px;">📝</div>
+      <div style="font-size:1.2vw;font-weight:900;color:var(--ink);">고객센터 직무테스트 앱</div>
+    </div>
+    <div class="card" style="text-align:center;padding:22px 16px;border:1.5px solid var(--ink);">
+      <div style="font-size:2.4vw;margin-bottom:8px;">🏢</div>
+      <div style="font-size:1.2vw;font-weight:900;color:var(--ink);">고객센터 통합 운영 시스템</div>
+    </div>
+  </div>
+  <div class="insight" style="margin-top:22px;">다 같은 패턴 — <span class="accent">흩어진 거 모으고, AI랑 같이 만들고.</span></div>
 </section>
 
+<!-- NEW: 테이블 순환 다이어그램 -->
+<section class="slide" data-notes="여기가 진짜 핵심이에요. 한 번 쌓은 테이블이 여러 시스템에 부품으로 들어가요. 퀴즈가 만든 정책 벡터를 VOC가 쓰고, 퀴즈 점수가 QC 대시보드 직무테스트에 뜨고, 근태 한 테이블이 양쪽에 들어가요. 이 그림이 우리가 한 번 잘 쌓아두면 영원히 우려먹기 가능한 이유예요." style="padding:3.5vh 4vw;">
+  <div class="t-small" style="margin-bottom:4px;">데이터의 진짜 가치</div>
+  <div class="t-h1" style="margin-bottom:8px;">한 번 쌓은 테이블이 <span style="color:var(--orange);">여러 시스템</span>에 들어가요</div>
+  <div class="t-small" style="margin-bottom:20px;">서로 부품으로 활용되며 분석·인사이트가 끝없이 나옵니다</div>
+
+  <!-- 4 부품-시스템 매트릭스 -->
+  <div style="display:grid;grid-template-columns:1fr 1.4fr;gap:16px;font-size:1.05vw;">
+
+    <!-- 좌측: 부품 (테이블) -->
+    <div>
+      <div style="font-size:1vw;color:var(--muted);font-weight:800;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.05em;">🧱 핵심 테이블 (부품)</div>
+      <div class="card" style="background:var(--ink);color:#fff;border:none;padding:18px 22px;margin-bottom:10px;">
+        <div style="color:var(--orange);font-weight:900;font-size:1.2vw;margin-bottom:4px;">📚 kmcc_vector</div>
+        <div style="color:rgba(255,255,255,0.7);font-size:.95vw;">정책 텍스트 임베딩</div>
+      </div>
+      <div class="card" style="background:var(--ink);color:#fff;border:none;padding:18px 22px;margin-bottom:10px;">
+        <div style="color:var(--orange);font-weight:900;font-size:1.2vw;margin-bottom:4px;">📝 quiz_results</div>
+        <div style="color:rgba(255,255,255,0.7);font-size:.95vw;">점수·오답·연습량</div>
+      </div>
+      <div class="card" style="background:var(--ink);color:#fff;border:none;padding:18px 22px;">
+        <div style="color:var(--orange);font-weight:900;font-size:1.2vw;margin-bottom:4px;">⏰ kMCC_HR·attendance</div>
+        <div style="color:rgba(255,255,255,0.7);font-size:.95vw;">출근·휴가·근무시간</div>
+      </div>
+    </div>
+
+    <!-- 우측: 4가지 화살표 흐름 -->
+    <div>
+      <div style="font-size:1vw;color:var(--muted);font-weight:800;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.05em;">🔁 어디로 흘러가는지</div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div class="card" style="padding:14px 18px;border-left:6px solid var(--orange);">
+          <strong>kmcc_vector</strong> <span style="color:var(--orange);font-weight:900;">→</span> <strong>VOC 분석</strong>
+          <div style="font-size:.95vw;color:var(--muted);margin-top:2px;">민원 들어올 때 RAG 의미검색</div>
+        </div>
+        <div class="card" style="padding:14px 18px;border-left:6px solid var(--ink);">
+          <strong>quiz_results</strong> <span style="color:var(--orange);font-weight:900;">→</span> <strong>QC 대시보드 · 직무테스트 탭</strong>
+          <div style="font-size:.95vw;color:var(--muted);margin-top:2px;">점수·오답 항목 시각화</div>
+        </div>
+        <div class="card" style="padding:14px 18px;border-left:6px solid var(--ink);">
+          <strong>quiz_results</strong> <span style="color:var(--orange);font-weight:900;">→</span> <strong>QC 활동기록</strong>
+          <div style="font-size:.95vw;color:var(--muted);margin-top:2px;">"스스로 학습하는 상담사" 인사이트</div>
+        </div>
+        <div class="card" style="padding:14px 18px;border-left:6px solid var(--ink);">
+          <strong>attendance</strong> <span style="color:var(--orange);font-weight:900;">→</span> <strong>퀴즈 + QC 양쪽</strong>
+          <div style="font-size:.95vw;color:var(--muted);margin-top:2px;">근무 중 학습시간 · 가용시간 대비 생산성</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="insight" style="margin-top:18px;">
+    <strong>한 번 쌓은 테이블 = 영원히 우려먹기.</strong> <span style="color:var(--orange);">📂 실제 코드: ~/Desktop/ai-automation/ 의 kmcc-qc-dashbord · kmcc-quiz · voc · 민원자동화</span>
+  </div>
+</section>
+
+<!-- NEW: CSOPP 사내 빅쿼리 14 데이터셋 226 테이블 -->
+<section class="slide" data-notes="우리 회사 빅쿼리는 이미 14개 데이터셋, 226개 테이블이 운영 중이에요. 상담품질, VOC, 채널/생산성, SLA, HR 모두 한곳에 모여있어요. 자연어로 묻기만 하면 무궁무진한 분석 가능합니다." style="padding:4vh 4vw;">
+  <div class="t-small">CSOPP 파트 · csopp-25f2 프로젝트</div>
+  <div class="t-h2" style="margin-bottom:6px;">우리 회사 빅쿼리 · <span style="color:var(--orange);">14 데이터셋 / 226 테이블</span></div>
+  <div class="t-small" style="margin-bottom:24px;">제 일상 6개 영역 → 회사는 이미 이렇게 크게 운영 중</div>
+
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;font-size:.92vw;">
+    <div class="card" style="padding:16px 18px;border:1.5px solid var(--line);">
+      <div style="font-weight:900;color:var(--ink);font-size:1.15vw;margin-bottom:6px;">📞 상담 품질</div>
+      <div style="color:var(--muted);font-size:.95vw;line-height:1.55;">KMCC_QC<br>106 테이블</div>
+    </div>
+    <div class="card" style="padding:16px 18px;border:1.5px solid var(--line);">
+      <div style="font-weight:900;color:var(--ink);font-size:1.15vw;margin-bottom:6px;">📊 채널·생산성</div>
+      <div style="color:var(--muted);font-size:.95vw;line-height:1.55;">KMCC_CPD<br>19 테이블</div>
+    </div>
+    <div class="card" style="padding:16px 18px;border:1.5px solid var(--line);">
+      <div style="font-weight:900;color:var(--ink);font-size:1.15vw;margin-bottom:6px;">📋 VOC·민원</div>
+      <div style="color:var(--muted);font-size:.95vw;line-height:1.55;">voc·voc_analysis·<br>complaint_data · 27+</div>
+    </div>
+    <div class="card" style="padding:16px 18px;border:1.5px solid var(--line);">
+      <div style="font-weight:900;color:var(--ink);font-size:1.15vw;margin-bottom:6px;">⏱ SLA·응대</div>
+      <div style="color:var(--muted);font-size:.95vw;line-height:1.55;">KMCC_SLA<br>8 테이블</div>
+    </div>
+    <div class="card" style="padding:16px 18px;border:1.5px solid var(--line);">
+      <div style="font-weight:900;color:var(--ink);font-size:1.15vw;margin-bottom:6px;">👥 HR · 인사</div>
+      <div style="color:var(--muted);font-size:.95vw;line-height:1.55;">kMCC_HR<br>8 테이블</div>
+    </div>
+    <div class="card" style="padding:16px 18px;border:1.5px solid var(--line);">
+      <div style="font-weight:900;color:var(--ink);font-size:1.15vw;margin-bottom:6px;">🎯 QA·심사</div>
+      <div style="color:var(--muted);font-size:.95vw;line-height:1.55;">QA_data<br>4 테이블</div>
+    </div>
+    <div class="card" style="padding:16px 18px;border:1.5px solid var(--line);">
+      <div style="font-weight:900;color:var(--ink);font-size:1.15vw;margin-bottom:6px;">💬 아지트 분석</div>
+      <div style="color:var(--muted);font-size:.95vw;line-height:1.55;">agit_analytics<br>3 테이블</div>
+    </div>
+    <div class="card" style="padding:16px 18px;border:1.5px solid var(--line);">
+      <div style="font-weight:900;color:var(--ink);font-size:1.15vw;margin-bottom:6px;">🧠 지식·임베딩</div>
+      <div style="color:var(--muted);font-size:.95vw;line-height:1.55;">KMS·kmcc_vector·<br>wiki_search·quiz_results</div>
+    </div>
+  </div>
+  <div class="insight" style="margin-top:22px;">
+    같은 패턴이에요. <span style="color:var(--orange);">회사 데이터에도 자연어로 묻기만 하면</span> 무궁무진한 분석.
+  </div>
+</section>
 <!-- ═════════════════════════════════════════
      Part 4 S29~S33
 ═════════════════════════════════════════ -->
@@ -800,107 +986,9 @@ body.dark .progress-track{background:rgba(255,255,255,.1);}
   <div class="t-large accent">데이터한테 질문할 수 있어요.</div>
 </section>
 
-<!-- NEW: CSOPP 사내 빅쿼리 유기적 연결 — 회사에선 어떻게 -->
-<section class="slide" data-notes="이게 진짜 핵심이에요. 한 번 잘 쌓아둔 데이터는 다른 시스템의 부품으로 들어가요. 퀴즈가 만든 벡터를 VOC가 쓰고, 퀴즈 점수가 QC 대시보드 직무테스트 탭에 뜨고, 근태 한 테이블이 양쪽에 다 들어가요. 한 번 만들면 끝없이 우려먹기 가능합니다." style="padding:4vh 4vw;">
-  <div class="t-small">CSOPP 파트 · csopp-25f2 프로젝트 · 14 데이터셋 / 226 테이블</div>
-  <div class="t-h2" style="margin-bottom:6px;">한 번 잘 쌓으면 — <span class="accent">서로 다른 시스템의 부품</span>이 돼요</div>
-  <div class="t-small" style="margin-bottom:18px;">실제 활용 중인 4가지 유기적 데이터 흐름</div>
 
-  <!-- 4 flows grid -->
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:.86vw;">
 
-    <!-- Flow 1: 퀴즈 정책 벡터 → VOC -->
-    <div class="card" style="padding:14px 16px;background:#fff;border-left:6px solid var(--orange);">
-      <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
-        <span style="background:var(--orange);color:#fff;font-size:.85vw;font-weight:900;padding:3px 10px;border-radius:12px;letter-spacing:0.05em;">FLOW 1</span>
-        <span style="font-weight:900;color:var(--orange);font-size:1.15vw;">📚 정책 벡터 → 민원 자동분류</span>
-      </div>
-      <div style="line-height:1.7;color:var(--ink);">
-        <code style="background:var(--orange-l);color:var(--orange-d);padding:2px 7px;border-radius:4px;font-weight:700;">kmcc-quiz</code> 앱이 만든 <strong>정책 텍스트 임베딩</strong><br>
-        → <code style="background:var(--orange-l);color:var(--orange-d);padding:2px 7px;border-radius:4px;font-weight:700;">kmcc_vector</code> 테이블에 저장<br>
-        → <strong>VOC 분석 시스템</strong>이 민원 들어올 때 의미 검색에 활용 (RAG)
-      </div>
-    </div>
 
-    <!-- Flow 2: 퀴즈 점수 → 대시보드 직무테스트 -->
-    <div class="card" style="padding:14px 16px;background:#fff;border:1.5px solid var(--line);border-left:6px solid var(--ink);">
-      <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
-        <span style="background:var(--ink);color:#fff;font-size:.85vw;font-weight:900;padding:3px 10px;border-radius:12px;letter-spacing:0.05em;">FLOW 2</span>
-        <span style="font-weight:900;color:var(--ink);font-size:1.15vw;">📝 퀴즈 점수 → 직무테스트 탭</span>
-      </div>
-      <div style="line-height:1.7;color:var(--ink);">
-        <code style="background:#f0f0f0;color:var(--ink);padding:2px 7px;border-radius:4px;font-weight:700;">quiz_results</code>의 <strong>점수·오답 항목</strong><br>
-        → <code style="background:#f0f0f0;color:var(--ink);padding:2px 7px;border-radius:4px;font-weight:700;">kmcc-qc-dashbord</code> 의 <strong>직무테스트 탭</strong>에서 그대로 표시<br>
-        → 상담사·매니저가 어떤 단원에서 자주 틀리는지 한눈에
-      </div>
-    </div>
-
-    <!-- Flow 3: 퀴즈 연습 → 대시보드 활동기록 -->
-    <div class="card" style="padding:14px 16px;background:#fff;border:1.5px solid var(--line);border-left:6px solid var(--ink);">
-      <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
-        <span style="background:var(--ink);color:#fff;font-size:.85vw;font-weight:900;padding:3px 10px;border-radius:12px;letter-spacing:0.05em;">FLOW 3</span>
-        <span style="font-weight:900;color:var(--ink);font-size:1.15vw;">🔁 퀴즈 연습량 → 활동기록</span>
-      </div>
-      <div style="line-height:1.7;color:var(--ink);">
-        <code style="background:#f0f0f0;color:var(--ink);padding:2px 7px;border-radius:4px;font-weight:700;">quiz_results</code> 의 <strong>연습 빈도·시간대</strong><br>
-        → <code style="background:#f0f0f0;color:var(--ink);padding:2px 7px;border-radius:4px;font-weight:700;">kmcc-qc-dashbord</code> 활동기록으로 재활용<br>
-        → "이 상담사는 스스로 학습하는 사람" 같은 인사이트
-      </div>
-    </div>
-
-    <!-- Flow 4: 근태 → 양쪽 -->
-    <div class="card" style="padding:14px 16px;background:#fff;border:1.5px solid var(--line);border-left:6px solid var(--ink);">
-      <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
-        <span style="background:var(--ink);color:#fff;font-size:.85vw;font-weight:900;padding:3px 10px;border-radius:12px;letter-spacing:0.05em;">FLOW 4</span>
-        <span style="font-weight:900;color:var(--ink);font-size:1.15vw;">⏰ 근태 한 테이블 → 양쪽 활용</span>
-      </div>
-      <div style="line-height:1.7;color:var(--ink);">
-        <code style="background:#f0f0f0;color:var(--ink);padding:2px 7px;border-radius:4px;font-weight:700;">kMCC_HR · attendance</code> 출근·휴가·근무시간<br>
-        → <strong>퀴즈 앱</strong>이 "근무 중 학습 시간" 분석에 사용<br>
-        → <strong>QC 대시보드</strong>가 "월간 가용 시간 대비 생산성" 계산에 사용
-      </div>
-    </div>
-  </div>
-
-  <!-- 결론 -->
-  <div style="margin-top:20px;background:var(--ink);color:#fff;border-radius:14px;padding:20px 26px;">
-    <div style="font-weight:900;color:var(--orange);font-size:1.25vw;margin-bottom:8px;letter-spacing:-0.01em;">✨ 그래서 좋은 점</div>
-    <div style="font-size:1.15vw;line-height:1.6;color:#fff;font-weight:600;">
-      <strong>같은 테이블이 여러 시스템에 부품으로</strong> — 한 번 잘 쌓아두면 시스템·분석·인사이트가 끝없이 나옵니다.
-    </div>
-    <div style="font-size:.95vw;color:rgba(255,255,255,0.6);margin-top:10px;">
-      📂 실제 코드 — <code style="background:rgba(255,255,255,0.1);color:var(--orange);padding:2px 7px;border-radius:4px;">~/Desktop/ai-automation/</code> 의 <strong style="color:#fff;">kmcc-qc-dashbord · kmcc-quiz · voc · 민원자동화</strong>
-    </div>
-  </div>
-</section>
-
-<!-- S32 메이의 사내 시스템들 -->
-<section class="slide" data-notes="다 같은 패턴이에요. 흩어진 거 모으고, AI랑 같이 만들고.">
-  <div class="t-h1" style="margin-bottom:30px;">지난 1년 반 동안 만든 것들</div>
-  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px;">
-    <div class="card" style="text-align:center;padding:24px 18px;">
-      <div style="font-size:2.5vw;margin-bottom:8px;">⚠️</div>
-      <div style="font-size:1.2vw;font-weight:700;">위험상담사 주간 예측</div>
-    </div>
-    <div class="card" style="text-align:center;padding:24px 18px;">
-      <div style="font-size:2.5vw;margin-bottom:8px;">💬</div>
-      <div style="font-size:1.2vw;font-weight:700;">슬랙↔아지트 연동</div>
-    </div>
-    <div class="card" style="text-align:center;padding:24px 18px;">
-      <div style="font-size:2.5vw;margin-bottom:8px;">📋</div>
-      <div style="font-size:1.2vw;font-weight:700;">민원 통합 자동화 프로세스</div>
-    </div>
-    <div class="card" style="text-align:center;padding:24px 18px;">
-      <div style="font-size:2.5vw;margin-bottom:8px;">📝</div>
-      <div style="font-size:1.2vw;font-weight:700;">고객센터 직무테스트 앱</div>
-    </div>
-    <div class="card" style="text-align:center;padding:24px 18px;">
-      <div style="font-size:2.5vw;margin-bottom:8px;">🏢</div>
-      <div style="font-size:1.2vw;font-weight:700;">고객센터 통합 운영 시스템</div>
-    </div>
-  </div>
-  <div class="insight" style="margin-top:24px;">다 같은 패턴이에요. <span class="accent">흩어진 거 모으고, AI랑 같이 만들고.</span></div>
-</section>
 
 <!-- S33 Part 4 → 클로징 -->
 <section class="slide center" data-notes="이제 진짜 가져가실 수 있는 거 드릴게요.">
@@ -926,12 +1014,12 @@ body.dark .progress-track{background:rgba(255,255,255,.1);}
   </div>
 </section>
 
-<!-- S35 1년 반 전 다시 짚기 -->
+<!-- S35 1년 전 다시 짚기 -->
 <section class="slide" data-notes="처음 봤던 메이의 대화 4컷 기억나시죠? 그 사이에 어떻게 변했냐면요.">
-  <div class="t-h2" style="text-align:center;margin-bottom:40px;">1년 반 전 vs 지금</div>
+  <div class="t-h2" style="text-align:center;margin-bottom:40px;">1년 전 vs 지금</div>
   <div class="compare">
     <div class="compare-side" style="text-align:right;">
-      <h4>1년 반 전</h4>
+      <h4>1년 전</h4>
       <div class="quote" style="font-size:1.5vw;line-height:1.8;">
         "BigQuery?<br>그게 뭐예요?"<br>
         "어떻게 확인하나요?"<br>
@@ -942,7 +1030,7 @@ body.dark .progress-track{background:rgba(255,255,255,.1);}
       <h4>지금</h4>
       <div class="quote" style="font-size:1.5vw;line-height:1.8;">
         "내가 뭘 원하는지<br>알아요"<br>
-        "아니야, 그거 말고"<br>
+        "이 부분은 이렇게<br>수정해볼까?"<br>
         "이거 같이 봐줘"
       </div>
     </div>
@@ -953,19 +1041,19 @@ body.dark .progress-track{background:rgba(255,255,255,.1);}
 </section>
 
 <!-- S36 수미상관 ★★★ 발표 핵심 -->
-<section class="slide bg-dark center" data-notes="발표 시작할 때 물었어요. AI는 저를 얼만큼 알까요. (잠시) 답을 드릴게요. 소통하면 알아요. 말 안 해도요. 제 데이터 보고 AI가 '메이는 요즘 AI 강의에 빠져있구나, 일본 여행 가고 싶구나' 알아요. 제가 일일이 말 안 해도요. 여러분도 AI랑 소통될 수 있어요. 어색한 단계만 지나면요.">
-  <div style="font-size:1.2vw;color:rgba(255,255,255,.5);margin-bottom:30px;">발표 시작할 때 물었어요.</div>
-  <div class="t-large" style="margin-bottom:50px;color:#fff;">"AI는 저를 얼만큼 알고 있을까요?"</div>
-  <div class="t-hero" style="color:var(--coral);line-height:1.3;">
-    답: 소통하면 알아요.<br>말 안 해도요.
+<section class="slide bg-dark center" data-notes="발표 시작할 때 물었어요. AI는 저를 얼만큼 알까요. 답을 드릴게요. 이제 AI랑 메이는 서로 잘 아는 친한 친구가 됐어요. 원하는 거 뭐든 함께 구조화하고 조립해서 만들어낼 수 있는 친구요.">
+  <div style="font-size:1.4vw;color:rgba(255,255,255,.55);margin-bottom:30px;font-weight:500;">발표 시작할 때 물었어요.</div>
+  <div class="t-large" style="margin-bottom:46px;color:#fff;">"AI는 저를 얼만큼 알고 있을까요?"</div>
+  <div class="t-hero" style="color:var(--orange);line-height:1.2;">
+    AI와 메이.<br>이제 서로 잘 아는<br>친한 친구가 됐어요.
   </div>
-  <div style="font-size:1.1vw;color:rgba(255,255,255,.5);margin-top:40px;">
-    — 제 데이터 보고 AI가 알아요. 제가 일일이 말 안 해도요.
+  <div style="font-size:1.4vw;color:rgba(255,255,255,.6);margin-top:36px;font-weight:500;line-height:1.6;">
+    원하는 거 뭐든 — <strong style="color:#fff;">함께 구조화하고 조립해서</strong> 만들어내는 대화.
   </div>
 </section>
 
 <!-- S37 가져갈 자료 + 인사 -->
-<section class="slide" data-notes="따라할 수 있는 가이드 다 준비해뒀어요. 천천히 가셔도 돼요. 1년 반 안 걸려요. AI한테 부탁하는 게 어색하시면, 저한테 물어봐주셔도 좋아요. 같이 시작해봐요. 감사합니다.">
+<section class="slide" data-notes="따라할 수 있는 가이드 다 준비해뒀어요. 천천히 가셔도 돼요. 1년 안 걸려요. AI한테 부탁하는 게 어색하시면, 저한테 물어봐주셔도 좋아요. 같이 시작해봐요. 감사합니다.">
   <div class="takeaway">
     <div>
       <a href="https://ksy070822.github.io/bq-lab-2605/" target="_blank" rel="noopener" style="display:block;text-decoration:none;color:inherit;transition:transform .15s;" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
@@ -1017,10 +1105,10 @@ let cur = 0;
 const CHAPTERS = [
   {start:0, end:5, name:'도입'},
   {start:6, end:10, name:'Part 1 · 일상이 데이터로'},
-  {start:11, end:20, name:'Part 2 · 왜 빅쿼리?'},
-  {start:21, end:31, name:'Part 3 · AI랑 자연어로 분석'},
-  {start:32, end:36, name:'Part 4 · 사내 적용'},
-  {start:37, end:40, name:'클로징'},
+  {start:11, end:21, name:'Part 2 · 왜 빅쿼리?'},
+  {start:22, end:31, name:'Part 3 · AI랑 자연어로 분석'},
+  {start:32, end:37, name:'Part 4 · 사내 적용'},
+  {start:38, end:42, name:'클로징'},
 ];
 
 function go(n){
