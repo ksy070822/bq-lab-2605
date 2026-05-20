@@ -3034,9 +3034,9 @@ function genCode() {
   let fieldLines = [];
 
   // ── SQL 생성: String.fromCharCode(96)으로 런타임 백틱 생성 (100% 이스케이프 안전) ──
-  // 생성된 코드는 const BT = String.fromCharCode(96); 한 줄로 백틱 변수 만든 뒤 사용
-  const tblYt = "BT + '" + pid + "." + dataset + ".youtube_history' + BT";
-  const tblMu = "BT + '" + pid + "." + dataset + ".music_history' + BT";
+  // tblYt 가 코드에 박힐 때 → " + BT + "project.ds.table" + BT + "   (큰따옴표 종료/시작 + BT 참조)
+  const tblYt = '" + BT + "' + pid + '.' + dataset + '.youtube_history" + BT + "';
+  const tblMu = '" + BT + "' + pid + '.' + dataset + '.music_history" + BT + "';
 
   if (opts.views) {
     queryLines.push(
