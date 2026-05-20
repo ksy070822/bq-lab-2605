@@ -1908,12 +1908,21 @@ function gst(n){
 }
 
 // ── STEP 2 ──
-function chkPid(){const v=document.getElementById('inp-pid').value.trim();document.getElementById('btn-chk-2').disabled=v.length<3;}
+function chkPid(){
+  // 입력값에서 보이지 않는 유니코드 문자 제거 (zero-width space 등 복붙 사고 방지)
+  const el = document.getElementById('inp-pid');
+  const cleaned = el.value.replace(/[\u0000-\u001F\u007F-\u009F\u200B-\u200F\u2028\u2029\uFEFF]/g, '').trim();
+  if (cleaned !== el.value) { el.value = cleaned; }
+  document.getElementById('btn-chk-2').disabled = cleaned.length < 3;
+}
 function earnScore(key){
   if(S.earned[key])return;
   if(key==='s2'){
-    const v=document.getElementById('inp-pid').value.trim() || 'my-life-data-00000';
-    S.projectId=v;
+    let v = document.getElementById('inp-pid').value
+      .replace(/[\u0000-\u001F\u007F-\u009F\u200B-\u200F\u2028\u2029\uFEFF]/g, '')
+      .trim() || 'my-life-data-00000';
+    S.projectId = v;
+    Logger && Logger.log && Logger.log('[DEBUG] PID 저장: ' + v + ' (length=' + v.length + ')');
     document.getElementById('inp-pid').classList.add('valid');
     fillPid();  // 모든 프롬프트 슬롯에 즉시 반영
     if (typeof genCode === 'function') genCode();  // Step 7 코드도 즉시 갱신
@@ -3143,10 +3152,12 @@ function genCode() {
 // 만약 PID/DATASET/TOKEN/CHANNEL 값을 바꾸고 싶으면 아래 4줄만 수정하면 됩니다.
 // SQL 안에 값이 박혀있지 않고 런타임 변수로 동작하므로 다른 부분은 건드릴 필요 없어요.
 
-const TOKEN   = '${token}';     // 슬랙 봇 토큰 (xoxb-...)
-const CHANNEL = '${channel}';   // 채널 ID (C로 시작하는 11자)
-const PID     = '${pid}';       // GCP 프로젝트 ID
-const DATASET = '${dataset}';   // BigQuery 데이터셋 이름
+// 보이지 않는 유니코드 문자 제거 (복붙 시 끼는 ZWSP 등 방어)
+const _clean = function(s){ return String(s).replace(/[^\x20-\x7E]/g, '').trim(); };
+const TOKEN   = _clean('${token}');     // 슬랙 봇 토큰 (xoxb-...)
+const CHANNEL = _clean('${channel}');   // 채널 ID (C로 시작하는 11자)
+const PID     = _clean('${pid}');       // GCP 프로젝트 ID
+const DATASET = _clean('${dataset}');   // BigQuery 데이터셋 이름
 const BT      = String.fromCharCode(96);  // 백틱 문자 (이스케이프 문제 회피용)
 
 // ═══════════════════════════════════════════
@@ -3160,6 +3171,10 @@ function sendWeeklyReport() {
   const e   = fmt_(now), s = fmt_(w7);
   Logger.log('📅 기간: ' + s + ' ~ ' + e);
   Logger.log('🔧 사용 중: PID=' + PID + ' / DATASET=' + DATASET + ' / CHANNEL=' + CHANNEL);
+  // 진단: PID 의 각 글자 char code 출력 (보이지 않는 문자 있나 확인)
+  let pidCodes = '';
+  for (let i = 0; i < PID.length; i++) pidCodes += PID.charCodeAt(i) + ' ';
+  Logger.log('🔬 PID char codes (' + PID.length + '자): ' + pidCodes);
 
   // BigQuery 조회
   try {
