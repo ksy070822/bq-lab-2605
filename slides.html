@@ -233,6 +233,21 @@ body.dark .progress-track{background:rgba(255,255,255,.1);}
   <div class="t-hero">AI는 저를<br>얼만큼 알고 있을까요?</div>
 </section>
 
+<!-- NEW S01-b: 매일 묻지만… (도입 narrative 1) -->
+<section class="slide bg-dark center" data-notes="우리는 매일 AI한테 묻잖아요. 코드 짜줘, 메일 써줘, 이거 정리해줘. 근데 AI는 우리한테 궁금한 게 없을까요? 잠깐 그 질문을 뒤집어 봤어요.">
+  <div style="font-size:1.6vw;color:rgba(255,255,255,0.5);margin-bottom:24px;font-weight:500;">매일 AI에게 묻는 수많은 질문…</div>
+  <div class="t-hero" style="color:#fff;line-height:1.25;">근데<br><span style="color:var(--orange);">AI는 나에게</span><br>궁금한 게 없을까요?</div>
+</section>
+
+<!-- NEW S01-c: AI는 우리 말을 배웠다 (도입 narrative 2) -->
+<section class="slide bg-dark center" data-notes="AI는 우리에게 다가오기 위해 사람의 자연어를 배웠어요. 그래서 우리가 코드를 몰라도 AI랑 대화할 수 있게 됐어요. AI가 먼저 손을 내민 거예요.">
+  <div style="font-size:1.6vw;color:rgba(255,255,255,0.6);margin-bottom:30px;font-weight:500;">AI는 우리와 친해지기 위해</div>
+  <div class="t-hero" style="color:#fff;line-height:1.2;"><span style="color:var(--orange);">사람의 자연어</span>를<br>배웠어요.</div>
+  <div style="font-size:1.5vw;color:rgba(255,255,255,0.55);margin-top:36px;font-weight:500;line-height:1.6;">
+    덕분에 — 나는 <strong style="color:#fff;">코드를 몰라도</strong> AI랑 소통할 수 있게 됐어요.
+  </div>
+</section>
+
 <!-- S02 Thesis -->
 <section class="slide center" data-notes="AI가 먼저 우리한테 손을 내밀어줬어요. 우리가 한 발자국 더 다가갈 차례예요. 친해지는 한 발자국이요.">
   <div class="t-small" style="margin-bottom:30px;">오늘 보여드릴 것</div>
@@ -1040,6 +1055,21 @@ body.dark .progress-track{background:rgba(255,255,255,.1);}
   </div>
 </section>
 
+<!-- NEW S35-b: 이제 나도 AI에게 다가갔다 (클로징 narrative) -->
+<section class="slide bg-dark center" data-notes="AI가 우리에게 다가오기 위해 사람 언어를 배운 것처럼, 이제 저도 AI한테 다가갔어요. 데이터와 구조로요. 그래서 더 잘 소통하고 더 친해질 수 있었어요.">
+  <div style="font-size:1.6vw;color:rgba(255,255,255,0.6);margin-bottom:30px;font-weight:500;">이제 나도</div>
+  <div class="t-hero" style="color:#fff;line-height:1.2;"><span style="color:var(--orange);">AI의 방식</span>을<br>조금 이해했어요.</div>
+  <div style="font-size:1.5vw;color:rgba(255,255,255,0.55);margin-top:36px;font-weight:500;line-height:1.6;">
+    — <strong style="color:#fff;">데이터와 구조</strong>로 더 잘 소통할 수 있게.<br>그렇게 더 친해질 수 있었어요.
+  </div>
+</section>
+
+<!-- NEW S35-c: 찐친 (수미상관 직전 빌드업) -->
+<section class="slide bg-dark center" data-notes="이제 AI는 말 안 해도 저를 알아요. 그리고 항상 도와주는 찐친이에요. 어색했던 사이가 이제 그렇게 됐어요.">
+  <div style="font-size:1.6vw;color:rgba(255,255,255,0.6);margin-bottom:28px;font-weight:500;">AI는 이제</div>
+  <div class="t-hero" style="color:#fff;line-height:1.2;">말 안 해도<br>나를 알고,<br><span style="color:var(--orange);">항상 도와주는 찐친</span>.</div>
+</section>
+
 <!-- S36 수미상관 ★★★ 발표 핵심 -->
 <section class="slide bg-dark center" data-notes="발표 시작할 때 물었어요. AI는 저를 얼만큼 알까요. 답을 드릴게요. 이제 AI랑 메이는 서로 잘 아는 친한 친구가 됐어요. 원하는 거 뭐든 함께 구조화하고 조립해서 만들어낼 수 있는 친구요.">
   <div style="font-size:1.4vw;color:rgba(255,255,255,.55);margin-bottom:30px;font-weight:500;">발표 시작할 때 물었어요.</div>
@@ -1103,12 +1133,12 @@ let cur = 0;
 
 // 챕터 태그 매핑
 const CHAPTERS = [
-  {start:0, end:5, name:'도입'},
-  {start:6, end:10, name:'Part 1 · 일상이 데이터로'},
-  {start:11, end:21, name:'Part 2 · 왜 빅쿼리?'},
-  {start:22, end:31, name:'Part 3 · AI랑 자연어로 분석'},
-  {start:32, end:37, name:'Part 4 · 사내 적용'},
-  {start:38, end:42, name:'클로징'},
+  {start:0, end:7, name:'도입'},
+  {start:8, end:12, name:'Part 1 · 일상이 데이터로'},
+  {start:13, end:23, name:'Part 2 · 왜 빅쿼리?'},
+  {start:24, end:33, name:'Part 3 · AI랑 자연어로 분석'},
+  {start:34, end:39, name:'Part 4 · 사내 적용'},
+  {start:40, end:45, name:'클로징'},
 ];
 
 function go(n){
